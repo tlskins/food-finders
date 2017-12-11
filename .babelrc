@@ -1,0 +1,16 @@
+{
+  "presets": ["react-app", "es2015", "stage-2", "react"],
+  "plugins": [
+    ["module-resolver", {
+        "root": ["./src/**"],
+        "alias": {
+          "components": "./src/views/components"
+        }
+      }
+    ],
+    ["module-alias", [
+      { "src": "src", "expose": "~" },
+      { "src": "src/views/components", "expose": "@components"},
+    ]]
+  ]
+}
