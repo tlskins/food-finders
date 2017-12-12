@@ -3,12 +3,14 @@ Not great to have all service imports in a separate file, but is a workaround fo
 testing avoiding importing browserHistory node module
 */
 
-import * as counterServices from './counter'
+import * as CounterService from './counter'
 
+// const services = {
+//   RestService,
+//   SessionService,
+// }
 
-const services = {
-  ...counterServices,
-}
+const services = CounterService
 
 /* pass redux store dispatch and state to all services */
 const ServiceInitializer = ( dispatch, getState ) => services => {
@@ -33,3 +35,9 @@ export const initServices = ( store, moreServices = {}) => {
 
   return __services
 }
+
+export const loadServices = () => {
+  return __services
+}
+
+export { default as BaseService } from './base'

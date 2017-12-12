@@ -1,4 +1,5 @@
-import BaseService from './base'
+import { default as BaseService } from './base'
+// import BaseService from './base'
 import actions from '../../state/actions'
 
 export class CounterService extends BaseService {

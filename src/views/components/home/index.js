@@ -1,6 +1,5 @@
 import React from 'react'
 import { push } from 'react-router-redux'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import services from '../../../behavior/services'
 
@@ -49,6 +48,9 @@ const mapDispatchToProps = () => {
   const changePage = () => push('/about-us')
 
   const { increment, incrementAsync, decrement, decrementAsync } = CounterService
+  console.log('counterservice.dispatch - ', CounterService.dispatch)
+  console.log('counterservice.getState - ', CounterService.getState)
+
 
   return {
     increment,
@@ -60,7 +62,4 @@ const mapDispatchToProps = () => {
 }
 
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Home)
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
