@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { push } from 'react-router-redux'
 import { connect } from 'react-redux'
-import services from '../../../behavior/services'
+// import services from '../../../behavior/services'
+import services from '@services'
 import { bindActionCreators } from 'redux'
 
 class Home extends Component {
