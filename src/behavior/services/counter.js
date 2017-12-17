@@ -1,5 +1,5 @@
 import { default as BaseService } from './base'
-import actions from '../../state/actions'
+import actions from '@actions'
 
 export class CounterService extends BaseService {
 

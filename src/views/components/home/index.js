@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { push } from 'react-router-redux'
 import { connect } from 'react-redux'
-// import services from '../../../behavior/services'
-import services from '@services'
 import { bindActionCreators } from 'redux'
+import services from '@services'
 
 class Home extends Component {
 
@@ -31,8 +30,6 @@ class Home extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log('mapStateToProps!')
-
   return {
     count: state.counter.count,
     isIncrementing: state.counter.isIncrementing,

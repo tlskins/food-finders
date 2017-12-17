@@ -1,0 +1,12 @@
+{
+  "presets": ["react-app"],
+  "plugins": [
+    ["module-alias", [
+      { "src": "src", "expose": "~" },
+      { "src": "src/behavior/services", "expose": "@services"},
+      { "src": "src/views/components", "expose": "@components"},
+      { "src": "src/state/actions", "expose": "@actions"},
+      { "src": "src/state/reducers", "expose": "@reducers"},
+    ]]
+  ]
+}
