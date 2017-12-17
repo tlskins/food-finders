@@ -1,10 +1,10 @@
 import { default as BaseService } from './base'
-// import BaseService from './base'
 import actions from '../../state/actions'
 
 export class CounterService extends BaseService {
+
   increment() {
-    console.log('increment service called')
+    console.log('increment service called, this =',this)
     this.dispatch( actions.incrementRequested() )
     this.dispatch( actions.increment() )
   }

@@ -10,12 +10,14 @@ import * as CounterService from './counter'
 //   SessionService,
 // }
 
-const services = CounterService
+const coreServices = CounterService
 
 /* pass redux store dispatch and state to all services */
 const ServiceInitializer = ( dispatch, getState ) => services => {
   const initializedServices = {}
   for ( const p in services ) {
+    console.log('initializing service: ',services[p])
+    console.log('services loop, this = ',this)
     initializedServices[p] = new services[p]( dispatch, getState )
   }
 
@@ -27,17 +29,16 @@ let __services
 
 export const initServices = ( store, moreServices = {}) => {
   const { dispatch, getState } = store
+
   const serviceInitializer = ServiceInitializer( dispatch, getState )
   __services = serviceInitializer({
-    ...services,
+    ...coreServices,
     ...moreServices,
   })
 
   return __services
 }
 
-export const loadServices = () => {
-  return __services
-}
-
-export { default as BaseService } from './base'
+// export const loadServices = () => {
+//   return __services
+// }

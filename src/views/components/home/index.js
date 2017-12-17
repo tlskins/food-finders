@@ -1,28 +1,32 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { push } from 'react-router-redux'
 import { connect } from 'react-redux'
 import services from '../../../behavior/services'
+import { bindActionCreators } from 'redux'
 
-const Home = props => {
-  console.log('home props =',props)
-  return (
-    <div>
-      <h1>Home</h1>
-      <p>Count: {props.count}</p>
+class Home extends Component {
 
-      <p>
-        <button onClick={props.increment} disabled={props.isIncrementing}>Increment</button>
-        <button onClick={props.incrementAsync} disabled={props.isIncrementing}>Increment Async</button>
-      </p>
+  render() {
+    return (
+      <div>
+        <h1>Home</h1>
+        <p>Count: {this.props.count}</p>
 
-      <p>
-        <button onClick={props.decrement} disabled={props.isDecrementing}>Decrementing</button>
-        <button onClick={props.decrementAsync} disabled={props.isDecrementing}>Decrement Async</button>
-      </p>
+        <p>
+          <button onClick={this.props.increment} disabled={this.props.isIncrementing}>Increment</button>
+          <button onClick={this.props.incrementAsync} disabled={this.props.isIncrementing}>Increment Async</button>
+        </p>
 
-      <p><button onClick={() => props.changePage()}>Go to about page via redux</button></p>
-    </div>
-  )
+        <p>
+          <button onClick={this.props.decrement} disabled={this.props.isDecrementing}>Decrementing</button>
+          <button onClick={this.props.decrementAsync} disabled={this.props.isDecrementing}>Decrement Async</button>
+        </p>
+
+        <p><button onClick={() => this.props.changePage()}>Go to about page via redux</button></p>
+      </div>
+    )
+  }
+
 }
 
 const mapStateToProps = state => {
@@ -35,31 +39,19 @@ const mapStateToProps = state => {
   }
 }
 
-// const mapDispatchToProps = dispatch => bindActionCreators({
-//   increment,
-//   incrementAsync,
-//   decrement,
-//   decrementAsync,
-//   changePage: () => push('/about-us')
-// }, dispatch)
+const mapDispatchToProps = dispatch => {
+  const increment = () => services.CounterService.increment()
+  const incrementAsync = () => services.CounterService.incrementAsync()
+  const decrement = () => services.CounterService.decrement()
+  const decrementAsync = () => services.CounterService.decrementAsync()
 
-const mapDispatchToProps = () => {
-  const { CounterService } = services
-  const changePage = () => push('/about-us')
-
-  const { increment, incrementAsync, decrement, decrementAsync } = CounterService
-  console.log('counterservice.dispatch - ', CounterService.dispatch)
-  console.log('counterservice.getState - ', CounterService.getState)
-
-
-  return {
+  return bindActionCreators({
     increment,
     incrementAsync,
     decrement,
     decrementAsync,
-    changePage,
-  }
+    changePage: () => push('/about-us')
+  }, dispatch)
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
