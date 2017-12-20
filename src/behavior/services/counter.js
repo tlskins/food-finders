@@ -4,7 +4,6 @@ import actions from '@actions'
 export class CounterService extends BaseService {
 
   increment() {
-    console.log('increment service called, this =',this)
     this.dispatch( actions.incrementRequested() )
     this.dispatch( actions.increment() )
   }
