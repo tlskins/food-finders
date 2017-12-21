@@ -4,20 +4,20 @@ testing avoiding importing browserHistory node module
 */
 
 import * as CounterService from './counter'
-
-// const services = {
-//   RestService,
-//   SessionService,
-// }
+import * as RestService from './rest'
 
 const coreServices = CounterService
+
+// const coreServices = {
+//   CounterService,
+//   RestService,
+// }
 
 /* pass redux store dispatch and state to all services */
 const ServiceInitializer = ( dispatch, getState ) => services => {
   const initializedServices = {}
   for ( const p in services ) {
     console.log('initializing service: ',services[p])
-    console.log('services loop, this = ',this)
     initializedServices[p] = new services[p]( dispatch, getState )
   }
 
@@ -29,8 +29,9 @@ let __services
 
 export const initServices = ( store, moreServices = {}) => {
   const { dispatch, getState } = store
-
   const serviceInitializer = ServiceInitializer( dispatch, getState )
+
+  console.log('coreServices = ',coreServices)
   __services = serviceInitializer({
     ...coreServices,
     ...moreServices,

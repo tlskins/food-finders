@@ -2,7 +2,6 @@ import { default as BaseService } from './base'
 import actions from '@actions'
 
 export class CounterService extends BaseService {
-
   increment() {
     this.dispatch( actions.incrementRequested() )
     this.dispatch( actions.increment() )

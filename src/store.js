@@ -7,24 +7,29 @@ import rootReducer from '@reducers'
 export const history = createHistory()
 
 const initialState = {}
-const enhancers = []
+// const enhancers = []
+
 const middleware = [
   thunk,
   routerMiddleware(history)
 ]
 
-if (process.env.NODE_ENV === 'development') {
-  const devToolsExtension = window.devToolsExtension
-
-  if (typeof devToolsExtension === 'function') {
-    enhancers.push(devToolsExtension())
-  }
-}
+// if (process.env.NODE_ENV === 'development') {
+//   const devToolsExtension = window.devToolsExtension
+//
+//   if (typeof devToolsExtension === 'function') {
+//     enhancers.push(devToolsExtension())
+//   }
+// }
 
 const composedEnhancers = compose(
   applyMiddleware(...middleware),
-  ...enhancers
 )
+
+// const composedEnhancers = compose(
+//   applyMiddleware(...middleware),
+//   ...enhancers
+// )
 
 const store = createStore(
   rootReducer,

@@ -3,6 +3,7 @@ import { push } from 'react-router-redux'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import services from '@services'
+import coordinators from '@coordinators'
 
 class Home extends Component {
 
@@ -37,19 +38,23 @@ const mapStateToProps = state => {
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  const increment = () => services.CounterService.increment()
-  const incrementAsync = () => services.CounterService.incrementAsync()
-  const decrement = () => services.CounterService.decrement()
-  const decrementAsync = () => services.CounterService.decrementAsync()
+const mapDispatchToProps = () => {
+  const { RestService, CounterService } = services
+  const increment = () => CounterService.increment()
+  const incrementAsync = () => CounterService.incrementAsync()
+  const decrement = () => CounterService.decrement()
+  const decrementAsync = () => CounterService.decrementAsync()
+  const yelpSearch = coordinators.searchYelp({ RestService })
+  const changePage = () => push('/about-us')
 
-  return bindActionCreators({
+  return {
     increment,
     incrementAsync,
     decrement,
     decrementAsync,
-    changePage: () => push('/about-us')
-  }, dispatch)
+    yelpSearch,
+    changePage,
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
