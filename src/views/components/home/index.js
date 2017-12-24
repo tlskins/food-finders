@@ -1,11 +1,24 @@
 import React, { Component } from 'react'
 import { push } from 'react-router-redux'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
 import services from '@services'
 import coordinators from '@coordinators'
 
 class Home extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      yelpQuery: '',
+    }
+    this.yelpSearchHandler = this.yelpSearchHandler.bind(this)
+  }
+
+  yelpSearchHandler = (event) => {
+    event.preventDefault()
+    this.props.yelpSearch( this.state.yelpQuery )
+    this.setState({ yelpQuery: '' })
+  }
 
   render() {
     return (
@@ -24,6 +37,10 @@ class Home extends Component {
         </p>
 
         <p><button onClick={() => this.props.changePage()}>Go to about page via redux</button></p>
+
+        <form id="yelpQuery" onSubmit={ this.yelpSearchHandler }>
+          <input type="text" value={ this.state.yelpQuery } onChange={ (event) => this.setState({ yelpQuery: event.target.value }) } />
+        </form>
       </div>
     )
   }

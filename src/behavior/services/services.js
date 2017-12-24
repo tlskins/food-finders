@@ -6,12 +6,12 @@ testing avoiding importing browserHistory node module
 import * as CounterService from './counter'
 import * as RestService from './rest'
 
-const coreServices = CounterService
+// const coreServices = CounterService
 
-// const coreServices = {
-//   CounterService,
-//   RestService,
-// }
+const coreServices = {
+  ...CounterService,
+  ...RestService,
+}
 
 /* pass redux store dispatch and state to all services */
 const ServiceInitializer = ( dispatch, getState ) => services => {
