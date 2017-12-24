@@ -44,10 +44,16 @@ class Home extends Component {
 
   renderOption(option) {
     console.log('render options called')
+    const { location, categories } = option
+    const locationString = location.address1.concat(', ').concat(location.city).concat(', ').concat(location.state).concat(', ').concat(location.zip_code)
+    const categoriesString = categories.map( c => c.title ).join(', ')
+
     return ( option && option.name &&
       <div>
         <h5>{option && option.name}</h5>
         <p style={{ "font-size": "80%", "color": "#999999"}}>
+          <b>{ locationString }</b><br />
+          <b>{ categoriesString }</b><br />
           <b>Rating: </b>{option && option.rating}<br />
           <b>Price: </b>{option && option.price}<br />
         </p>
@@ -74,12 +80,6 @@ class Home extends Component {
 
         <p><button onClick={() => this.props.changePage()}>Go to about page via redux</button></p>
 
-        {
-          // <form id="yelpQuery" onSubmit={ this.yelpSearchHandler }>
-          //   <input type="text" value={ this.state.yelpQuery } onChange={ (event) => this.setState({ yelpQuery: event.target.value }) } />
-          // </form>
-        }
-
         <Select.Async multi={ false }
           value={this.state.yelpQuery}
           onChange={(event) => this.setState({ yelpQuery: event.target.value })}
@@ -100,7 +100,7 @@ const mapStateToProps = state => {
     count: state.counter.count,
     isIncrementing: state.counter.isIncrementing,
     isDecrementing: state.counter.isDecrementing,
-    suggestedYelpLocations: state.yelp.suggestedLocations,
+    bestAwards: state.bestAwards.all,
   }
 }
 
@@ -110,7 +110,6 @@ const mapDispatchToProps = () => {
   const incrementAsync = () => CounterService.incrementAsync()
   const decrement = () => CounterService.decrement()
   const decrementAsync = () => CounterService.decrementAsync()
-  const yelpSearch = coordinators.searchYelp({ RestService, YelpService })
   const suggestYelp = coordinators.suggestYelp({ RestService })
   const changePage = () => push('/about-us')
 
@@ -119,7 +118,6 @@ const mapDispatchToProps = () => {
     incrementAsync,
     decrement,
     decrementAsync,
-    yelpSearch,
     changePage,
     suggestYelp,
   }
