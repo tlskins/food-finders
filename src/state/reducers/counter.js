@@ -3,7 +3,7 @@ import {
   INCREMENT,
   DECREMENT_REQUESTED,
   DECREMENT,
-} from '../actions/counter'
+} from '@actions/counter'
 
 const initialState = {
   count: 0,

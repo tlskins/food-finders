@@ -3,6 +3,8 @@ import { push } from 'react-router-redux'
 import { connect } from 'react-redux'
 import services from '@services'
 import coordinators from '@coordinators'
+import Select from 'react-select'
+import './index.css'
 
 class Home extends Component {
   constructor(props) {
@@ -12,6 +14,7 @@ class Home extends Component {
       yelpQuery: '',
     }
     this.yelpSearchHandler = this.yelpSearchHandler.bind(this)
+    this.suggestYelp = this.suggestYelp.bind(this)
   }
 
   yelpSearchHandler = (event) => {
@@ -20,7 +23,40 @@ class Home extends Component {
     this.setState({ yelpQuery: '' })
   }
 
+  suggestYelp(input,callback) {
+    if (!input) {
+      return Promise.resolve({ options: [] })
+    }
+
+    this.props.suggestYelp(input)
+    .then( results => {
+      console.log('suggestYelp - results = ',results)
+      setTimeout(() => {
+        callback(null, { options: results} )
+      }, 500)
+
+    }).catch(
+      e => {
+        console.log('error = ',e)
+      }
+    )
+  }
+
+  renderOption(option) {
+    console.log('render options called')
+    return ( option && option.name &&
+      <div>
+        <h5>{option && option.name}</h5>
+        <p style={{ "font-size": "80%", "color": "#999999"}}>
+          <b>Rating: </b>{option && option.rating}<br />
+          <b>Price: </b>{option && option.price}<br />
+        </p>
+      </div>
+    )
+  }
+
   render() {
+    console.log('renders props = ',this.props)
     return (
       <div>
         <h1>Home</h1>
@@ -38,9 +74,21 @@ class Home extends Component {
 
         <p><button onClick={() => this.props.changePage()}>Go to about page via redux</button></p>
 
-        <form id="yelpQuery" onSubmit={ this.yelpSearchHandler }>
-          <input type="text" value={ this.state.yelpQuery } onChange={ (event) => this.setState({ yelpQuery: event.target.value }) } />
-        </form>
+        {
+          // <form id="yelpQuery" onSubmit={ this.yelpSearchHandler }>
+          //   <input type="text" value={ this.state.yelpQuery } onChange={ (event) => this.setState({ yelpQuery: event.target.value }) } />
+          // </form>
+        }
+
+        <Select.Async multi={ false }
+          value={this.state.yelpQuery}
+          onChange={(event) => this.setState({ yelpQuery: event.target.value })}
+          onValueClick={() => console.log('clicked!')}
+          valueKey="name"
+          labelKey="name"
+          loadOptions={this.suggestYelp}
+          optionRenderer={ this.renderOption }
+          backspaceRemoves={ true } />
       </div>
     )
   }
@@ -51,17 +99,19 @@ const mapStateToProps = state => {
   return {
     count: state.counter.count,
     isIncrementing: state.counter.isIncrementing,
-    isDecrementing: state.counter.isDecrementing
+    isDecrementing: state.counter.isDecrementing,
+    suggestedYelpLocations: state.yelp.suggestedLocations,
   }
 }
 
 const mapDispatchToProps = () => {
-  const { RestService, CounterService } = services
+  const { RestService, CounterService, YelpService } = services
   const increment = () => CounterService.increment()
   const incrementAsync = () => CounterService.incrementAsync()
   const decrement = () => CounterService.decrement()
   const decrementAsync = () => CounterService.decrementAsync()
-  const yelpSearch = coordinators.searchYelp({ RestService })
+  const yelpSearch = coordinators.searchYelp({ RestService, YelpService })
+  const suggestYelp = coordinators.suggestYelp({ RestService })
   const changePage = () => push('/about-us')
 
   return {
@@ -71,6 +121,7 @@ const mapDispatchToProps = () => {
     decrementAsync,
     yelpSearch,
     changePage,
+    suggestYelp,
   }
 }
 

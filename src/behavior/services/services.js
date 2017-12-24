@@ -5,12 +5,12 @@ testing avoiding importing browserHistory node module
 
 import * as CounterService from './counter'
 import * as RestService from './rest'
-
-// const coreServices = CounterService
+import * as YelpService from './yelp'
 
 const coreServices = {
   ...CounterService,
   ...RestService,
+  ...YelpService,
 }
 
 /* pass redux store dispatch and state to all services */
