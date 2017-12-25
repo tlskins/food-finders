@@ -4,7 +4,7 @@ import axios from './api/axios'
 class Config {
   constructor() {
     // this.API_HOST = 'http://food-finders-api.test/'
-    this.API_HOST = 'http://food-finders-api.192.168.1.22.xip.io/'
+    this.API_HOST = 'http://food-finders-api.127.0.0.1.xip.io/'
   }
 
   setConfig( config ) {

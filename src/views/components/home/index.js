@@ -11,16 +11,10 @@ class Home extends Component {
     super(props)
 
     this.state = {
-      yelpQuery: '',
+      selectedLocation: null,
     }
-    this.yelpSearchHandler = this.yelpSearchHandler.bind(this)
     this.suggestYelp = this.suggestYelp.bind(this)
-  }
-
-  yelpSearchHandler = (event) => {
-    event.preventDefault()
-    this.props.yelpSearch( this.state.yelpQuery )
-    this.setState({ yelpQuery: '' })
+    this.onSelect = this.onSelect.bind(this)
   }
 
   suggestYelp(input,callback) {
@@ -43,7 +37,6 @@ class Home extends Component {
   }
 
   renderOption(option) {
-    console.log('render options called')
     const { location, categories } = option
     const locationString = location.address1.concat(', ').concat(location.city).concat(', ').concat(location.state).concat(', ').concat(location.zip_code)
     const categoriesString = categories.map( c => c.title ).join(', ')
@@ -51,7 +44,7 @@ class Home extends Component {
     return ( option && option.name &&
       <div>
         <h5>{option && option.name}</h5>
-        <p style={{ "font-size": "80%", "color": "#999999"}}>
+        <p style={{ "fontSize": "80%", "color": "#999999"}}>
           <b>{ locationString }</b><br />
           <b>{ categoriesString }</b><br />
           <b>Rating: </b>{option && option.rating}<br />
@@ -61,32 +54,37 @@ class Home extends Component {
     )
   }
 
+  onSelect(value, event) {
+    if(value) {
+      this.setState({ selectedLocation: value })
+    }
+  }
+
   render() {
-    console.log('renders props = ',this.props)
     return (
       <div>
-        <h1>Home</h1>
-        <p>Count: {this.props.count}</p>
-
-        <p>
-          <button onClick={this.props.increment} disabled={this.props.isIncrementing}>Increment</button>
-          <button onClick={this.props.incrementAsync} disabled={this.props.isIncrementing}>Increment Async</button>
-        </p>
-
-        <p>
-          <button onClick={this.props.decrement} disabled={this.props.isDecrementing}>Decrementing</button>
-          <button onClick={this.props.decrementAsync} disabled={this.props.isDecrementing}>Decrement Async</button>
-        </p>
-
-        <p><button onClick={() => this.props.changePage()}>Go to about page via redux</button></p>
+        {
+          // <h1>Home</h1>
+          // <p>Count: {this.props.count}</p>
+          //
+          // <p>
+          //   <button onClick={this.props.increment} disabled={this.props.isIncrementing}>Increment</button>
+          //   <button onClick={this.props.incrementAsync} disabled={this.props.isIncrementing}>Increment Async</button>
+          // </p>
+          //
+          // <p>
+          //   <button onClick={this.props.decrement} disabled={this.props.isDecrementing}>Decrementing</button>
+          //   <button onClick={this.props.decrementAsync} disabled={this.props.isDecrementing}>Decrement Async</button>
+          // </p>
+          //
+          // <p><button onClick={() => this.props.changePage()}>Go to about page via redux</button></p>
+        }
 
         <Select.Async multi={ false }
-          value={this.state.yelpQuery}
-          onChange={(event) => this.setState({ yelpQuery: event.target.value })}
-          onValueClick={() => console.log('clicked!')}
+          onChange={ this.onSelect }
           valueKey="name"
           labelKey="name"
-          loadOptions={this.suggestYelp}
+          loadOptions={ this.suggestYelp }
           optionRenderer={ this.renderOption }
           backspaceRemoves={ true } />
       </div>
@@ -105,7 +103,7 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  const { RestService, CounterService, YelpService } = services
+  const { RestService, CounterService } = services
   const increment = () => CounterService.increment()
   const incrementAsync = () => CounterService.incrementAsync()
   const decrement = () => CounterService.decrement()
