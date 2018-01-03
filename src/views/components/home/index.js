@@ -74,25 +74,10 @@ class Home extends Component {
 
   render() {
     const { selectedLocation, bestAwards } = this.state
+    const { createEntity } = this.props
+
     return (
       <div>
-        {
-          // <h1>Home</h1>
-          // <p>Count: {this.props.count}</p>
-          //
-          // <p>
-          //   <button onClick={this.props.increment} disabled={this.props.isIncrementing}>Increment</button>
-          //   <button onClick={this.props.incrementAsync} disabled={this.props.isIncrementing}>Increment Async</button>
-          // </p>
-          //
-          // <p>
-          //   <button onClick={this.props.decrement} disabled={this.props.isDecrementing}>Decrementing</button>
-          //   <button onClick={this.props.decrementAsync} disabled={this.props.isDecrementing}>Decrement Async</button>
-          // </p>
-          //
-          // <p><button onClick={() => this.props.changePage()}>Go to about page via redux</button></p>
-        }
-
         <p>
           Available Best Awards: { bestAwards && bestAwards.map( a => a.name ).join(', ') }
         </p>
@@ -108,10 +93,13 @@ class Home extends Component {
         { selectedLocation &&
           <div>
             <p>
-              <b>{ selectedLocation.name }</b><input type="submit" value="X" onClick={ () => this.setState({ selectedLocation: null })}/>
+              <b>{ selectedLocation.name }</b>
+              <input type="submit" value="X" onClick={ () => this.setState({ selectedLocation: null })}/>
+              <input type="submit" value="+" onClick={ () => createEntity(selectedLocation) }/>
             </p>
           </div>
         }
+
       </div>
     )
   }
@@ -138,10 +126,12 @@ const mapDispatchToProps = () => {
 
   const suggestYelp = coordinators.suggestYelp({ RestService })
   const loadFoods = coordinators.loadFoods({ RestService })
+  const createEntity = coordinators.createEntity({ RestService })
 
   return {
     increment,
     incrementAsync,
+    createEntity,
     decrement,
     decrementAsync,
     changePage,
