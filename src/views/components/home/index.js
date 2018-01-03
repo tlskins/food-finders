@@ -12,9 +12,22 @@ class Home extends Component {
 
     this.state = {
       selectedLocation: null,
+      bestAwards: [],
     }
+
     this.suggestYelp = this.suggestYelp.bind(this)
     this.onSelect = this.onSelect.bind(this)
+  }
+
+  componentWillMount() {
+    const { loadFoods } = this.props
+
+    if ( loadFoods ) {
+      loadFoods().then( results => {
+        console.log('bestaward results = ',results)
+        this.setState({ bestAwards: results })
+      }).catch( e => console.log('loadFoods error = ',e))
+    }
   }
 
   suggestYelp(input,callback) {
@@ -28,7 +41,6 @@ class Home extends Component {
       setTimeout(() => {
         callback(null, { options: results} )
       }, 500)
-
     }).catch(
       e => {
         console.log('error = ',e)
@@ -61,6 +73,7 @@ class Home extends Component {
   }
 
   render() {
+    const { selectedLocation, bestAwards } = this.state
     return (
       <div>
         {
@@ -80,6 +93,10 @@ class Home extends Component {
           // <p><button onClick={() => this.props.changePage()}>Go to about page via redux</button></p>
         }
 
+        <p>
+          Available Best Awards: { bestAwards && bestAwards.map( a => a.name ).join(', ') }
+        </p>
+
         <Select.Async multi={ false }
           onChange={ this.onSelect }
           valueKey="name"
@@ -87,6 +104,14 @@ class Home extends Component {
           loadOptions={ this.suggestYelp }
           optionRenderer={ this.renderOption }
           backspaceRemoves={ true } />
+
+        { selectedLocation &&
+          <div>
+            <p>
+              <b>{ selectedLocation.name }</b><input type="submit" value="X" onClick={ () => this.setState({ selectedLocation: null })}/>
+            </p>
+          </div>
+        }
       </div>
     )
   }
@@ -98,7 +123,7 @@ const mapStateToProps = state => {
     count: state.counter.count,
     isIncrementing: state.counter.isIncrementing,
     isDecrementing: state.counter.isDecrementing,
-    bestAwards: state.bestAwards.all,
+    // bestAwards: state.bestAwards.all,
   }
 }
 
@@ -108,8 +133,11 @@ const mapDispatchToProps = () => {
   const incrementAsync = () => CounterService.incrementAsync()
   const decrement = () => CounterService.decrement()
   const decrementAsync = () => CounterService.decrementAsync()
-  const suggestYelp = coordinators.suggestYelp({ RestService })
+
   const changePage = () => push('/about-us')
+
+  const suggestYelp = coordinators.suggestYelp({ RestService })
+  const loadFoods = coordinators.loadFoods({ RestService })
 
   return {
     increment,
@@ -117,6 +145,7 @@ const mapDispatchToProps = () => {
     decrement,
     decrementAsync,
     changePage,
+    loadFoods,
     suggestYelp,
   }
 }
