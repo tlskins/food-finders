@@ -17,8 +17,10 @@ const mapDispatchToProps = () => {
   const { RestService } = services
 
   const suggestYelp = coordinators.suggestYelp({ RestService })
+  const searchEntitiesByBusinessId = coordinators.searchEntitiesByBusinessId({ RestService })
 
   return {
+    searchEntitiesByBusinessId,
     suggestYelp,
   }
 }
