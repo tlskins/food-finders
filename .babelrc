@@ -7,6 +7,7 @@
       { "src": "src/behavior/coordinators", "expose": "@coordinators"},
       { "src": "src/api", "expose": "@api"},
       { "src": "src/views/components", "expose": "@components"},
+      { "src": "src/views/containers", "expose": "@containers"},
       { "src": "src/state/actions", "expose": "@actions"},
       { "src": "src/state/reducers", "expose": "@reducers"},
     ]]

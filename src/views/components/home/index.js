@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
-import { push } from 'react-router-redux'
-import { connect } from 'react-redux'
-import services from '@services'
-import coordinators from '@coordinators'
+import PropTypes from 'prop-types'
+
 import Select from 'react-select'
 import './index.css'
 
@@ -40,7 +38,7 @@ class Home extends Component {
       console.log('suggestYelp - results = ',results)
       setTimeout(() => {
         callback(null, { options: results} )
-      }, 500)
+      }, 50)
     }).catch(
       e => {
         console.log('error = ',e)
@@ -106,38 +104,4 @@ class Home extends Component {
 
 }
 
-const mapStateToProps = state => {
-  return {
-    count: state.counter.count,
-    isIncrementing: state.counter.isIncrementing,
-    isDecrementing: state.counter.isDecrementing,
-    // bestAwards: state.bestAwards.all,
-  }
-}
-
-const mapDispatchToProps = () => {
-  const { RestService, CounterService } = services
-  const increment = () => CounterService.increment()
-  const incrementAsync = () => CounterService.incrementAsync()
-  const decrement = () => CounterService.decrement()
-  const decrementAsync = () => CounterService.decrementAsync()
-
-  const changePage = () => push('/about-us')
-
-  const suggestYelp = coordinators.suggestYelp({ RestService })
-  const loadFoods = coordinators.loadFoods({ RestService })
-  const createEntity = coordinators.createEntity({ RestService })
-
-  return {
-    increment,
-    incrementAsync,
-    createEntity,
-    decrement,
-    decrementAsync,
-    changePage,
-    loadFoods,
-    suggestYelp,
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home)
+export default Home
