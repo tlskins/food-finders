@@ -104,4 +104,11 @@ class Home extends Component {
 
 }
 
+Home.propTypes = {
+  createEntity: PropTypes.func,
+  changePage: PropTypes.func,
+  loadFoods: PropTypes.func,
+  suggestYelp: PropTypes.func,
+}
+
 export default Home

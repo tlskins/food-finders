@@ -8,19 +8,14 @@ import coordinators from '@coordinators'
 
 const mapStateToProps = state => {
   return {
-    count: state.counter.count,
-    isIncrementing: state.counter.isIncrementing,
-    isDecrementing: state.counter.isDecrementing,
-    // bestAwards: state.bestAwards.all,
+    // count: state.counter.count,
+    // isIncrementing: state.counter.isIncrementing,
+    // isDecrementing: state.counter.isDecrementing,
   }
 }
 
 const mapDispatchToProps = () => {
-  const { RestService, CounterService } = services
-  const increment = () => CounterService.increment()
-  const incrementAsync = () => CounterService.incrementAsync()
-  const decrement = () => CounterService.decrement()
-  const decrementAsync = () => CounterService.decrementAsync()
+  const { RestService } = services
 
   const changePage = () => push('/about-us')
 
@@ -29,11 +24,7 @@ const mapDispatchToProps = () => {
   const createEntity = coordinators.createEntity({ RestService })
 
   return {
-    increment,
-    incrementAsync,
     createEntity,
-    decrement,
-    decrementAsync,
     changePage,
     loadFoods,
     suggestYelp,
