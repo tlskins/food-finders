@@ -1,7 +1,6 @@
 import { connect } from 'react-redux'
-import { push } from 'react-router-redux'
 
-import Home from '@components/home/index'
+import EntitySelect from '@components/home/EntitySelect'
 
 import services from '@services'
 import coordinators from '@coordinators'
@@ -15,17 +14,13 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  const changePage = () => push('/about-us')
   const { RestService } = services
 
-  const createEntity = coordinators.createEntity({ RestService })
-  const loadFoods = coordinators.loadFoods({ RestService })
+  const suggestYelp = coordinators.suggestYelp({ RestService })
 
   return {
-    changePage,
-    createEntity,
-    loadFoods,
+    suggestYelp,
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home)
+export default connect(mapStateToProps, mapDispatchToProps)(EntitySelect)
