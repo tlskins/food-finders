@@ -9,7 +9,7 @@ class EntitySelect extends Component {
     super(props)
 
     this.state = {
-      loadedEntities: [],
+      loadedEntities: {},
     }
 
     this.loadEntities = this.loadEntities.bind(this)
@@ -24,7 +24,6 @@ class EntitySelect extends Component {
 
     this.props.suggestYelp(input)
     .then( results => {
-      console.log('suggestYelp - results = ',results)
       // setTimeout(() => {
         callback(null, { options: results} )
         const businessIds = results.map( r => r["id"] )
@@ -39,13 +38,17 @@ class EntitySelect extends Component {
   }
 
   loadEntities(businessIds) {
-
-    // TODO - append loaded entities using dict NOT replace
-
-    this.props.searchEntitiesByBusinessId(businessIds)
+    console.log('loading entities = ',businessIds)
+    businessIds.length > 0 && this.props.searchEntitiesByBusinessId(businessIds)
     .then( entities => {
       console.log('loaded entity results = ',entities)
-      this.setState({ loadedEntities: entities })
+      const { loadedEntities } = this.state
+      entities.forEach(entity => {
+        if ( entity.business_id ) {
+          loadedEntities[entity.business_id] = entity
+        }
+      })
+      this.setState({ loadedEntities })
     }).catch(
       e => {
         console.log('error loading Entites= ',e)
@@ -59,7 +62,7 @@ class EntitySelect extends Component {
 
     const locationString = location.display_address.join(', ')
     const categoriesString = categories.map( c => c.title ).join(', ')
-    const foundEntity = loadedEntities.find( e => e.business && e.business.id === option.id )
+    const foundEntity = loadedEntities[option.id]
 
     return ( option && option.name &&
       <div>
@@ -78,10 +81,12 @@ class EntitySelect extends Component {
 
   render() {
     const { onChange } = this.props
+    let { loadedEntities } = this.state
+    loadedEntities = Object.values(loadedEntities)
 
     return (
       <div>
-        <p>Loaded Entities: { this.state.loadedEntities.map( e => e.business && e.business.name ).join(",") }</p>
+        <p>Loaded Entities: { loadedEntities.map( e => e.business && e.business.name ).join(",") }</p>
         <Select.Async multi={ false }
           onChange={ onChange }
           valueKey="name"
