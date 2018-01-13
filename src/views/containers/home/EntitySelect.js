@@ -7,19 +7,18 @@ import coordinators from '@coordinators'
 
 const mapStateToProps = state => {
   return {
-    // count: state.counter.count,
-    // isIncrementing: state.counter.isIncrementing,
-    // isDecrementing: state.counter.isDecrementing,
   }
 }
 
 const mapDispatchToProps = () => {
   const { RestService } = services
 
+  const createEntity = coordinators.createEntity({ RestService })
   const suggestYelp = coordinators.suggestYelp({ RestService })
   const searchEntitiesByBusinessId = coordinators.searchEntitiesByBusinessId({ RestService })
 
   return {
+    createEntity,
     searchEntitiesByBusinessId,
     suggestYelp,
   }

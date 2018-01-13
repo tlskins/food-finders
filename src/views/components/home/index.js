@@ -2,57 +2,47 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import EntitySelect from '@containers/home/EntitySelect'
+import FoodSelect from '@containers/home/FoodSelect'
 
 class Home extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      selectedLocation: null,
-      bestAwards: [],
+      selectedEntity: null,
+      selectedFood: null,
     }
 
-    this.onSelect = this.onSelect.bind(this)
+    this.onChange = this.onChange.bind(this)
   }
 
-  componentWillMount() {
-    const { loadFoods } = this.props
-
-    if ( loadFoods ) {
-      loadFoods().then( results => {
-        console.log('bestaward results = ',results)
-        this.setState({ bestAwards: results })
-      }).catch( e => console.log('loadFoods error = ',e))
-    }
-  }
-
-  onSelect(value, event) {
+  onChange = (key) => (value, event) => {
     if(value) {
-      this.setState({ selectedLocation: value })
+      const { state } = this
+      state[key] = value
+      this.setState( state )
     }
   }
 
   render() {
-    const { selectedLocation, bestAwards } = this.state
-    const { createEntity } = this.props
+    const { selectedFood } = this.state
 
     return (
       <div>
-        <p>
-          Available Best Awards: { bestAwards && bestAwards.map( a => a.name ).join(', ') }
-        </p>
 
         <EntitySelect
-          onChange={ this.onSelect }/>
+          onChange={ this.onChange('selectedEntity') }/>
 
-        { selectedLocation &&
+        { selectedFood ?
           <div>
             <p>
-              <b>{ selectedLocation.name }</b>
-              <input type="submit" value="X" onClick={ () => this.setState({ selectedLocation: null })}/>
-              <input type="submit" value="+" onClick={ () => createEntity(selectedLocation) }/>
+              <b>{ selectedFood.name }</b>
+              <input type="submit" value="X" onClick={ () => this.setState({ selectedFood: null })}/>
             </p>
           </div>
+          :
+          <FoodSelect
+            onChange={ this.onChange('selectedFood') }/>
         }
 
       </div>
@@ -63,8 +53,6 @@ class Home extends Component {
 
 Home.propTypes = {
   changePage: PropTypes.func,
-  createEntity: PropTypes.func,
-  loadFoods: PropTypes.func,
 }
 
 export default Home

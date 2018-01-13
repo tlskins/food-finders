@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import Select from 'react-select'
-import './EntitySelect.css'
+import './ReactSelect.css'
 
 class EntitySelect extends Component {
   constructor(props) {
@@ -10,6 +10,7 @@ class EntitySelect extends Component {
 
     this.state = {
       loadedEntities: {},
+      selectedBusiness: null,
     }
 
     this.loadEntities = this.loadEntities.bind(this)
@@ -23,11 +24,11 @@ class EntitySelect extends Component {
     }
 
     this.props.suggestYelp(input)
-    .then( results => {
+    .then( businesses => {
       // setTimeout(() => {
-        callback(null, { options: results} )
-        const businessIds = results.map( r => r["id"] )
-        console.log('yelp id results = ',businessIds)
+        callback(null, { options: businesses} )
+        const businessIds = businesses.map( r => r["id"] )
+        console.log('yelp ids = ',businessIds)
         this.loadEntities(businessIds)
       // }, 50)
     }).catch(
@@ -41,7 +42,7 @@ class EntitySelect extends Component {
     console.log('loading entities = ',businessIds)
     businessIds.length > 0 && this.props.searchEntitiesByBusinessId(businessIds)
     .then( entities => {
-      console.log('loaded entity results = ',entities)
+      console.log('loaded entities = ',entities)
       const { loadedEntities } = this.state
       entities.forEach(entity => {
         if ( entity.business_id ) {
@@ -80,15 +81,37 @@ class EntitySelect extends Component {
   }
 
   render() {
-    const { onChange } = this.props
-    let { loadedEntities } = this.state
-    loadedEntities = Object.values(loadedEntities)
+    const { onChange, createEntity } = this.props
+    const { selectedBusiness } = this.state
+    const { loadedEntities } = this.state
+    const entities = Object.values(loadedEntities)
+    let matchingEntity = null
+    if ( selectedBusiness && loadedEntities && loadedEntities[selectedBusiness.id] ) {
+      matchingEntity = loadedEntities[selectedBusiness.id]
+    }
 
     return (
+      selectedBusiness ?
       <div>
-        <p>Loaded Entities: { loadedEntities.map( e => e.business && e.business.name ).join(",") }</p>
-        <Select.Async multi={ false }
-          onChange={ onChange }
+        <p>
+          <b>{ selectedBusiness.name }</b>
+          { matchingEntity && matchingEntity.vote_totals && matchingEntity.vote_totals.map( v => v._id + ': ' + v.count + ' votes').map( v => (
+            <div>{v}<br /></div>
+          ))}
+          <input type="submit" value="X" onClick={ () => this.setState({ selectedBusiness: null })}/>
+          <input type="submit" value="+" onClick={ () => createEntity(selectedBusiness) }/>
+        </p>
+      </div>
+      :
+      <div>
+        <p>Loaded Entities: { entities.map( e => e.business && e.business.name ).join(",") }</p>
+        <Select.Async
+          placeholder="Choose Entity"
+          multi={ false }
+          onChange={ (value, event) => {
+            this.setState({ selectedBusiness: value })
+            onChange(value, event)
+          }}
           valueKey="name"
           labelKey="name"
           loadOptions={ this.suggestYelp }
@@ -100,6 +123,7 @@ class EntitySelect extends Component {
 }
 
 EntitySelect.propTypes = {
+  createEntity: PropTypes.func,
   onChange: PropTypes.func,
   searchEntitiesByBusinessId: PropTypes.func,
   suggestYelp: PropTypes.func,
