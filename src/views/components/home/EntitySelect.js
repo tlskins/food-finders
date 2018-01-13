@@ -25,12 +25,12 @@ class EntitySelect extends Component {
     this.props.suggestYelp(input)
     .then( results => {
       console.log('suggestYelp - results = ',results)
-      setTimeout(() => {
+      // setTimeout(() => {
         callback(null, { options: results} )
         const businessIds = results.map( r => r["id"] )
         console.log('yelp id results = ',businessIds)
         this.loadEntities(businessIds)
-      }, 50)
+      // }, 50)
     }).catch(
       e => {
         console.log('error Suggesting Yelp= ',e)
@@ -39,6 +39,9 @@ class EntitySelect extends Component {
   }
 
   loadEntities(businessIds) {
+
+    // TODO - append loaded entities using dict NOT replace
+
     this.props.searchEntitiesByBusinessId(businessIds)
     .then( entities => {
       console.log('loaded entity results = ',entities)
@@ -54,7 +57,7 @@ class EntitySelect extends Component {
     const { location, categories } = option
     const { loadedEntities } = this.state
 
-    const locationString = location.address1.concat(', ').concat(location.city).concat(', ').concat(location.state).concat(', ').concat(location.zip_code)
+    const locationString = location.display_address.join(', ')
     const categoriesString = categories.map( c => c.title ).join(', ')
     const foundEntity = loadedEntities.find( e => e.business && e.business.id === option.id )
 
