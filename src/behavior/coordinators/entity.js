@@ -1,6 +1,6 @@
 
-export const createEntity = ({ RestService }) => async (business) => {
-  const payload = { entity: { business } }
+export const createEntity = ({ RestService }) => async (yelp_business) => {
+  const payload = { entity: { yelp_business } }
 
   const response = await RestService.post('/entities', payload )
   return response

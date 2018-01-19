@@ -39,10 +39,21 @@ class FoodSelect extends Component {
     const { loadedFoods, selectedFood } = this.state
 
     return (
+      selectedFood ?
+      <div>
+        <p>
+          <b>{ selectedFood.name }</b>
+          <input type="submit" value="X" onClick={ () => this.setState({ selectedFood: null })}/>
+        </p>
+      </div>
+      :
       <div>
         <Select
           placeholder="Choose Food"
-          onChange={ onChange }
+          onChange={ (value, event) => {
+            this.setState({ selectedFood: value })
+            onChange(value, event)
+          }}
           valueKey="name"
           labelKey="name"
           options={ loadedFoods }

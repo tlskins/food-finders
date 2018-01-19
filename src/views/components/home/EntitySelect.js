@@ -98,7 +98,10 @@ class EntitySelect extends Component {
           { matchingEntity && matchingEntity.vote_totals && matchingEntity.vote_totals.map( v => v._id + ': ' + v.count + ' votes').map( v => (
             <div>{v}<br /></div>
           ))}
-          <input type="submit" value="X" onClick={ () => this.setState({ selectedBusiness: null })}/>
+          <input type="submit" value="X" onClick={ (event) => {
+            this.setState({ selectedBusiness: null })
+            onChange(null, event)
+          }}/>
           <input type="submit" value="+" onClick={ () => createEntity(selectedBusiness) }/>
         </p>
       </div>

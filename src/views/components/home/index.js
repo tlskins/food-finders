@@ -25,26 +25,12 @@ class Home extends Component {
   }
 
   render() {
-    const { selectedFood } = this.state
-
     return (
       <div>
-
         <EntitySelect
           onChange={ this.onChange('selectedEntity') }/>
-
-        { selectedFood ?
-          <div>
-            <p>
-              <b>{ selectedFood.name }</b>
-              <input type="submit" value="X" onClick={ () => this.setState({ selectedFood: null })}/>
-            </p>
-          </div>
-          :
-          <FoodSelect
-            onChange={ this.onChange('selectedFood') }/>
-        }
-
+        <FoodSelect
+          onChange={ this.onChange('selectedFood') }/>
       </div>
     )
   }

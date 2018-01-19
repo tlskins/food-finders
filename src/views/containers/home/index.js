@@ -3,11 +3,6 @@ import { push } from 'react-router-redux'
 
 import Home from '@components/home/index'
 
-const mapStateToProps = state => {
-  return {
-  }
-}
-
 const mapDispatchToProps = () => {
   const changePage = () => push('/about-us')
 
@@ -16,4 +11,4 @@ const mapDispatchToProps = () => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home)
+export default connect(null, mapDispatchToProps)(Home)
