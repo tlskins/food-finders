@@ -9,10 +9,12 @@ const mapDispatchToProps = () => {
   const { RestService } = services
 
   const loadDraftSocialEntry = coordinators.loadDraftSocialEntry({ RestService })
+  const suggestTags = coordinators.suggestTags({ RestService })
   const updateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService })
 
   return {
     loadDraftSocialEntry,
+    suggestTags,
     updateDraftSocialEntry,
   }
 }
