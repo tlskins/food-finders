@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 
 import EntitySelect from '@containers/home/EntitySelect'
 import FoodSelect from '@containers/home/FoodSelect'
+import SocialEntryInput from '@containers/home/SocialEntryInput'
+
 
 class Home extends Component {
   constructor(props) {
@@ -27,10 +29,9 @@ class Home extends Component {
   render() {
     return (
       <div>
-        <EntitySelect
-          onChange={ this.onChange('selectedEntity') }/>
-        <FoodSelect
-          onChange={ this.onChange('selectedFood') }/>
+        <SocialEntryInput />
+        <EntitySelect onChange={ this.onChange('selectedEntity') }/>
+        <FoodSelect onChange={ this.onChange('selectedFood') }/>
       </div>
     )
   }
