@@ -8,10 +8,13 @@ export const loadDraftSocialEntry = ({ RestService }) => async () => {
 
 
 export const suggestTags = ({ RestService }) => async ({ symbol, text }) => {
+  // TODO - Figoure out # encoding
+  if ( symbol === "#" ) {
+    symbol = "%23"
+  }
   const payload = { symbol, text }
 
   const response = await RestService.get('/tags', payload )
-  console.log('suggested tags response = ',response)
   return response
 }
 

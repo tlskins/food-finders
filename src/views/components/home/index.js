@@ -30,8 +30,8 @@ class Home extends Component {
     return (
       <div>
         <SocialEntryInput />
-        <EntitySelect onChange={ this.onChange('selectedEntity') }/>
-        <FoodSelect onChange={ this.onChange('selectedFood') }/>
+        { /** <EntitySelect onChange={ this.onChange('selectedEntity') }/> **/ }
+        { /** }<FoodSelect onChange={ this.onChange('selectedFood') }/> **/ }
       </div>
     )
   }

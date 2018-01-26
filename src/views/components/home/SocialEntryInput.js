@@ -1,20 +1,20 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import Select from 'react-select'
-import './ReactSelect.css'
-
 class SocialEntryInput extends Component {
 
   state = {
     text: "",
+    tags: [],
     tagSuggestions: [],
+    beginIndex: 0,
+    endIndex: 0,
+    suppressUpdateText: false,
   }
 
   componentDidMount() {
     ( async () => {
       const draftSocialEntry = await this.props.loadDraftSocialEntry()
-      console.log('draftSocialEntry = ',draftSocialEntry)
       this.setState({ ...draftSocialEntry })
     })()
   }
@@ -25,54 +25,79 @@ class SocialEntryInput extends Component {
       endIndex = cursorIndex
     }
 
-    let beginIndex = text.slice(0,cursorIndex).lastIndexOf(' ')
+    let beginIndex = text.slice(0,cursorIndex).lastIndexOf(' ') + 1
     if (beginIndex === -1 || beginIndex > endIndex ) {
       beginIndex = 0
     }
 
+    this.setState({ beginIndex, endIndex })
     return text.slice(beginIndex, endIndex).trim()
   }
 
-  updateText = async text => {
+  updateSocialEntry = async text => {
     const { updateDraftSocialEntry } = this.props
 
-    this.setState({ text })
     const newDraftSocialEntry = await updateDraftSocialEntry( text )
     delete newDraftSocialEntry.text
-    this.setState({ ...newDraftSocialEntry })
+    this.setState({ ...newDraftSocialEntry, suppressUpdateText: false })
   }
 
   suggestTags = async (text, selectionStart) => {
-
     const currentWord = this.findWordAtCursor(text, selectionStart)
-    console.log('suggestTags - currentWord = ',currentWord)
+    console.log('currentWord=',currentWord)
 
     if ( currentWord[0] && ["@", "#", "^"].includes(currentWord[0]) ) {
       const { suggestTags } = this.props
-      const tags = await suggestTags({ symbol: currentWord[0], text: currentWord.substr(1) })
-      console.log('suggestTags - found tags = ',tags)
+      const tagSuggestions = await suggestTags({ symbol: currentWord[0], text: currentWord.substr(1) })
+      this.setState({ tagSuggestions })
+    }
+    else {
+      this.setState({ tagSuggestions: [] })
     }
   }
 
-  updateSocialEntry = e => {
-    const text = e.target.value
-    const selectionStart = e.target.selectionStart
-    console.log('suggestTags - text = ',text)
+  addTag = tag => () => {
+    const { symbol, handle } = tag
+    let { text, beginIndex, endIndex } = this.state
 
-
-    this.updateText(text)
-    this.suggestTags(text, selectionStart)
+    this.setState({
+      tagSuggestions: [],
+      text: text.slice(0, beginIndex) + symbol + handle + text.slice(endIndex),
+     })
   }
 
+  updateText = e => {
+    const newText = e.target.value
+    const selectionStart = e.target.selectionStart
+    const { suppressUpdateText, text } = this.state
+
+    if ( suppressUpdateText ) {
+      this.updateSocialEntry(text)
+    }
+    else {
+      this.setState({ text: newText })
+      this.updateSocialEntry(newText)
+      this.suggestTags(newText, selectionStart)
+    }
+  }
+
+  onKeyDown = e => {
+    const { tagSuggestions } = this.state
+    if ( e.key === 'Enter' && tagSuggestions.length > 0 ) {
+      this.setState({ suppressUpdateText: true })
+      this.addTag(tagSuggestions[0])()
+    }
+  }
 
   render() {
-    const { text, tags } = this.state
+    const { text, tags, tagSuggestions } = this.state
 
     return (
       <div>
-        <textarea type="text" name="socialEntryText"
+        <textarea type="text"
           value={ text }
-          onChange={ this.updateSocialEntry }
+          onChange={ this.updateText }
+          onKeyDown={ this.onKeyDown }
           />
         <div>
           Existing Tags:
@@ -81,16 +106,14 @@ class SocialEntryInput extends Component {
           ) }
         </div>
         <div>
-          Option 1
-        </div>
-        <div>
-          Option 2
-        </div>
-        <div>
-          Option 3
-        </div>
-        <div>
-          Option 4
+          Tag Suggestions:
+          { (tagSuggestions || []).map( (t,i) =>
+            <div key={ i }
+              onClick={ this.addTag(t) }
+              >
+              { t.symbol + t.handle }
+            </div>
+          ) }
         </div>
       </div>
     )
