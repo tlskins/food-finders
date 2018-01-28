@@ -4,10 +4,12 @@ import PropTypes from 'prop-types'
 class SocialEntryInput extends Component {
 
   state = {
+    pendingYelpRequests: 0,
     text: "",
     tags: [],
     tagSuggestions: [],
     yelpSuggestions: [],
+    lastValidYelpSuggestions: [],
     beginIndex: 0,
     endIndex: 0,
     suppressUpdateText: false,
@@ -63,8 +65,26 @@ class SocialEntryInput extends Component {
 
   asyncSuggestSetYelp = async text => {
     const { suggestYelp } = this.props
-    const yelpSuggestions = await suggestYelp( text )
-    this.setState({ yelpSuggestions })
+
+    let yelpSuggestions = []
+    let errored = false
+
+    this.setState({ pendingYelpRequests: this.state.pendingYelpRequests + 1 })
+    try {
+      yelpSuggestions = await suggestYelp( text )
+    }
+    catch(err) {
+      console.log('Error during async yelp request, err=',err)
+      errored = true
+    }
+    this.setState({ pendingYelpRequests: this.state.pendingYelpRequests - 1 })
+
+    if (this.state.pendingYelpRequests === 0 && !errored) {
+      this.setState({ yelpSuggestions })
+    }
+    else if (!errored){
+      this.setState({ lastValidYelpSuggestions: yelpSuggestions })
+    }
   }
 
   aggregateTags = additionalTags => {
@@ -115,7 +135,7 @@ class SocialEntryInput extends Component {
   }
 
   render() {
-    const { text, tags, yelpSuggestions } = this.state
+    const { text, tags, pendingYelpRequests, yelpSuggestions } = this.state
     let { tagSuggestions } = this.state
 
     if ( yelpSuggestions ) {
@@ -134,6 +154,9 @@ class SocialEntryInput extends Component {
           { (tags || []).map( (t,i) =>
             <span key={ i }>{ t.symbol + t.handle }</span>
           ) }
+        </div>
+        <div>
+          Pending Yelp Suggestions: { pendingYelpRequests }
         </div>
         <div>
           Tag Suggestions:
