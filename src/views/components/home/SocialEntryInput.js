@@ -7,6 +7,7 @@ class SocialEntryInput extends Component {
     text: "",
     tags: [],
     tagSuggestions: [],
+    yelpSuggestions: [],
     beginIndex: 0,
     endIndex: 0,
     suppressUpdateText: false,
@@ -42,18 +43,41 @@ class SocialEntryInput extends Component {
     this.setState({ ...newDraftSocialEntry, suppressUpdateText: false })
   }
 
-  suggestTags = async (text, selectionStart) => {
+  calculateTags = (text, selectionStart) => {
     const currentWord = this.findWordAtCursor(text, selectionStart)
-    console.log('currentWord=',currentWord)
 
     if ( currentWord[0] && ["@", "#", "^"].includes(currentWord[0]) ) {
-      const { suggestTags } = this.props
-      const tagSuggestions = await suggestTags({ symbol: currentWord[0], text: currentWord.substr(1) })
-      this.setState({ tagSuggestions })
+      this.asyncSuggestSetTags(currentWord[0], currentWord.substr(1))
+      this.asyncSuggestSetYelp(currentWord.substr(1))
     }
     else {
       this.setState({ tagSuggestions: [] })
     }
+  }
+
+  asyncSuggestSetTags = async (symbol, text) => {
+    const { suggestTags } = this.props
+    const tagSuggestions = await suggestTags({ symbol, text })
+    this.setState({ tagSuggestions })
+  }
+
+  asyncSuggestSetYelp = async text => {
+    const { suggestYelp } = this.props
+    const yelpSuggestions = await suggestYelp( text )
+    this.setState({ yelpSuggestions })
+  }
+
+  aggregateTags = additionalTags => {
+    const { tagSuggestions } = this.state
+    const allTagHandles = tagSuggestions.map( t => t.handle )
+    allTagHandles && additionalTags.forEach( t => {
+      if (!allTagHandles.includes(t.handle)) {
+        tagSuggestions.push(t)
+      }
+    })
+    return tagSuggestions.sort((a,b) => {
+      return b['handle'].toLowerCase() < a['handle'].toLowerCase()
+    }).slice(0,4)
   }
 
   addTag = tag => () => {
@@ -77,20 +101,26 @@ class SocialEntryInput extends Component {
     else {
       this.setState({ text: newText })
       this.updateSocialEntry(newText)
-      this.suggestTags(newText, selectionStart)
+      this.calculateTags(newText, selectionStart)
     }
   }
 
   onKeyDown = e => {
     const { tagSuggestions } = this.state
-    if ( e.key === 'Enter' && tagSuggestions.length > 0 ) {
+    if ( e.key === 'Enter' && Object.keys(tagSuggestions).length > 0 ) {
       this.setState({ suppressUpdateText: true })
-      this.addTag(tagSuggestions[0])()
+      const firstSuggestion = Object.values(tagSuggestions)[0]
+      this.addTag(firstSuggestion)()
     }
   }
 
   render() {
-    const { text, tags, tagSuggestions } = this.state
+    const { text, tags, yelpSuggestions } = this.state
+    let { tagSuggestions } = this.state
+
+    if ( yelpSuggestions ) {
+      tagSuggestions = this.aggregateTags(yelpSuggestions)
+    }
 
     return (
       <div>
@@ -107,11 +137,11 @@ class SocialEntryInput extends Component {
         </div>
         <div>
           Tag Suggestions:
-          { (tagSuggestions || []).map( (t,i) =>
+          { tagSuggestions.map( (t,i) =>
             <div key={ i }
               onClick={ this.addTag(t) }
               >
-              { t.symbol + t.handle }
+              { t.symbol + t.handle + ": " + t.name }
             </div>
           ) }
         </div>
@@ -123,6 +153,7 @@ class SocialEntryInput extends Component {
 SocialEntryInput.propTypes = {
   loadDraftSocialEntry: PropTypes.func,
   suggestTags: PropTypes.func,
+  suggestYelp: PropTypes.func,
   updateDraftSocialEntry: PropTypes.func,
 }
 
