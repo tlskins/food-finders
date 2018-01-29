@@ -3,19 +3,14 @@ import PropTypes from 'prop-types'
 
 import EntitySelect from '@containers/home/EntitySelect'
 import FoodSelect from '@containers/home/FoodSelect'
+import Newsfeed from '@containers/home/Newsfeed'
 import SocialEntryInput from '@containers/home/SocialEntryInput'
 
 
 class Home extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      selectedEntity: null,
-      selectedFood: null,
-    }
-
-    this.onChange = this.onChange.bind(this)
+  state = {
+    selectedEntity: null,
+    selectedFood: null,
   }
 
   onChange = (key) => (value, event) => {
@@ -29,6 +24,7 @@ class Home extends Component {
   render() {
     return (
       <div>
+        <Newsfeed />
         <SocialEntryInput />
         { /** <EntitySelect onChange={ this.onChange('selectedEntity') }/> **/ }
         { /** }<FoodSelect onChange={ this.onChange('selectedFood') }/> **/ }
