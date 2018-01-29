@@ -25,3 +25,10 @@ export const updateDraftSocialEntry = ({ RestService }) => async text => {
   const response = await RestService.put('/users/5a6bca32d6f45f38424492b8', payload )
   return response.draft_social_entry
 }
+
+
+export const postSocialEntry = ({ RestService }) => async () => {
+  const response = await RestService.post('/users/5a6bca32d6f45f38424492b8/publish_draft_social_entry' )
+  console.log('postSocialEntry response=',response)
+  return response.draft_social_entry
+}

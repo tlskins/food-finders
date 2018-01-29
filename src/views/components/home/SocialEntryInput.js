@@ -50,10 +50,12 @@ class SocialEntryInput extends Component {
 
     if ( currentWord[0] && ["@", "#", "^"].includes(currentWord[0]) ) {
       this.asyncSuggestSetTags(currentWord[0], currentWord.substr(1))
-      this.asyncSuggestSetYelp(currentWord.substr(1))
+      if ( currentWord[0] === "@" ) {
+        this.asyncSuggestSetYelp(currentWord.substr(1))
+      }
     }
     else {
-      this.setState({ tagSuggestions: [] })
+      this.setState({ tagSuggestions: [], yelpSuggestions: [] })
     }
   }
 
@@ -106,6 +108,7 @@ class SocialEntryInput extends Component {
 
     this.setState({
       tagSuggestions: [],
+      yelpSuggestions: [],
       text: text.slice(0, beginIndex) + symbol + handle + text.slice(endIndex),
      })
   }
@@ -134,6 +137,13 @@ class SocialEntryInput extends Component {
     }
   }
 
+  onPost = async () => {
+    const { postSocialEntry } = this.props
+
+    const newDraftSocialEntry = await postSocialEntry()
+    this.setState({ ...newDraftSocialEntry })
+  }
+
   render() {
     const { text, tags, pendingYelpRequests, yelpSuggestions } = this.state
     let { tagSuggestions } = this.state
@@ -149,6 +159,8 @@ class SocialEntryInput extends Component {
           onChange={ this.updateText }
           onKeyDown={ this.onKeyDown }
           />
+        <br />
+        <input type="submit" value="Post" onClick={ this.onPost }/>
         <div>
           Existing Tags:
           { (tags || []).map( (t,i) =>
@@ -175,6 +187,7 @@ class SocialEntryInput extends Component {
 
 SocialEntryInput.propTypes = {
   loadDraftSocialEntry: PropTypes.func,
+  postSocialEntry: PropTypes.func,
   suggestTags: PropTypes.func,
   suggestYelp: PropTypes.func,
   updateDraftSocialEntry: PropTypes.func,
