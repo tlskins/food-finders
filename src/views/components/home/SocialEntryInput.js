@@ -30,19 +30,40 @@ class SocialEntryInput extends Component {
     }
   }
 
-  updateSocialEntry = async text => {
-    const { updateDraftSocialEntry } = this.props
+  asyncSuggestSetTags = async (symbol, text) => {
+    const { addEntities, addHashtags, addFoods, suggestTags } = this.props
+    const tagSuggestions = await suggestTags({ symbol, text })
 
-    const newDraftSocialEntry = await updateDraftSocialEntry( text )
-    delete newDraftSocialEntry.text
-    this.setState({ ...newDraftSocialEntry, suppressUpdateText: false })
+    // Remove these hardcode symbols too
+    if ( symbol === '@' ) {
+      addEntities && addEntities(tagSuggestions)
+    }
+    else if ( symbol === '#' ) {
+      addHashtags && addHashtags(tagSuggestions)
+    }
+    else if ( symbol === '^' ) {
+      addFoods && addFoods(tagSuggestions)
+    }
+  }
+
+  asyncSuggestSetYelp = async text => {
+    const { addYelpBusinessEntities, suggestYelp } = this.props
+    const yelpSuggestions = await suggestYelp( text )
+
+    addYelpBusinessEntities && addYelpBusinessEntities(yelpSuggestions)
   }
 
   populateTagSuggestions = (tagSymbol, searchText) => {
-    const { entities } = this.props
+    const { entities, hashtags, foods } = this.props
 
     if ( tagSymbol === '@' ) {
       this.setState({ tagSuggestions: searchDictionaryBy(entities, 'name', searchText) })
+    }
+    else if ( tagSymbol === '#' ) {
+      this.setState({ tagSuggestions: searchDictionaryBy(hashtags, 'name', searchText) })
+    }
+    else if ( tagSymbol === '^' ) {
+      this.setState({ tagSuggestions: searchDictionaryBy(foods, 'name', searchText) })
     }
   }
 
@@ -63,20 +84,6 @@ class SocialEntryInput extends Component {
         this.asyncSuggestSetYelp(searchText)
       }
     }
-  }
-
-  asyncSuggestSetTags = async (symbol, text) => {
-    const { addEntities, suggestTags } = this.props
-    const tagSuggestions = await suggestTags({ symbol, text })
-
-    addEntities && addEntities(tagSuggestions)
-  }
-
-  asyncSuggestSetYelp = async text => {
-    const { addYelpBusinessEntities, suggestYelp } = this.props
-    const yelpSuggestions = await suggestYelp( text )
-
-    addYelpBusinessEntities && addYelpBusinessEntities(yelpSuggestions)
   }
 
   addTag = tag => () => {
@@ -111,6 +118,14 @@ class SocialEntryInput extends Component {
       const firstSuggestion = Object.values(tagSuggestions)[0]
       this.addTag(firstSuggestion)()
     }
+  }
+
+  updateSocialEntry = async text => {
+    const { updateDraftSocialEntry } = this.props
+
+    const newDraftSocialEntry = await updateDraftSocialEntry( text )
+    delete newDraftSocialEntry.text
+    this.setState({ ...newDraftSocialEntry, suppressUpdateText: false })
   }
 
   onPost = async () => {
@@ -155,9 +170,13 @@ class SocialEntryInput extends Component {
 
 SocialEntryInput.propTypes = {
   entities: PropTypes.object,
+  foods: PropTypes.object,
+  hashtags: PropTypes.object,
 
   addEntities: PropTypes.func,
   addYelpBusinessEntities: PropTypes.func,
+  addHashtags: PropTypes.func,
+  addFoods: PropTypes.func,
   loadDraftSocialEntry: PropTypes.func,
   postSocialEntry: PropTypes.func,
   searchEntitiesByName: PropTypes.func,

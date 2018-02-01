@@ -7,12 +7,16 @@ import * as CounterService from './counter'
 import * as RestService from './rest'
 import * as YelpService from './yelp'
 import * as EntityService from './entity'
+import * as FoodService from './food'
+import * as HashtagService from './hashtag'
 
 const coreServices = {
   ...CounterService,
   ...EntityService,
   ...RestService,
   ...YelpService,
+  ...HashtagService,
+  ...FoodService,
 }
 
 /* pass redux store dispatch and state to all services */

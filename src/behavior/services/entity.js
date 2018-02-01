@@ -9,8 +9,4 @@ export class EntityService extends BaseService {
   addYelpBusinessEntities = businesses => {
     this.dispatch( actions.addYelpBusinessEntities(businesses) )
   }
-
-  searchEntitiesByName = text => {
-    this.dispatch( actions.searchEntitiesByName(text) )
-  }
 }
