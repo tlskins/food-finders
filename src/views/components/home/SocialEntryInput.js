@@ -1,17 +1,18 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import { findWordAtCursor, searchDictionaryBy } from '~/utils'
+
 class SocialEntryInput extends Component {
 
   state = {
-    pendingYelpRequests: 0,
     text: "",
+    searchText: "",
     tags: [],
     tagSuggestions: [],
-    yelpSuggestions: [],
-    lastValidYelpSuggestions: [],
-    beginIndex: 0,
-    endIndex: 0,
+    tagSymbol: undefined,
+    cursorBeginIndex: 0,
+    cursorEndIndex: 0,
     suppressUpdateText: false,
   }
 
@@ -22,19 +23,11 @@ class SocialEntryInput extends Component {
     })()
   }
 
-  findWordAtCursor = (text, cursorIndex) => {
-    let endIndex = text.indexOf(' ',cursorIndex)
-    if ( endIndex === -1 ) {
-      endIndex = cursorIndex
+  componentWillReceiveProps(nextProps) {
+    if ( nextProps !== this.props ) {
+      const { tagSymbol, searchText } = this.state
+      this.populateTagSuggestions(tagSymbol, searchText)
     }
-
-    let beginIndex = text.slice(0,cursorIndex).lastIndexOf(' ') + 1
-    if (beginIndex === -1 || beginIndex > endIndex ) {
-      beginIndex = 0
-    }
-
-    this.setState({ beginIndex, endIndex })
-    return text.slice(beginIndex, endIndex).trim()
   }
 
   updateSocialEntry = async text => {
@@ -45,71 +38,54 @@ class SocialEntryInput extends Component {
     this.setState({ ...newDraftSocialEntry, suppressUpdateText: false })
   }
 
-  calculateTags = (text, selectionStart) => {
-    const currentWord = this.findWordAtCursor(text, selectionStart)
+  populateTagSuggestions = (tagSymbol, searchText) => {
+    const { entities } = this.props
 
-    if ( currentWord[0] && ["@", "#", "^"].includes(currentWord[0]) ) {
-      this.asyncSuggestSetTags(currentWord[0], currentWord.substr(1))
-      if ( currentWord[0] === "@" ) {
-        this.asyncSuggestSetYelp(currentWord.substr(1))
-      }
+    if ( tagSymbol === '@' ) {
+      this.setState({ tagSuggestions: searchDictionaryBy(entities, 'name', searchText) })
     }
-    else {
-      this.setState({ tagSuggestions: [], yelpSuggestions: [] })
+  }
+
+  calculateTags = (text, selectionStart) => {
+    const { currentWord, cursorBeginIndex, cursorEndIndex } = findWordAtCursor(text, selectionStart)
+    const tagSymbol = currentWord && currentWord[0]
+    const searchText = currentWord && currentWord.substr(1)
+
+    if ( tagSymbol && ["@", "#", "^"].includes(tagSymbol) ) {
+      this.setState({ cursorBeginIndex, cursorEndIndex, tagSymbol, searchText })
+
+      // search in redux
+      this.populateTagSuggestions(tagSymbol, searchText)
+
+      // async populate tags in redux
+      this.asyncSuggestSetTags(tagSymbol, searchText)
+      if ( tagSymbol === "@" ) {
+        this.asyncSuggestSetYelp(searchText)
+      }
     }
   }
 
   asyncSuggestSetTags = async (symbol, text) => {
-    const { suggestTags } = this.props
+    const { addEntities, suggestTags } = this.props
     const tagSuggestions = await suggestTags({ symbol, text })
-    this.setState({ tagSuggestions })
+
+    addEntities && addEntities(tagSuggestions)
   }
 
   asyncSuggestSetYelp = async text => {
-    const { suggestYelp } = this.props
+    const { addYelpBusinessEntities, suggestYelp } = this.props
+    const yelpSuggestions = await suggestYelp( text )
 
-    let yelpSuggestions = []
-    let errored = false
-
-    this.setState({ pendingYelpRequests: this.state.pendingYelpRequests + 1 })
-    try {
-      yelpSuggestions = await suggestYelp( text )
-    }
-    catch(err) {
-      console.log('Error during async yelp request, err=',err)
-      errored = true
-    }
-    this.setState({ pendingYelpRequests: this.state.pendingYelpRequests - 1 })
-
-    if (this.state.pendingYelpRequests === 0 && !errored) {
-      this.setState({ yelpSuggestions })
-    }
-    else if (!errored){
-      this.setState({ lastValidYelpSuggestions: yelpSuggestions })
-    }
-  }
-
-  aggregateTags = additionalTags => {
-    const { tagSuggestions } = this.state
-    const allTagHandles = tagSuggestions.map( t => t.handle )
-    allTagHandles && additionalTags.forEach( t => {
-      if (!allTagHandles.includes(t.handle)) {
-        tagSuggestions.push(t)
-      }
-    })
-    return tagSuggestions.sort((a,b) => {
-      return b['handle'].toLowerCase() < a['handle'].toLowerCase()
-    }).slice(0,4)
+    addYelpBusinessEntities && addYelpBusinessEntities(yelpSuggestions)
   }
 
   addTag = tag => () => {
     const { symbol, handle } = tag
-    let { text, beginIndex, endIndex } = this.state
+    let { text, cursorBeginIndex, cursorEndIndex } = this.state
 
     this.setState({
       tagSuggestions: [],
-      yelpSuggestions: [],
-      text: text.slice(0, beginIndex) + symbol + handle + text.slice(endIndex),
+      text: text.slice(0, cursorBeginIndex) + symbol + handle + text.slice(cursorEndIndex),
      })
   }
 
@@ -145,12 +121,7 @@ class SocialEntryInput extends Component {
   }
 
   render() {
-    const { text, tags, pendingYelpRequests, yelpSuggestions } = this.state
-    let { tagSuggestions } = this.state
-
-    if ( yelpSuggestions ) {
-      tagSuggestions = this.aggregateTags(yelpSuggestions)
-    }
+    const { text, tags, tagSuggestions  } = this.state
 
     return (
       <div>
@@ -168,9 +139,6 @@ class SocialEntryInput extends Component {
           ) }
         </div>
         <div>
-          Pending Yelp Suggestions: { pendingYelpRequests }
-        </div>
-        <div>
           Tag Suggestions:
           { tagSuggestions.map( (t,i) =>
             <div key={ i }
@@ -186,8 +154,13 @@ class SocialEntryInput extends Component {
 }
 
 SocialEntryInput.propTypes = {
+  entities: PropTypes.object,
+
+  addEntities: PropTypes.func,
+  addYelpBusinessEntities: PropTypes.func,
   loadDraftSocialEntry: PropTypes.func,
   postSocialEntry: PropTypes.func,
+  searchEntitiesByName: PropTypes.func,
   suggestTags: PropTypes.func,
   suggestYelp: PropTypes.func,
   updateDraftSocialEntry: PropTypes.func,

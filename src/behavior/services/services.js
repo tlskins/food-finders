@@ -6,9 +6,11 @@ testing avoiding importing browserHistory node module
 import * as CounterService from './counter'
 import * as RestService from './rest'
 import * as YelpService from './yelp'
+import * as EntityService from './entity'
 
 const coreServices = {
   ...CounterService,
+  ...EntityService,
   ...RestService,
   ...YelpService,
 }
