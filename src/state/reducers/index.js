@@ -6,6 +6,8 @@ import * as bestAwardReducers from './bestAward'
 import * as entitiesReducers from './entities'
 import * as hashtagsReducers from './hashtags'
 import * as foodsReducers from './foods'
+import * as sessionsReducers from './sessions'
+import uiReducers from './ui'
 
 
 export default combineReducers({
@@ -15,4 +17,6 @@ export default combineReducers({
   ...entitiesReducers,
   ...hashtagsReducers,
   ...foodsReducers,
+  ...sessionsReducers,
+  ...uiReducers,
 })

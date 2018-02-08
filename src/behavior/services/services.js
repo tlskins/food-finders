@@ -9,6 +9,9 @@ import * as YelpService from './yelp'
 import * as EntityService from './entity'
 import * as FoodService from './food'
 import * as HashtagService from './hashtag'
+import * as RouterService from './router'
+import * as SessionService from './session'
+import UIService from './ui/index'
 
 const coreServices = {
   ...CounterService,
@@ -17,6 +20,9 @@ const coreServices = {
   ...YelpService,
   ...HashtagService,
   ...FoodService,
+  ...RouterService,
+  ...SessionService,
+  UIService,
 }
 
 /* pass redux store dispatch and state to all services */

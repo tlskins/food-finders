@@ -13,7 +13,7 @@ class NewsFeed extends Component {
   }
 
   componentWillUnmount() {
-    this.clearInterval(this.interval)
+    clearInterval(this.interval)
   }
 
   reloadFeedItems = async () => {

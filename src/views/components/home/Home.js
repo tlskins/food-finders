@@ -5,12 +5,23 @@ import EntitySelect from '@containers/home/EntitySelect'
 import FoodSelect from '@containers/home/FoodSelect'
 import Newsfeed from '@containers/home/Newsfeed'
 import SocialEntryInput from '@containers/home/SocialEntryInput'
+import NavBar from '@containers/common/Navbar'
 
 
 class Home extends Component {
   state = {
     selectedEntity: null,
     selectedFood: null,
+  }
+
+  componentDidMount() {
+    setTimeout(() => {
+      const { currentUser, redirect } = this.props
+
+      if ( !currentUser ) {
+        redirect()
+      }
+    }, 100 )
   }
 
   onChange = (key) => (value, event) => {
@@ -22,8 +33,15 @@ class Home extends Component {
   }
 
   render() {
+    const { currentUser } = this.props
+
+    if ( !currentUser ) {
+      return null
+    }
+
     return (
       <div>
+        <NavBar />
         <Newsfeed />
         <SocialEntryInput />
         { /** <EntitySelect onChange={ this.onChange('selectedEntity') }/> **/ }
@@ -35,7 +53,7 @@ class Home extends Component {
 }
 
 Home.propTypes = {
-  changePage: PropTypes.func,
+  redirect: PropTypes.func,
 }
 
 export default Home

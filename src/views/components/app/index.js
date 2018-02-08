@@ -1,18 +1,20 @@
 import React from 'react';
-import { Route, Link } from 'react-router-dom'
-import Home from '@containers/home/index'
-import About from '../about'
+import { Redirect, Route, Link, Switch } from 'react-router-dom'
+import Home from '@containers/home/Home'
+import LoginPage from '@containers/user/LoginForm'
+import ConfirmEmail from '@containers/user/ConfirmEmail'
+import FlashMessages from '@containers/common/FlashMessages'
+
 
 const App = () => (
   <div>
-    <header>
-      <Link to="/">Home</Link>
-      <Link to="/about-us">About</Link>
-    </header>
-
+    <FlashMessages />
     <main>
-      <Route exact path="/" component={Home} />
-      <Route exact path="/about-us" component={About} />
+      <Switch>
+        <Route exact path="/login" component={ LoginPage } />
+        <Route path="/" component={ Home } />
+        <Route exact path="/users/confirmation" component={ ConfirmEmail } />
+      </Switch>
     </main>
   </div>
 )
