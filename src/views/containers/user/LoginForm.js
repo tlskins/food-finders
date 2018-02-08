@@ -4,15 +4,16 @@ import LoginForm from '@components/user/LoginForm'
 
 import coordinators from '@coordinators'
 import services from '@services'
+import presenters from '@presenters'
 import { HandleError } from '@coordinators/composed'
 
 
 const mapStateToProps = state => {
-  const { loginFormPage } = state
+  const { loginFormPage, session } = state
   const errors = (state.errors && state.errors.loginForm) || {}
 
   return {
-    currentUser: state.session,
+    currentUser: session.user,
     errors,
     mode: loginFormPage.mode,
   }
@@ -22,8 +23,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = () => {
   const { RestService, RouterService, SessionService, UIService } = services
   const { EmailSignIn, EmailSignUp } = coordinators
+  const { pResponseGeneric: pResponseUser } = presenters.Api
 
-  const signIn = EmailSignIn({ RestService, RouterService, SessionService, UIService, HandleError })
+  const signIn = EmailSignIn({ RestService, RouterService, SessionService, UIService, HandleError, pResponseUser })
 
   const signUp = EmailSignUp({ RestService, SessionService, UIService })
 

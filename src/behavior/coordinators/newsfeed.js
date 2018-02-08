@@ -1,9 +1,10 @@
 
-export const loadNewsfeed = ({ RestService, SessionService }) => async () => {
+export const loadNewsfeed = ({ RestService, SessionService, pResponseFeedItems }) => async () => {
   const userId = SessionService.currentUserId()
-  const response = await RestService.get('/users/' + userId + '/newsfeed')
+  let feedItems = await RestService.get('/users/' + userId + '/newsfeed')
+  feedItems = pResponseFeedItems( feedItems )
 
-  return response
+  return feedItems
 }
 
 

@@ -3,30 +3,47 @@ import PropTypes from 'prop-types'
 
 import { findWordAtCursor, searchDictionaryBy } from '~/utils'
 
+const initialDraftSocialEntry = { text: '', tags: []}
+
 class SocialEntryInput extends Component {
+  constructor(props) {
+    super(props)
+    const { draftSocialEntry } = props
 
-  state = {
-    text: "",
-    searchText: "",
-    tags: [],
-    tagSuggestions: [],
-    tagSymbol: undefined,
-    cursorBeginIndex: 0,
-    cursorEndIndex: 0,
-    suppressUpdateText: false,
-  }
-
-  componentDidMount() {
-    ( async () => {
-      const draftSocialEntry = await this.props.loadDraftSocialEntry()
-      this.setState({ ...draftSocialEntry })
-    })()
+    this.state = {
+      text: (draftSocialEntry && draftSocialEntry.text) || '',
+      searchText: '',
+      refreshText: false,
+      draftSocialEntry: draftSocialEntry || initialDraftSocialEntry,
+      tagSuggestions: [],
+      tagSymbol: undefined,
+      cursorBeginIndex: 0,
+      cursorEndIndex: 0,
+      suppressUpdateText: false,
+    }
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log('SocialEntryInput nextProps = ',nextProps)
     if ( nextProps !== this.props ) {
-      const { tagSymbol, searchText } = this.state
-      this.populateTagSuggestions(tagSymbol, searchText)
+      const { refreshText, searchText, tagSymbol } = this.state
+      const { draftSocialEntry } = nextProps
+
+      // maintain text in state during edit but refresh on submit to limit unnecessary text delays
+      if ( refreshText && this.state.draftSocialEntry !== draftSocialEntry ) {
+        this.setState({
+          draftSocialEntry,
+          refreshText: false,
+          text: (draftSocialEntry && draftSocialEntry.text) || ''
+        })
+      }
+      else {
+        this.setState({ draftSocialEntry })
+      }
+
+      if ( tagSymbol ) {
+        this.populateTagSuggestions(nextProps, tagSymbol, searchText)
+      }
     }
   }
 
@@ -53,8 +70,8 @@ class SocialEntryInput extends Component {
     addYelpBusinessEntities && addYelpBusinessEntities(yelpSuggestions)
   }
 
-  populateTagSuggestions = (tagSymbol, searchText) => {
-    const { entities, hashtags, foods } = this.props
+  populateTagSuggestions = (props, tagSymbol, searchText) => {
+    const { entities, hashtags, foods } = props
 
     if ( tagSymbol === '@' ) {
       this.setState({ tagSuggestions: searchDictionaryBy(entities, 'name', searchText) })
@@ -76,7 +93,7 @@ class SocialEntryInput extends Component {
       this.setState({ cursorBeginIndex, cursorEndIndex, tagSymbol, searchText })
 
       // search in redux
-      this.populateTagSuggestions(tagSymbol, searchText)
+      this.populateTagSuggestions(this.props, tagSymbol, searchText)
 
       // async populate tags in redux
       this.asyncSuggestSetTags(tagSymbol, searchText)
@@ -93,7 +110,7 @@ class SocialEntryInput extends Component {
     this.setState({
       tagSuggestions: [],
       text: text.slice(0, cursorBeginIndex) + symbol + handle + text.slice(cursorEndIndex),
-     })
+    })
   }
 
   updateText = e => {
@@ -123,20 +140,21 @@ class SocialEntryInput extends Component {
   updateSocialEntry = async text => {
     const { updateDraftSocialEntry } = this.props
 
-    const newDraftSocialEntry = await updateDraftSocialEntry( text )
-    delete newDraftSocialEntry.text
-    this.setState({ ...newDraftSocialEntry, suppressUpdateText: false })
+    await updateDraftSocialEntry( text )
+    this.setState({ suppressUpdateText: false })
   }
 
   onPost = async () => {
     const { postSocialEntry } = this.props
 
-    const newDraftSocialEntry = await postSocialEntry()
-    this.setState({ ...newDraftSocialEntry })
+    this.setState({ refreshText: true })
+
+    await postSocialEntry()
   }
 
   render() {
-    const { text, tags, tagSuggestions  } = this.state
+    const { text, draftSocialEntry, tagSuggestions  } = this.state
+    const { tags } = draftSocialEntry
 
     return (
       <div>
@@ -177,7 +195,6 @@ SocialEntryInput.propTypes = {
   addYelpBusinessEntities: PropTypes.func,
   addHashtags: PropTypes.func,
   addFoods: PropTypes.func,
-  loadDraftSocialEntry: PropTypes.func,
   postSocialEntry: PropTypes.func,
   searchEntitiesByName: PropTypes.func,
   suggestTags: PropTypes.func,

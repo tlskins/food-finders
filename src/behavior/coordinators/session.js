@@ -13,9 +13,10 @@ export const EmailSignUp = ({ RestService, UIService }) => async ({ firstName, l
 }
 
 
-export const EmailSignIn = ({ RestService, RouterService, SessionService, UIService, HandleError }) => async ({ email, password }) => {
+export const EmailSignIn = ({ RestService, RouterService, SessionService, UIService, HandleError, pResponseUser }) => async ({ email, password }) => {
   try {
-    const response = await RestService.post( '/users/sign_in', { email, password })
+    let response = await RestService.post( '/users/sign_in', { email, password })
+    response = pResponseUser( response )
     SessionService.setUserSession( response )
     RouterService.replace({ pathname: '/' })
     // RouterService.back()
@@ -39,11 +40,12 @@ export const SignOut = ({ RestService, SessionService, RouterService }) => async
 }
 
 
-export const ConfirmEmail = ({ RestService, RouterService, SessionService, UIService }) => async () => {
+export const ConfirmEmail = ({ RestService, RouterService, SessionService, UIService, pResponseUser }) => async () => {
   try {
     const token = RouterService.getState().routing.location.search
     console.log('token=',RouterService.getState().routing)
-    const user = await RestService.get( `/users/confirmation${ token }` )
+    let user = await RestService.get( `/users/confirmation${ token }` )
+    user = pResponseUser( user )
     SessionService.setUserSession( user )
     RouterService.push({ pathname: '/' })
     // UIService.FlashMessage.displaySuccessMessage( 'Email successfully confirmed!' )

@@ -16,14 +16,20 @@ export class SessionService extends BaseService {
   }
 
   currentUser() {
-    return this.getState().session
+    const currentUser = this.getState().session.user
+    if ( !currentUser.id ) {
+      return undefined
+    }
+    else {
+      return currentUser
+    }
   }
 
   currentUserId() {
-    const currentUser = this.getState().session
+    const currentUser = this.currentUser()
 
     if ( currentUser ) {
-      return currentUser._id.$oid
+      return currentUser.id
     }
     else {
       return null

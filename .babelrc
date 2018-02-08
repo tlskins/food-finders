@@ -5,6 +5,7 @@
       { "src": "src", "expose": "~" },
       { "src": "src/behavior/services", "expose": "@services"},
       { "src": "src/behavior/coordinators", "expose": "@coordinators"},
+      { "src": "src/behavior/presenters", "expose": "@presenters"},
       { "src": "src/api", "expose": "@api"},
       { "src": "src/views/components", "expose": "@components"},
       { "src": "src/views/containers", "expose": "@containers"},

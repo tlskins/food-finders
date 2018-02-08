@@ -4,12 +4,17 @@ import SocialEntryInput from '@components/home/SocialEntryInput'
 
 import services from '@services'
 import coordinators from '@coordinators'
+import presenters from '@presenters'
 
 
 const mapStateToProps = state => {
-  const { entities, foods, hashtags } = state
+  const { entities, foods, hashtags, session } = state
+  const { user } = session
+
+  const draftSocialEntry = user ? user.draftSocialEntry : ''
 
   return {
+    draftSocialEntry,
     entities,
     foods,
     hashtags,
@@ -18,12 +23,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = () => {
   const { RestService, EntityService, FoodService, HashtagService, SessionService } = services
+  const { pResponseGeneric: pResponseUser } = presenters.Api
 
-  const loadDraftSocialEntry = coordinators.loadDraftSocialEntry({ RestService, SessionService })
-  const postSocialEntry = coordinators.postSocialEntry({ RestService, SessionService })
+  const updateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService, pResponseUser })
+  const postSocialEntry = coordinators.postSocialEntry({ RestService, SessionService, pResponseUser })
   const suggestTags = coordinators.suggestTags({ RestService })
   const suggestYelp = coordinators.suggestYelp({ RestService })
-  const updateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService })
   const { addEntities, addYelpBusinessEntities } = EntityService
   const { addFoods } = FoodService
   const { addHashtags } = HashtagService
@@ -33,7 +38,6 @@ const mapDispatchToProps = () => {
     addHashtags,
     addFoods,
     addYelpBusinessEntities,
-    loadDraftSocialEntry,
     postSocialEntry,
     suggestTags,
     suggestYelp,
