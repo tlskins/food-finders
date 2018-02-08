@@ -3,7 +3,6 @@ Not great to have all service imports in a separate file, but is a workaround fo
 testing avoiding importing browserHistory node module
 */
 
-import * as CounterService from './counter'
 import * as RestService from './rest'
 import * as YelpService from './yelp'
 import * as EntityService from './entity'
@@ -14,7 +13,6 @@ import * as SessionService from './session'
 import UIService from './ui/index'
 
 const coreServices = {
-  ...CounterService,
   ...EntityService,
   ...RestService,
   ...YelpService,
@@ -51,7 +49,3 @@ export const initServices = ( store, moreServices = {}) => {
 
   return __services
 }
-
-// export const loadServices = () => {
-//   return __services
-// }

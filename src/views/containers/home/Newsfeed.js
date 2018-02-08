@@ -6,9 +6,9 @@ import services from '@services'
 import coordinators from '@coordinators'
 
 const mapDispatchToProps = () => {
-  const { RestService } = services
+  const { RestService, SessionService } = services
 
-  const loadNewsfeed = coordinators.loadNewsfeed({ RestService })
+  const loadNewsfeed = coordinators.loadNewsfeed({ RestService, SessionService })
 
   return {
     loadNewsfeed,

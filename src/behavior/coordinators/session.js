@@ -21,7 +21,6 @@ export const EmailSignIn = ({ RestService, RouterService, SessionService, UIServ
     // RouterService.back()
   }
   catch ( error ) {
-    // console.log('EmailSignIn error:',error)
     HandleError({ error, namespace: 'loginForm'})
   }
 }

@@ -17,13 +17,13 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  const { RestService, EntityService, FoodService, HashtagService } = services
+  const { RestService, EntityService, FoodService, HashtagService, SessionService } = services
 
-  const loadDraftSocialEntry = coordinators.loadDraftSocialEntry({ RestService })
-  const postSocialEntry = coordinators.postSocialEntry({ RestService })
+  const loadDraftSocialEntry = coordinators.loadDraftSocialEntry({ RestService, SessionService })
+  const postSocialEntry = coordinators.postSocialEntry({ RestService, SessionService })
   const suggestTags = coordinators.suggestTags({ RestService })
   const suggestYelp = coordinators.suggestYelp({ RestService })
-  const updateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService })
+  const updateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService })
   const { addEntities, addYelpBusinessEntities } = EntityService
   const { addFoods } = FoodService
   const { addHashtags } = HashtagService

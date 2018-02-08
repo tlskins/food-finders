@@ -1,8 +1,8 @@
 
-export const loadNewsfeed = ({ RestService }) => async () => {
-  // TODO - Remove hardcoded user id
-  const response = await RestService.get('/users/5a6bca32d6f45f38424492b8/newsfeed')
-  console.log('loadNewsfeed response=',response)
+export const loadNewsfeed = ({ RestService, SessionService }) => async () => {
+  const userId = SessionService.currentUserId()
+  const response = await RestService.get('/users/' + userId + '/newsfeed')
+
   return response
 }
 
