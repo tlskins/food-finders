@@ -11,9 +11,10 @@ import { HandleError } from '@coordinators/composed'
 const mapStateToProps = state => {
   const { loginFormPage, session } = state
   const errors = (state.errors && state.errors.loginForm) || {}
+  const currentUser = session ? session.user : undefined
 
   return {
-    currentUser: session.user,
+    currentUser,
     errors,
     mode: loginFormPage.mode,
   }

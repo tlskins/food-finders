@@ -13,8 +13,8 @@ const App = () => (
       <Switch>
         <Route exact path="/login" component={ LoginPage } />
         <Route path="/" component={ Home } />
-        <Route exact path="/users/confirmation" component={ ConfirmEmail } />
       </Switch>
+      <Route path="/users/confirmation" component={ ConfirmEmail } />
     </main>
   </div>
 )
