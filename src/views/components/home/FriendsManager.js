@@ -48,6 +48,8 @@ class FriendsManager extends Component {
           { !searchTextEmpty && suggestions.map( (s,i) =>
             <div key={ i }>
               @{ s.name }: { s.first_name } { s.last_name }
+              following: { s.following }
+              follower: { s.follower }
             </div>
           ) }
         </div>

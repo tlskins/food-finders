@@ -23,10 +23,19 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  const { RestService, UsersService } = services
-  const { pResponseGeneric: pResponseUsers } = presenters.Api
+  const { RestService, SessionService, UsersService } = services
+  const { pResponseGeneric  } = presenters.Api
+  const pResponseUsers = pResponseGeneric
+  const pResponseRelationships = pResponseGeneric
 
-  const SearchUsersByText = coordinators.searchUsersByText({ RestService, UsersService, pResponseUsers, HandleError })
+  const SearchUsersByText = coordinators.searchUsersByText({
+    RestService,
+    UsersService,
+    SessionService,
+    pResponseUsers,
+    pResponseRelationships,
+    HandleError
+  })
 
   return {
     SearchUsersByText,
