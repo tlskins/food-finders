@@ -5,6 +5,7 @@ import EntitySelect from '@containers/home/EntitySelect'
 import FoodSelect from '@containers/home/FoodSelect'
 import Newsfeed from '@containers/home/Newsfeed'
 import SocialEntryInput from '@containers/home/SocialEntryInput'
+import FriendsManager from '@containers/home/FriendsManager'
 import NavBar from '@containers/common/Navbar'
 
 
@@ -24,13 +25,13 @@ class Home extends Component {
     }, 100 )
   }
 
-  onChange = (key) => (value, event) => {
-    if(value) {
-      const { state } = this
-      state[key] = value
-      this.setState( state )
-    }
-  }
+  // onChange = (key) => (value, event) => {
+  //   if(value) {
+  //     const { state } = this
+  //     state[key] = value
+  //     this.setState( state )
+  //   }
+  // }
 
   render() {
     const { currentUser } = this.props
@@ -44,6 +45,7 @@ class Home extends Component {
         <NavBar />
         <Newsfeed />
         <SocialEntryInput />
+        <FriendsManager />
         { /** <EntitySelect onChange={ this.onChange('selectedEntity') }/> **/ }
         { /** }<FoodSelect onChange={ this.onChange('selectedFood') }/> **/ }
       </div>

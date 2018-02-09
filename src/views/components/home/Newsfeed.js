@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 class NewsFeed extends Component {
-
   state = {
     feedItems: []
   }

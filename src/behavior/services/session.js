@@ -3,15 +3,15 @@ import actions from '@actions'
 
 
 export class SessionService extends BaseService {
-  async setUserSession( user ) {
+  setUserSession( user ) {
     this.dispatch( actions.setUserSession( user ))
   }
 
-  async clearUserSession() {
+  clearUserSession() {
     this.dispatch( actions.clearUserSession())
   }
 
-  async refreshSession() {
+  refreshSession() {
     this.dispatch( actions.refreshSession())
   }
 

@@ -8,6 +8,9 @@ export const HandleError = ({ UIService }) => ({ error, namespace }) => {
   else if ( error.error ) {
     UIService.FlashMessage.displayFailureMessage( error.error )
   }
+  else if ( error.message ) {
+    UIService.FlashMessage.displayFailureMessage( error.message )
+  }
   else {
     UIService.FlashMessage.displayFailureMessage( 'Error!' )
   }

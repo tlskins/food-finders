@@ -5,6 +5,8 @@ import * as newsfeedCoordinators from './newsfeed'
 import * as socialEntryCoordinators from './socialEntry'
 import * as sessionCoordinators from './session'
 import * as yelpCoordinators from './yelp'
+import * as usersCoordinators from './users'
+
 
 export default Object.freeze({
   ...yelpCoordinators,
@@ -14,4 +16,5 @@ export default Object.freeze({
   ...entityCoordinators,
   ...socialEntryCoordinators,
   ...sessionCoordinators,
+  ...usersCoordinators,
 })

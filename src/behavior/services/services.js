@@ -10,6 +10,7 @@ import * as FoodService from './food'
 import * as HashtagService from './hashtag'
 import * as RouterService from './router'
 import * as SessionService from './session'
+import * as UsersService from './users'
 import UIService from './ui/index'
 
 const coreServices = {
@@ -20,6 +21,7 @@ const coreServices = {
   ...FoodService,
   ...RouterService,
   ...SessionService,
+  ...UsersService,
   UIService,
 }
 
