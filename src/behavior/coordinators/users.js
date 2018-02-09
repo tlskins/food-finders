@@ -17,6 +17,20 @@ export const searchUsersByText = ({ RestService, UsersService, SessionService, p
   }
 }
 
+export const updateUserRelationship = ({ RestService, SessionService, UsersService, pResponseUser, HandleError }) => async ({targetId, type}) => {
+  try {
+    let user = SessionService.currentUser()
+    user = await RestService.put('users/' + user.id + '/update_relationship', { target_id: targetId, type })
+    user = pResponseUser(user)
+    SessionService.setUserSession( user )
+
+    const following = type === 'follow' ? 'Yes' : 'No'
+    UsersService.addUserRelationships( [{ id: targetId, following }])
+  }
+  catch( error ) {
+    HandleError({ error, namespace: 'friendsManager'})
+  }
+}
 
 // export const suggestTags = ({ RestService }) => async ({ symbol, text }) => {
 //   // TODO - Figoure out # encoding

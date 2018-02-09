@@ -21,13 +21,24 @@ class FriendsManager extends Component {
   }
 
   updateText = e => {
-    const { SearchUsersByText, users } = this.props
+    const { searchUsersByText, users } = this.props
     const { value } = e.target
     this.setState({
       searchText: value,
       suggestions: searchDictionaryBy(users, 'name', value)
     })
-    SearchUsersByText && SearchUsersByText(value)
+    searchUsersByText && searchUsersByText(value)
+  }
+
+  renderEditRelationshipButton = (isFollowing, targetId) => {
+    const { updateUserRelationship } = this.props
+    const type = isFollowing === 'Yes' ? 'unfollow' : 'follow'
+    const buttonText = isFollowing === 'Yes' ? '-' : '+'
+    return (
+      <button type='button' onClick={ () => updateUserRelationship({targetId, type}) } >
+        { buttonText }
+      </button>
+    )
   }
 
   render() {
@@ -47,8 +58,8 @@ class FriendsManager extends Component {
         <div>
           { !searchTextEmpty && suggestions.map( (s,i) =>
             <div key={ i }>
-              @{ s.name }: { s.first_name } { s.last_name }
-              following: { s.following }
+              @{ s.name }: { s.first_name } { s.last_name } <br />
+              following: { s.following } { this.renderEditRelationshipButton(s.following, s.id) }<br />
               follower: { s.follower }
             </div>
           ) }
@@ -64,7 +75,8 @@ FriendsManager.propTypes = {
   followingCount: PropTypes.number,
   followersCount: PropTypes.number,
 
-  SearchUsersByText: PropTypes.func,
+  searchUsersByText: PropTypes.func,
+  updateUserRelationship: PropTypes.func,
 }
 
 export default FriendsManager

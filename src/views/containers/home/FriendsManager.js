@@ -25,10 +25,11 @@ const mapStateToProps = state => {
 const mapDispatchToProps = () => {
   const { RestService, SessionService, UsersService } = services
   const { pResponseGeneric  } = presenters.Api
+  const pResponseUser = pResponseGeneric
   const pResponseUsers = pResponseGeneric
   const pResponseRelationships = pResponseGeneric
 
-  const SearchUsersByText = coordinators.searchUsersByText({
+  const searchUsersByText = coordinators.searchUsersByText({
     RestService,
     UsersService,
     SessionService,
@@ -36,9 +37,17 @@ const mapDispatchToProps = () => {
     pResponseRelationships,
     HandleError
   })
+  const updateUserRelationship = coordinators.updateUserRelationship({
+    RestService,
+    SessionService,
+    UsersService,
+    pResponseUser,
+    HandleError
+  })
 
   return {
-    SearchUsersByText,
+    searchUsersByText,
+    updateUserRelationship
   }
 }
 
