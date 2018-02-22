@@ -1,5 +1,213 @@
+
+#root {
+  font: 600 16px 'Merriweather Sans', sans-serif
+}
+
 body {
+  background: rgb(244, 247, 250);
+  margin: 0;
+}
+
+.container {
+  /* min-height: 100%; */
+  max-width: 730px;
+  width: 100%;
+  position: relative;
+  overflow-x: hidden;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/** Header **/
+
+.main-nav {
+  display: flex;
+  order: -1;
+  /* background: #232c3b; */
+  background: rgb(6, 103, 208);
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+}
+
+.main-nav ul {
+  list-style: none;
+  display: flex;
+  width: 100%;
+}
+
+.main-nav li {
+  width: 200px;
+}
+
+.main-nav > [class^="main-nav"] > li > a {
+  color: #fcfcfc;
+}
+
+.main-nav--user {
+  color: #fcfcfc;
+  background: url("./_res/images/ic_person_outline_white_24px.svg") no-repeat;
+  padding-left: 30px;
+  width: 250px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.main-nav--user--dropdown {
+  position: absolute;
+  z-index: 5;
+  top: 60px;
+  right: 17px;
+  width: 250px;
+  background: rgb(255, 255, 255);
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(218, 225, 233);
+}
+
+.main-nav--user--dropdown__profile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-nav--user--dropdown__profile--name {
+  padding: 40px 20px 5px 20px;
+}
+
+.main-nav--user--dropdown__profile--email {
+  font: 100 12px 'Merriweather Sans', sans-serif;
+  padding-bottom: 10px;
+}
+
+.main-nav--user--dropdown__separator {
+  border-top: 1px solid rgb(218, 225, 233);
+}
+
+.main-nav--user--dropdown > a {
+  padding: 15px;
+}
+
+/** Home Page **/
+
+.home-page {
+  min-height: 100%;
+  position: relative;
+}
+
+/** Friends Manager **/
+
+.friends-manager {
+  position: absolute;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.friends-manager--content {
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+}
+
+.friends-manager--clicker {
+  position: relative;
+  float: right;
+  width: 40px;
+  box-shadow: 2px 2px 2px rgba(0,0,0,1);
+}
+
+/** Social **/
+
+.social-container {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  padding: 30px;
+  background: #eee;
+  box-shadow: 0 0 5px rgba(0,0,0,1);
+  transform: translate3d(40px,0,0);
+  transition: transform .3s;
+}
+
+.social-container.show-friends-manager {
+  transform: translate3d(240px,0,0);
+}
+
+/** Newsfeed **/
+
+.newsfeed {
+  list-style: none;
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  width: 800px;
+  word-wrap: normal;
+  order: -1;
+  display: flex;
+  flex-direction: column;
+}
+
+.newsfeed__header {
+  text-align: center;
+  padding: 15px;
+}
+
+[class^="newsfeed__item--"] {
+  background: #fcfcfc;
+  padding: 20px;
+  border: 1px solid rgb(218, 225, 233);
+  border-radius: 3px;
+  margin: 4px;
+}
+
+/** Tags **/
+
+.tag-suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+[class^="tag-suggestions__item"] {
+  cursor: pointer;
+  height: 25px;
+  display: block;
+  color: #af544f;
+  /* letter-spacing: 2px; */
+  box-sizing: border-box;
+  padding: 2px 2px 2px 25px;
+  box-shadow: 0 1px 0 0 #e6e6e6, 0 2px 0 0 white;
+}
+
+.tag-suggestions__item--food {
+  background: url("./_res/images/ic_restaurant_white_24px.svg") no-repeat;
+}
+
+.tag-suggestions__item--hashtag {
+  background: url("./_res/images/ic_local_offer_white_24px.svg") no-repeat;
+}
+
+.tag-suggestions__item--entity {
+  background: url("./_res/images/ic_restaurant_white_24px.svg") no-repeat;
+}
+
+.tag-suggestions__item--user {
+  background: url("./_res/images/ic_person_outline_white_24px.svg") no-repeat;
 }

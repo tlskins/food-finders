@@ -12,7 +12,7 @@ class FriendsManager extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props !== nextProps) {
-      const { users } = this.props
+      const { users } = nextProps
       const { searchText } = this.state
       this.setState({
         suggestions: searchDictionaryBy(users, 'name', searchText)
@@ -42,27 +42,32 @@ class FriendsManager extends Component {
   }
 
   render() {
-    const { followersCount, followingCount } = this.props
+    const { followersCount, followingCount, visible, toggleVisibility } = this.props
     const { suggestions, searchText } = this.state
     const searchTextEmpty = searchText.length === 0
-
+    
     return (
-      <div>
-        { `followers: ${followersCount}` }<br />
-        { `following: ${followingCount}` }
-        <textarea type="text"
-          value={ searchText }
-          onChange={ this.updateText }
-          />
-        <br />
-        <div>
-          { !searchTextEmpty && suggestions.map( (s,i) =>
-            <div key={ i }>
-              @{ s.name }: { s.first_name } { s.last_name } <br />
-              following: { s.following } { this.renderEditRelationshipButton(s.following, s.id) }<br />
-              follower: { s.follower }
-            </div>
-          ) }
+      <div className='friends-manager'>
+        <div className='friends-manager--clicker'
+          onClick={ () => toggleVisibility(!visible) }
+        />
+        <div className='friends-manager--content'>
+          { `followers: ${followersCount}` }<br />
+          { `following: ${followingCount}` }
+          <textarea type="text"
+            value={ searchText }
+            onChange={ this.updateText }
+            />
+          <br />
+          <div>
+            { !searchTextEmpty && suggestions.map( (s,i) =>
+              <div key={ i }>
+                @{ s.name }: { s.first_name } { s.last_name } <br />
+                following: { s.following } { this.renderEditRelationshipButton(s.following, s.id) }<br />
+                follower: { s.follower }
+              </div>
+            ) }
+          </div>
         </div>
       </div>
     )
@@ -72,10 +77,12 @@ class FriendsManager extends Component {
 
 FriendsManager.propTypes = {
   users: PropTypes.object,
+  visible: PropTypes.bool,
   followingCount: PropTypes.number,
   followersCount: PropTypes.number,
 
   searchUsersByText: PropTypes.func,
+  toggleVisibility: PropTypes.func,
   updateUserRelationship: PropTypes.func,
 }
 

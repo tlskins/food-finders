@@ -6,11 +6,13 @@ import services from '@services'
 
 
 const mapStateToProps = state => {
-  const { session } = state
+  const { session, friendsManager } = state
+  const { visible } = friendsManager
   const currentUser = session ? session.user : undefined
 
   return {
     currentUser,
+    friendsManagerVisible: visible,
   }
 }
 

@@ -70,7 +70,7 @@ class LoginForm extends Component {
     const { errors } = this.props
 
     return (
-      <div>
+      <div className='login-page'>
         <h2> Sign In </h2>
         <div>
           { errors && errors.email &&

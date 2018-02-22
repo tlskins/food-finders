@@ -12,9 +12,8 @@ export const entities = (state = {}, action) => {
     }
     case ADD_YELP_BUSINESS_ENTITIES: {
       action.businesses.forEach( b => {
-        if ( !state[b.id] ) {
-          // TODO : Remove hardcod @
-          state[b.id] = { symbol: '@', handle: b.id, name: b.name, yelp_business: b }
+        if ( !state[b.handle] ) {
+          state[b.handle] = b
         }
       })
 

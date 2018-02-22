@@ -28,14 +28,16 @@ class NewsFeed extends Component {
 
     return (
       <div>
-        <div>
-          NewsFeed
+        <ul className='newsfeed'>
+          <h1 className='newsfeed__header'>NewsFeed</h1>
           { feedItems.map( (f,i) =>
-            <div key={ i }>
-              { f.metadata.data }
-            </div>
+            <li key={ i } className='newsfeed__item--parent'>
+              <div className='newsfeed__item__content'>
+                { f.metadata.authorName }: { f.metadata.data }
+              </div>
+            </li>
           ) }
-        </div>
+        </ul>
       </div>
     )
   }

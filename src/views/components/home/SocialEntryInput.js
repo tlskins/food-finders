@@ -171,16 +171,17 @@ class SocialEntryInput extends Component {
             <span key={ i }>{ t.symbol + t.handle }</span>
           ) }
         </div>
-        <div>
+        <ul className='tag-suggestions'>
           Tag Suggestions:
           { tagSuggestions.map( (t,i) =>
-            <div key={ i }
+            <li key={ i }
+              className={ 'tag-suggestions__item--' + (t.taggableType || '').toLowerCase() }
               onClick={ this.addTag(t) }
               >
               { t.symbol + t.handle + ": " + t.name }
-            </div>
+            </li>
           ) }
-        </div>
+        </ul>
       </div>
     )
   }
@@ -196,7 +197,6 @@ SocialEntryInput.propTypes = {
   addHashtags: PropTypes.func,
   addFoods: PropTypes.func,
   postSocialEntry: PropTypes.func,
-  searchEntitiesByName: PropTypes.func,
   suggestTags: PropTypes.func,
   suggestYelp: PropTypes.func,
   updateDraftSocialEntry: PropTypes.func,

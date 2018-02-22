@@ -23,12 +23,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = () => {
   const { RestService, EntityService, FoodService, HashtagService, SessionService } = services
-  const { pResponseGeneric: pResponseUser } = presenters.Api
+  const { pResponseGeneric, pResponseYelpBusinesses } = presenters.Api
+  const pResponseUser = pResponseGeneric
+  const pResponseTags = pResponseGeneric
 
   const updateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService, pResponseUser })
   const postSocialEntry = coordinators.postSocialEntry({ RestService, SessionService, pResponseUser })
-  const suggestTags = coordinators.suggestTags({ RestService })
-  const suggestYelp = coordinators.suggestYelp({ RestService })
+  const suggestTags = coordinators.suggestTags({ RestService, pResponseTags })
+  const suggestYelp = coordinators.suggestYelp({ RestService, pResponseYelpBusinesses })
   const { addEntities, addYelpBusinessEntities } = EntityService
   const { addFoods } = FoodService
   const { addHashtags } = HashtagService

@@ -25,16 +25,8 @@ class Home extends Component {
     }, 100 )
   }
 
-  // onChange = (key) => (value, event) => {
-  //   if(value) {
-  //     const { state } = this
-  //     state[key] = value
-  //     this.setState( state )
-  //   }
-  // }
-
   render() {
-    const { currentUser } = this.props
+    const { currentUser, friendsManagerVisible } = this.props
 
     if ( !currentUser ) {
       return null
@@ -43,11 +35,15 @@ class Home extends Component {
     return (
       <div>
         <NavBar />
-        <Newsfeed />
-        <SocialEntryInput />
-        <FriendsManager />
-        { /** <EntitySelect onChange={ this.onChange('selectedEntity') }/> **/ }
-        { /** }<FoodSelect onChange={ this.onChange('selectedFood') }/> **/ }
+        <div className='home-page'>
+          <FriendsManager />
+          <div className={ 'social-container' + (friendsManagerVisible ? ' show-friends-manager': '')}>
+            <Newsfeed />
+            <SocialEntryInput />
+          </div>
+          { /** <EntitySelect onChange={ this.onChange('selectedEntity') }/> **/ }
+          { /** <FoodSelect onChange={ this.onChange('selectedFood') }/> **/ }
+        </div>
       </div>
     )
   }
@@ -55,6 +51,9 @@ class Home extends Component {
 }
 
 Home.propTypes = {
+  currentUser: PropTypes.object,
+  friendsManagerVisible: PropTypes.bool,
+  
   redirect: PropTypes.func,
 }
 

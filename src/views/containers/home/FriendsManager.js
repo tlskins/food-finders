@@ -9,21 +9,25 @@ import { HandleError } from '@coordinators/composed'
 
 
 const mapStateToProps = state => {
-  const { users } = state
+  const { users, friendsManager } = state
   const { user } = state.session
+  const { visible } = friendsManager
 
   const followingCount = user ? user.followingCount : 0
   const followersCount = user ? user.followersCount : 0
 
   return {
-    users,
     followingCount,
     followersCount,
+    visible,
+    users,
   }
 }
 
 const mapDispatchToProps = () => {
-  const { RestService, SessionService, UsersService } = services
+  const { RestService, SessionService, UIService, UsersService } = services
+
+  const toggleVisibility = visible => UIService.FriendsManager.toggleVisibility(visible)
   const { pResponseGeneric  } = presenters.Api
   const pResponseUser = pResponseGeneric
   const pResponseUsers = pResponseGeneric
@@ -47,6 +51,7 @@ const mapDispatchToProps = () => {
 
   return {
     searchUsersByText,
+    toggleVisibility,
     updateUserRelationship
   }
 }
