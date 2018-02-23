@@ -50,7 +50,9 @@ class FriendsManager extends Component {
       <div className='friends-manager'>
         <div className='friends-manager--clicker'
           onClick={ () => toggleVisibility(!visible) }
-        />
+        >
+          <div className='friends-manager--icon'/>
+        </div>
         <div className='friends-manager--content'>
           { `followers: ${followersCount}` }<br />
           { `following: ${followingCount}` }
