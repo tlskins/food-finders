@@ -1,6 +1,7 @@
 
 #root {
-  font: 600 16px 'Merriweather Sans', sans-serif
+  font: 600 16px 'Merriweather Sans', sans-serif;
+  overflow-x: hidden;
 }
 
 body {
@@ -9,11 +10,8 @@ body {
 }
 
 .container {
-  /* min-height: 100%; */
-  max-width: 730px;
   width: 100%;
   position: relative;
-  overflow-x: hidden;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -26,6 +24,92 @@ body {
   flex-direction: column;
   align-items: center;
 }
+
+/** Alert **/
+
+.alert-container__inner {
+  /* @include transition(all, 0.5s); */
+  position: fixed;
+  opacity: 1;
+  cursor: pointer;
+  pointer-events: auto;
+  width: 400px;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  top: -100px;
+  padding: 4px;
+  z-index: 1000;
+  box-shadow: 0px 4px 17px 0px rgba(0,0,0,0.35);
+  p {
+    color: #fff;
+    /* font-family: ProximaNova-SemiBold; */
+    position: relative;
+    margin-left: 20px;
+  }
+  /* @media screen and (max-width: 400px) {
+    width: 300px;
+  }
+  @media screen and (max-width: 350px) {
+    width: 280px;
+  } */
+}
+
+.hide-alert {
+  animation: hideAlert normal forwards ease-in-out;
+  animation-duration: 0.35s;
+}
+
+.alert-success {
+  background: rgb(178, 208, 178);
+  p {
+    &:before {
+      content: '';
+      position: absolute;
+      /* background: url("../images/icon-white-check.png") no-repeat; */
+      background-size: 20px;
+      width: 20px;
+      height: 30px;
+      top: 2px;
+      left: -25px;
+    }
+  }
+}
+
+.alert-fail {
+  background: rgb(240, 116, 101);
+  p {
+    &:before {
+      content: '';
+      position: absolute;
+      /* background: url("../images/error-icon.png") no-repeat; */
+      background-size: 20px;
+      width: 20px;
+      height: 30px;
+      top: 2px;
+      left: -25px;
+    }
+  }
+}
+
+.alert-info {
+  background: rgb(213, 233, 92);
+  p {
+    color: #fff;
+    &:before {
+      content: '';
+      position: absolute;
+      /* background: url("../images/info-icon.png") no-repeat; */
+      background-size: 20px;
+      width: 20px;
+      height: 30px;
+      top: 2px;
+      left: -25px;
+    }
+  }
+}
+
+
 
 /** Header **/
 
@@ -122,6 +206,7 @@ body {
   display: flex;
   flex-direction: column;
   padding: 40px;
+  overflow-x: scroll;
 }
 
 .friends-manager--clicker {
