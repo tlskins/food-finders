@@ -8,8 +8,9 @@ import presenters from '@presenters'
 
 
 const mapStateToProps = state => {
-  const { entities, foods, hashtags, session } = state
+  const { entities, foods, hashtags, session, socialEntry } = state
   const { user } = session
+  const { visible } = socialEntry
 
   const draftSocialEntry = user ? user.draftSocialEntry : ''
 
@@ -18,15 +19,17 @@ const mapStateToProps = state => {
     entities,
     foods,
     hashtags,
+    visible,
   }
 }
 
 const mapDispatchToProps = () => {
-  const { RestService, EntityService, FoodService, HashtagService, SessionService } = services
+  const { RestService, EntityService, FoodService, HashtagService, SessionService, UIService } = services
   const { pResponseGeneric, pResponseYelpBusinesses } = presenters.Api
   const pResponseUser = pResponseGeneric
   const pResponseTags = pResponseGeneric
 
+  const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
   const updateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService, pResponseUser })
   const postSocialEntry = coordinators.postSocialEntry({ RestService, SessionService, pResponseUser })
   const suggestTags = coordinators.suggestTags({ RestService, pResponseTags })
@@ -43,6 +46,7 @@ const mapDispatchToProps = () => {
     postSocialEntry,
     suggestTags,
     suggestYelp,
+    toggleVisibility,
     updateDraftSocialEntry,
   }
 }

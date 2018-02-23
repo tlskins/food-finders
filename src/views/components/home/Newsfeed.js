@@ -25,11 +25,20 @@ class NewsFeed extends Component {
 
   render() {
     const { feedItems } = this.state
+    const { toggleVisibility } = this.props
 
     return (
       <div>
         <ul className='newsfeed'>
-          <h1 className='newsfeed__header'>NewsFeed</h1>
+          <div className='newsfeed__header-container'>
+            <h1 className='newsfeed__header'>
+              NewsFeed 
+              <input className='compose-social-entry-btn'
+                type='button' 
+                onClick={ () => toggleVisibility(true) } 
+              />
+            </h1>
+          </div>
           { feedItems.map( (f,i) =>
             <li key={ i } className='newsfeed__item--parent'>
               <div className='newsfeed__item__content'>
@@ -45,6 +54,7 @@ class NewsFeed extends Component {
 
 NewsFeed.propTypes = {
   loadNewsfeed: PropTypes.func,
+  toggleVisibility: PropTypes.func,
 }
 
 export default NewsFeed

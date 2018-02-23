@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import close from '@res/images/x-icon-gray.png'
+
 import { findWordAtCursor, searchDictionaryBy } from '~/utils'
 
 const initialDraftSocialEntry = { text: '', tags: []}
@@ -24,7 +26,6 @@ class SocialEntryInput extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('SocialEntryInput nextProps = ',nextProps)
     if ( nextProps !== this.props ) {
       const { refreshText, searchText, tagSymbol } = this.state
       const { draftSocialEntry } = nextProps
@@ -151,37 +152,60 @@ class SocialEntryInput extends Component {
 
     await postSocialEntry()
   }
+  
+  close = e => {
+    e.preventDefault()
+
+    this.props.toggleVisibility(false)
+  }
 
   render() {
     const { text, draftSocialEntry, tagSuggestions  } = this.state
+    const { visible } = this.props
     const { tags } = draftSocialEntry
+    
+    if ( !visible ) {
+      return null
+    }
 
     return (
-      <div>
-        <textarea type="text"
-          value={ text }
-          onChange={ this.updateText }
-          onKeyDown={ this.onKeyDown }
-          />
-        <br />
-        <input type="submit" value="Post" onClick={ this.onPost }/>
-        <div>
-          Existing Tags:
-          { (tags || []).map( (t,i) =>
-            <span key={ i }>{ t.symbol + t.handle }</span>
-          ) }
+      <div className={ `modal-form-container` }>
+        <div className="modal-form-container__screen"></div>
+        <div className="modal-form-container__inner">
+          <img className="close" src={ close } onClick={ this.close } />
+          <h1> Compose Message </h1>
+          <div className="social-entry-form">
+            <textarea type="text"
+              className="social-entry-form__textarea"
+              value={ text }
+              onChange={ this.updateText }
+              onKeyDown={ this.onKeyDown }
+              />
+            <div className="social-entry-form__tags">
+              Existing Tags:
+              { (tags || []).map( (t,i) =>
+                <div className='social-entry-form__tag' key={ i }>{ t.symbol + t.handle }</div>
+              ) }
+            </div>
+            <ul className='social-entry-form__suggestions'>
+              Tag Suggestions:
+              { tagSuggestions.map( (t,i) =>
+                <li key={ i }
+                  className={ 'social-entry-form__suggestions__item--' + (t.taggableType || '').toLowerCase() }
+                  onClick={ this.addTag(t) }
+                  >
+                  { t.symbol + t.handle + ": " + t.name }
+                </li>
+              ) }
+            </ul>
+            <input
+              className="social-entry-form__submit"
+              type="submit" 
+              value="Post" 
+              onClick={ this.onPost }
+            />
+          </div>
         </div>
-        <ul className='tag-suggestions'>
-          Tag Suggestions:
-          { tagSuggestions.map( (t,i) =>
-            <li key={ i }
-              className={ 'tag-suggestions__item--' + (t.taggableType || '').toLowerCase() }
-              onClick={ this.addTag(t) }
-              >
-              { t.symbol + t.handle + ": " + t.name }
-            </li>
-          ) }
-        </ul>
       </div>
     )
   }
@@ -191,6 +215,7 @@ SocialEntryInput.propTypes = {
   entities: PropTypes.object,
   foods: PropTypes.object,
   hashtags: PropTypes.object,
+  visible: PropTypes.bool,
 
   addEntities: PropTypes.func,
   addYelpBusinessEntities: PropTypes.func,
@@ -199,6 +224,7 @@ SocialEntryInput.propTypes = {
   postSocialEntry: PropTypes.func,
   suggestTags: PropTypes.func,
   suggestYelp: PropTypes.func,
+  toggleVisibility: PropTypes.func,
   updateDraftSocialEntry: PropTypes.func,
 }
 

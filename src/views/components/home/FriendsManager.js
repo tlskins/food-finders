@@ -56,17 +56,23 @@ class FriendsManager extends Component {
         <div className='friends-manager--content'>
           { `followers: ${followersCount}` }<br />
           { `following: ${followingCount}` }
-          <textarea type="text"
+          <input type='text'
+            className='friends-manager--content--text-input'
             value={ searchText }
             onChange={ this.updateText }
+            placeholder='Find friends...'
             />
-          <br />
-          <div>
+          <div className='friends-manager--content--suggestions'>
             { !searchTextEmpty && suggestions.map( (s,i) =>
-              <div key={ i }>
-                @{ s.name }: { s.first_name } { s.last_name } <br />
-                following: { s.following } { this.renderEditRelationshipButton(s.following, s.id) }<br />
-                follower: { s.follower }
+              <div key={ i } className='friends-manager--content--suggestions__item'>
+                <h4>
+                  @{ s.name }
+                </h4>
+                <p>
+                  { s.firstName } { s.lastName } <br />
+                  following: { s.following } { this.renderEditRelationshipButton(s.following, s.id) }<br />
+                  follower: { s.follower }
+                </p>                  
               </div>
             ) }
           </div>

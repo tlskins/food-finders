@@ -4,6 +4,7 @@
     ["module-alias", [
       { "src": "src", "expose": "~" },
       { "src": "src/behavior/services", "expose": "@services"},
+      { "src": "src/_res", "expose": "@res"},
       { "src": "src/behavior/coordinators", "expose": "@coordinators"},
       { "src": "src/behavior/presenters", "expose": "@presenters"},
       { "src": "src/api", "expose": "@api"},

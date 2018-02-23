@@ -3,12 +3,14 @@ import { default as BaseService } from '../base'
 import LoginForm from './loginForm'
 import FlashMessage from './flashMessage'
 import FriendsManager from './friendsManager'
+import SocialEntry from './socialEntry'
 
 
 const SubServices = {
   LoginForm,
   FlashMessage,
   FriendsManager,
+  SocialEntry,
 }
 
 
