@@ -148,9 +148,11 @@ class SocialEntryInput extends Component {
   onPost = async () => {
     const { postSocialEntry } = this.props
 
-    this.setState({ refreshText: true })
+    this.setState({ tagSuggestions: [], refreshText: true })
 
     await postSocialEntry()
+    
+    this.props.toggleVisibility(false)
   }
   
   close = e => {
