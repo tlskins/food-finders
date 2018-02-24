@@ -1,22 +1,33 @@
+html, body, main, #root {
+  height: 100%;
+}
+
+body {
+  background: rgb(244, 247, 247);
+  margin: 0;
+}
 
 #root {
   font: 600 16px 'Merriweather Sans', sans-serif;
   overflow-x: hidden;
 }
 
-body {
-  background: rgb(244, 247, 250);
+.container {
+  height: 100%;
+  vertical-align: baseline;
+  display: block;
+  position: relative;
   margin: 0;
+  padding: 0;
+  border: 0;
 }
 
-.container {
-  width: 100%;
-  position: relative;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+.p-header {
+  color: rgb(68, 152, 229);
+}
+
+.p-footer {
+  float: right;
 }
 
 .login-page {
@@ -119,6 +130,10 @@ body {
   opacity: 1;
   overflow-y: auto;
   overflow-x: hidden;
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s;
   /* @include transition(opacity, 0.5s)
   @include flex-center-horizontal-vertical;
   @media screen and (max-width: $screen-size-m) {
@@ -168,6 +183,16 @@ body {
   top: 15px;
   cursor: pointer;
   opacity: .8;
+}
+
+@-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
 }
 
 /** Header **/
@@ -335,20 +360,24 @@ body {
 .compose-social-entry-btn {
   height: 60px;
   width: 60px;
-  margin: 0 0 0 15px;
-  padding: 15px;
-  border-width: 1px;
+  cursor: pointer;
+  margin: 0 0 0 40px;
+  padding: 12px;
+  border-width: 3px;
   border-style: solid;
-  border-color: rgb(218, 225, 233);
-  border-radius: 4px;
-  background: url("./_res/images/icons8-quill-with-ink-48.png") no-repeat;
+  border-color: rgb(144,144,144);
+  border-radius: 10px;
+  /* background: url("./_res/images/icons8-quill-with-ink-48.png") no-repeat; */
+  background: url("./_res/images/icons8-idea-bank-48.png") no-repeat;
+  background-size: contain;
 }
 
 .compose-social-entry-btn:hover {
-  border-width: 1px;
+  border-width: 3px;
   border-style: solid;
-  border-color: rgb(75, 173, 2);
-  border-radius: 4px;
+  /* border-color: rgb(75, 173, 2); */
+  border-color: lightgoldenrodyellow;
+  border-radius: 10px;
 }
 
 .social-entry-form {
@@ -366,18 +395,106 @@ body {
   padding: 7px 10px;
 }
 
-.social-entry-form__submit {
-  width: 60px;
-  margin: 15px;
-  padding: 15px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: rgb(218, 225, 233);
-  border-radius: 4px;
-  background: url("./_res/images/icons8-approval-48.png") no-repeat;
+.social-entry-form__submit--container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.social-entry-form__submit:hover {
+/**** IMPORTED BUTTON STYLE ****/
+
+.btn {
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+  padding: 25px 80px;
+  display: inline-block;
+  margin: 15px 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  outline: none;
+  position: relative;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+/* Button 3 */
+.btn-3 {
+	background: cornflowerblue;
+	color: #fff;
+}
+
+.btn-3:hover {
+	background: darkslateblue;
+}
+
+.btn-3:active {
+	background: cadetblue;
+	top: 2px;
+}
+
+.btn-3:before {
+	position: absolute;
+	height: 100%;
+	left: 0;
+	top: 0;
+	line-height: 3;
+	font-size: 140%;
+	width: 60px;
+}
+
+/* Button 3e */
+.btn-3e {
+	padding: 25px 120px 25px 60px;
+	overflow: hidden;
+}
+
+.btn-3e:before {
+	left: auto;
+	right: 10px;
+	z-index: 2;
+}
+
+.btn-3e:after {
+	width: 30%;
+	height: 200%;
+	background: mediumslateblue;
+	z-index: 1;
+	right: 0;
+	top: 0;
+	margin: -5px 0 0 -5px;
+	-webkit-transform-origin: 0 0;
+	-webkit-transform: rotate(-20deg);
+	-moz-transform-origin: 0 0;
+	-moz-transform: rotate(-20deg);
+	-ms-transform-origin: 0 0;
+	-ms-transform: rotate(-20deg);
+	transform-origin: 0 0;
+	transform: rotate(-20deg);
+}
+
+.btn-3e:hover:after {
+	width: 40%;
+}
+
+/****** IMPORTED BUTTON STYLE **********/
+
+.social-entry-form__submit--button {
+  width: 60px;
+  margin: 15px;
+  padding: 5px;
+  border-width: 3px;
+  border-style: solid;
+  border-color: blue;
+  border-radius: 10px;
+}
+
+.social-entry-form__submit--button:hover {
   border-color: rgb(75, 173, 2);
 }
 
@@ -394,6 +511,14 @@ body {
   flex-direction: column;
 }
 
+.newsfeed-p {
+  display: flex;
+}
+
+.newsfeed-content {
+  display: flex;
+}
+
 .newsfeed__header-container {
   display: flex;
   flex-direction: column;
@@ -404,12 +529,6 @@ body {
 .newsfeed__header {
   text-align: center;
   padding: 15px;
-}
-
-.newsfeed__header:hover {
-  border-width: 0 0 2px 0;
-  border-style: solid;
-  border-color: rgb(75, 173, 2);
 }
 
 [class^="newsfeed__item--"] {
@@ -432,18 +551,46 @@ body {
 .social-entry-form__tags {
   display: flex;
   flex-direction: row;
+  margin: 10px 0 10px 5px;
 }
 
-.social-entry-form__tag {
+[class^="social-entry-tag"] {
   border-width: 1px;
   border-style: solid;
   border-color: rgb(147, 218, 246);
   border-radius: 7px;
   background-color: rgb(147, 218, 246);
   color: black;
-  margin-left: 6px;
-  margin-right: 6px;
-  padding: 2px;
+  max-height: 40px;
+  max-width: 400px;
+  word-wrap: normal;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  margin: 0 6px 0 6px;
+}
+
+[class^="social-entry-tag"] > p {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  margin: 2px 4px 2px 4px;
+}
+
+.social-entry-tag__food {
+  background-color: rgb(79, 229, 211);
+}
+
+.social-entry-tag__entity {
+  background-color: rgb(147, 218, 246);
+}
+
+.social-entry-tag__hashtag {
+  background-color: rgb(240, 237, 86);
+}
+
+.social-entry-tag__user {
+  background-color: rgb(255,255,255);
 }
 
 .social-entry-form__suggestions {
@@ -453,34 +600,71 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
+  margin: 10px 0 10px 5px;
 }
 
 [class^="social-entry-form__suggestions__item"] {
   cursor: pointer;
   height: 25px;
+  display: flex;
+  align-items: center;
+  margin: 5px 0 5px 0;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(147, 218, 246);
+  border-radius: 7px;
+  background-color: rgb(147, 218, 246);
+  margin-left: 6px;
+  margin-right: 6px;
+  padding: 13px;
+}
+
+[class^="social-entry-form__suggestions__icon"] {
   display: block;
-  color: #af544f;
-  box-sizing: border-box;
-  padding: 2px 2px 2px 25px;
-  box-shadow: 0 1px 0 0 #e6e6e6, 0 2px 0 0 white;
+  padding-right: 10px;
+  width: 45px;
+  height: 45px;
+  z-index: 2;
+  float: left;
 }
 
 [class^="social-entry-form__suggestions__item"]:hover {
-  box-shadow: 0 1px 0 0 #e6e6e6, 0 2px 0 0 rgb(75, 173, 2);
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(75, 173, 2);
+  border-radius: 7px;
 }
 
+/** Category Specific Tags **/
+
 .social-entry-form__suggestions__item--food {
-  background: url("./_res/images/ic_restaurant_white_24px.svg") no-repeat;
+  background-color: rgb(79, 229, 211);
+}
+.social-entry-form__suggestions__icon--food {
+  background: url("./_res/images/icons8-hamburger-48.png") no-repeat;
+  background-size: contain;
 }
 
 .social-entry-form__suggestions__item--hashtag {
-  background: url("./_res/images/ic_local_offer_white_24px.svg") no-repeat;
+  background-color: rgb(240, 237, 86);
+}
+.social-entry-form__suggestions__icon--hashtag {
+  background: url("./_res/images/icons8-trophy-48.png") no-repeat;
+  background-size: contain;
 }
 
 .social-entry-form__suggestions__item--entity {
-  background: url("./_res/images/ic_restaurant_white_24px.svg") no-repeat;
+  background-color: rgb(147, 218, 246);
+}
+.social-entry-form__suggestions__icon--entity {
+  background: url("./_res/images/icons8-meal-48.png") no-repeat;
+  background-size: contain;
 }
 
 .social-entry-form__suggestions__item--user {
-  background: url("./_res/images/ic_person_outline_white_24px.svg") no-repeat;
+  background-color: rgb(255,255,255);
+}
+.social-entry-form__suggestions__icon--user {
+  background: url("./_res/images/icons8-street-view-48.png") no-repeat;
+  background-size: contain;
 }

@@ -164,6 +164,8 @@ class SocialEntryInput extends Component {
     const { visible } = this.props
     const { tags } = draftSocialEntry
     
+    console.log('tags=',tags)
+    
     if ( !visible ) {
       return null
     }
@@ -183,27 +185,36 @@ class SocialEntryInput extends Component {
               />
             <div className="social-entry-form__tags">
               Existing Tags:
-              { (tags || []).map( (t,i) =>
-                <div className='social-entry-form__tag' key={ i }>{ t.symbol + t.handle }</div>
+              { tags && tags.map( (t,i) =>
+                <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }
+                  key={ i }>
+                  <p>
+                    { t.symbol + t.handle }
+                  </p>
+                </div>
               ) }
             </div>
-            <ul className='social-entry-form__suggestions'>
+            <div className='social-entry-form__suggestions'>
               Tag Suggestions:
               { tagSuggestions.map( (t,i) =>
-                <li key={ i }
+                <div 
+                  key={i}
                   className={ 'social-entry-form__suggestions__item--' + (t.taggableType || '').toLowerCase() }
                   onClick={ this.addTag(t) }
-                  >
+                >
+                  <div className={ 'social-entry-form__suggestions__icon--' + (t.taggableType || '').toLowerCase() }/>
                   { t.symbol + t.handle + ": " + t.name }
-                </li>
+                </div>
               ) }
-            </ul>
-            <input
-              className="social-entry-form__submit"
-              type="submit" 
-              value="Post" 
-              onClick={ this.onPost }
-            />
+            </div>
+            <div className="social-entry-form__submit--container">
+              <input
+                className="btn btn-3 btn-3e"
+                type="submit" 
+                value="Post" 
+                onClick={ this.onPost }
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import Moment from 'moment'
+
+
 class NewsFeed extends Component {
   state = {
     feedItems: []
@@ -26,23 +29,33 @@ class NewsFeed extends Component {
   render() {
     const { feedItems } = this.state
     const { toggleVisibility } = this.props
+    
+    const emptyFeed = feedItems.length === 0
+    console.log('feedItems=',feedItems)
 
     return (
       <div>
         <ul className='newsfeed'>
           <div className='newsfeed__header-container'>
             <h1 className='newsfeed__header'>
-              NewsFeed 
+              Feed 
               <input className='compose-social-entry-btn'
                 type='button' 
                 onClick={ () => toggleVisibility(true) } 
               />
             </h1>
           </div>
+          { emptyFeed && `Empty Feed!` }
           { feedItems.map( (f,i) =>
             <li key={ i } className='newsfeed__item--parent'>
               <div className='newsfeed__item__content'>
-                { f.metadata.authorName }: { f.metadata.data }
+                <h3 className='p-header'>
+                  { f.metadata.authorName }
+                </h3>
+                { f.renderContent() }
+                <p className='p-footer'>
+                  Posted at { Moment(f.conductedAt).format( 'MM-DD-YY h:mma' ) }
+                </p>
               </div>
             </li>
           ) }

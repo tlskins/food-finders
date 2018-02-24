@@ -8,7 +8,7 @@ import presenters from '@presenters'
 
 const mapDispatchToProps = () => {
   const { RestService, SessionService, UIService } = services
-  const { pResponseGeneric: pResponseFeedItems } = presenters.Api
+  const { pResponseFeedItems } = presenters.Api
 
   const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
   const loadNewsfeed = coordinators.loadNewsfeed({ RestService, SessionService, pResponseFeedItems })
