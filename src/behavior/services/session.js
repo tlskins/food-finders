@@ -3,8 +3,8 @@ import actions from '@actions'
 
 
 export class SessionService extends BaseService {
-  setUserSession( user ) {
-    this.dispatch( actions.setUserSession( user ))
+  setUserSession( user, requestedAt ) {
+    this.dispatch( actions.setUserSession( user, requestedAt ))
   }
 
   clearUserSession() {

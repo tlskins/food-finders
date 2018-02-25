@@ -3,7 +3,7 @@ export const REFRESH_SESSION = 'REFRESH_SESSION'
 export const SET_USER_SESSION = 'SET_USER_SESSION'
 
 
-export const setUserSession = user => ({ type: SET_USER_SESSION, user })
+export const setUserSession = (user, requestedAt) => ({ type: SET_USER_SESSION, user, requestedAt })
 
 
 export const clearUserSession = () => ({ type: CLEAR_USER_SESSION, user: null })

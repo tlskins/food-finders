@@ -4,7 +4,7 @@ import {
   SET_USER_SESSION,
 } from '@actions/sessions'
 
-const sessionInitialState = { user: undefined, lastRefresh: undefined }
+const sessionInitialState = { user: undefined, lastRefresh: undefined, requestedAt: undefined }
 
 export const session = ( state = sessionInitialState, action ) => {
   switch( action.type ) {
@@ -15,11 +15,13 @@ export const session = ( state = sessionInitialState, action ) => {
       ...state,
       lastRefresh: Date(),
     }
-  case SET_USER_SESSION:
+  case SET_USER_SESSION: {
     return {
       user: {...action.user},
       lastRefresh: Date(),
+      requestedAt: action.requestedAt,
     }
+  }
   default:
     return state
   }

@@ -19,13 +19,13 @@ export const suggestTags = ({ RestService, pResponseTags }) => async ({ symbol, 
 }
 
 
-export const updateDraftSocialEntry = ({ RestService, SessionService, pResponseUser }) => async text => {
+export const updateDraftSocialEntry = ({ RestService, SessionService, pResponseUser }) => async (text, requestedAt) => {
   const userId = SessionService.currentUserId()
   const payload = { user: { draft_social_entry: { text: text} } }
 
   let user = await RestService.put('/users/' + userId, payload )
   user = pResponseUser(user)
-  SessionService.setUserSession(user)
+  SessionService.setUserSession(user, requestedAt)
 }
 
 

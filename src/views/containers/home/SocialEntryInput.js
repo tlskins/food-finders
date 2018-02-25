@@ -9,7 +9,7 @@ import presenters from '@presenters'
 
 const mapStateToProps = state => {
   const { entities, foods, hashtags, session, socialEntry } = state
-  const { user } = session
+  const { requestedAt, user } = session
   const { visible } = socialEntry
 
   const draftSocialEntry = user ? user.draftSocialEntry : ''
@@ -19,6 +19,7 @@ const mapStateToProps = state => {
     entities,
     foods,
     hashtags,
+    requestedAt,
     visible,
   }
 }

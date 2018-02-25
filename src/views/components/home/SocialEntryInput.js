@@ -13,6 +13,7 @@ class SocialEntryInput extends Component {
     const { draftSocialEntry } = props
 
     this.state = {
+      lastEditAt: undefined,
       text: (draftSocialEntry && draftSocialEntry.text) || '',
       searchText: '',
       refreshText: false,
@@ -21,31 +22,20 @@ class SocialEntryInput extends Component {
       tagSymbol: undefined,
       cursorBeginIndex: 0,
       cursorEndIndex: 0,
-      suppressUpdateText: false,
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    if ( nextProps !== this.props ) {
-      const { refreshText, searchText, tagSymbol } = this.state
-      const { draftSocialEntry } = nextProps
+      const { refreshText, searchText, tagSymbol, lastEditAt } = this.state
+      const { draftSocialEntry, requestedAt } = nextProps
 
-      // maintain text in state during edit but refresh on submit to limit unnecessary text delays
-      if ( refreshText && this.state.draftSocialEntry !== draftSocialEntry ) {
-        this.setState({
-          draftSocialEntry,
-          refreshText: false,
-          text: (draftSocialEntry && draftSocialEntry.text) || ''
-        })
-      }
-      else {
+      if ( lastEditAt >= requestedAt ) {
         this.setState({ draftSocialEntry })
       }
 
       if ( tagSymbol ) {
         this.populateTagSuggestions(nextProps, tagSymbol, searchText)
       }
-    }
   }
 
   asyncSuggestSetTags = async (symbol, text) => {
@@ -117,32 +107,18 @@ class SocialEntryInput extends Component {
   updateText = e => {
     const newText = e.target.value
     const selectionStart = e.target.selectionStart
-    const { suppressUpdateText, text } = this.state
-
-    if ( suppressUpdateText ) {
-      this.updateSocialEntry(text)
-    }
-    else {
-      this.setState({ text: newText })
-      this.updateSocialEntry(newText)
-      this.calculateTags(newText, selectionStart)
-    }
+    const { text } = this.state
+    const currentEditAt = new Date()
+    
+    this.setState({ text: newText, lastEditAt: currentEditAt })
+    this.updateSocialEntry(newText, currentEditAt)
+    this.calculateTags(newText, selectionStart)
   }
 
-  onKeyDown = e => {
-    const { tagSuggestions } = this.state
-    if ( e.key === 'Enter' && Object.keys(tagSuggestions).length > 0 ) {
-      this.setState({ suppressUpdateText: true })
-      const firstSuggestion = Object.values(tagSuggestions)[0]
-      this.addTag(firstSuggestion)()
-    }
-  }
-
-  updateSocialEntry = async text => {
+  updateSocialEntry = async (text, requestedAt) => {
     const { updateDraftSocialEntry } = this.props
 
-    await updateDraftSocialEntry( text )
-    this.setState({ suppressUpdateText: false })
+    await updateDraftSocialEntry( text, requestedAt )
   }
 
   onPost = async () => {
@@ -228,6 +204,7 @@ SocialEntryInput.propTypes = {
   entities: PropTypes.object,
   foods: PropTypes.object,
   hashtags: PropTypes.object,
+  requestedAt: PropTypes.object,
   visible: PropTypes.bool,
 
   addEntities: PropTypes.func,
