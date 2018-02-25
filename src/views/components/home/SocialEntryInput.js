@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import close from '@res/images/x-icon-gray.png'
 
-import { findWordAtCursor, searchDictionaryBy } from '~/utils'
+import { findWordAtCursor, searchDictionaryBy, stringDifference } from '~/utils'
 
 const initialDraftSocialEntry = { text: '', tags: []}
 
@@ -13,6 +13,7 @@ class SocialEntryInput extends Component {
     const { draftSocialEntry } = props
 
     this.state = {
+      enterPressed: false,
       lastEditAt: undefined,
       text: (draftSocialEntry && draftSocialEntry.text) || '',
       searchText: '',
@@ -74,44 +75,54 @@ class SocialEntryInput extends Component {
     }
   }
 
-  calculateTags = (text, selectionStart) => {
+  calculateTags = (text) => {
+    const { tagSymbol, searchText } = this.state
+    // search in redux
+    this.populateTagSuggestions(this.props, tagSymbol, searchText)
+
+    // async populate tags in redux
+    this.asyncSuggestSetTags(tagSymbol, searchText)
+    if ( tagSymbol === "@" ) {
+      this.asyncSuggestSetYelp(searchText)
+    }
+  }
+
+  addTag = (tag, currentEditAt) => () => {
+    const { symbol, handle } = tag
+    let { text, cursorBeginIndex, cursorEndIndex } = this.state
+    const newText = text.slice(0, cursorBeginIndex) + symbol + handle + text.slice(cursorEndIndex)
+
+    this.setState({ tagSuggestions: [], text: newText })
+    this.updateSocialEntry(newText, currentEditAt)
+  }
+    
+  updateCurrentEditData = (text, selectionStart) => {
     const { currentWord, cursorBeginIndex, cursorEndIndex } = findWordAtCursor(text, selectionStart)
     const tagSymbol = currentWord && currentWord[0]
     const searchText = currentWord && currentWord.substr(1)
 
-    if ( tagSymbol && ["@", "#", "^"].includes(tagSymbol) ) {
-      this.setState({ cursorBeginIndex, cursorEndIndex, tagSymbol, searchText })
-
-      // search in redux
-      this.populateTagSuggestions(this.props, tagSymbol, searchText)
-
-      // async populate tags in redux
-      this.asyncSuggestSetTags(tagSymbol, searchText)
-      if ( tagSymbol === "@" ) {
-        this.asyncSuggestSetYelp(searchText)
-      }
-    }
-  }
-
-  addTag = tag => () => {
-    const { symbol, handle } = tag
-    let { text, cursorBeginIndex, cursorEndIndex } = this.state
-
-    this.setState({
-      tagSuggestions: [],
-      text: text.slice(0, cursorBeginIndex) + symbol + handle + text.slice(cursorEndIndex),
-    })
+    this.setState({ cursorBeginIndex, cursorEndIndex, tagSymbol, searchText })
   }
 
   updateText = e => {
     const newText = e.target.value
     const selectionStart = e.target.selectionStart
-    const { text } = this.state
+    const { enterPressed, tagSuggestions, text } = this.state
     const currentEditAt = new Date()
     
+    console.log('newText=',newText)
+    
     this.setState({ text: newText, lastEditAt: currentEditAt })
-    this.updateSocialEntry(newText, currentEditAt)
-    this.calculateTags(newText, selectionStart)
+    
+    if ( tagSuggestions.length > 0 && stringDifference(text,newText) === '\n' ) {
+      this.updateCurrentEditData(newText, selectionStart)
+      this.addTag(tagSuggestions[0], currentEditAt)()
+    }
+    else {
+      this.updateSocialEntry(newText, currentEditAt)
+      this.updateCurrentEditData(newText, selectionStart)
+      this.calculateTags(newText)
+    }
   }
 
   updateSocialEntry = async (text, requestedAt) => {
@@ -178,7 +189,7 @@ class SocialEntryInput extends Component {
                 <div 
                   key={i}
                   className={ 'social-entry-form__suggestions__item--' + (t.taggableType || '').toLowerCase() }
-                  onClick={ this.addTag(t) }
+                  onClick={ this.addTag(t, new Date()) }
                 >
                   <div className={ 'social-entry-form__suggestions__icon--' + (t.taggableType || '').toLowerCase() }/>
                   { t.symbol + t.handle + ": " + t.name }
