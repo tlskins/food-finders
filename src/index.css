@@ -512,11 +512,15 @@ body {
 }
 
 .newsfeed-p {
-  display: flex;
+  display: block;
 }
 
 .newsfeed-content {
-  display: flex;
+  display: inline;
+}
+
+.social-entry-text {
+  display: inline;
 }
 
 .newsfeed__header-container {
@@ -555,17 +559,18 @@ body {
 }
 
 [class^="social-entry-tag"] {
+  display: inline;
   border-width: 1px;
   border-style: solid;
   border-color: rgb(147, 218, 246);
   border-radius: 7px;
   background-color: rgb(147, 218, 246);
   color: black;
-  max-height: 40px;
+  /* max-height: 40px;
   max-width: 400px;
   word-wrap: normal;
   overflow-y: scroll;
-  overflow-x: scroll;
+  overflow-x: scroll; */
   margin: 0 6px 0 6px;
 }
 

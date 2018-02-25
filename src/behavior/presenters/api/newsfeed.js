@@ -15,11 +15,13 @@ export const pResponseFeedItems = json => {
         return(
           <p className='newsfeed-p'>
             { tags.map( (t,i) =>
-              <div className='newsfeed-content'>
-                { data.slice(((tags[i-1] && tags[i-1].tagEnd) || 0), t.tagStart) }
-                  <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }>
-                    { data.slice(t.tagStart,t.tagEnd) }
-                  </div>
+              <div className='social-entry-text'>
+                <div className='social-entry-text'>
+                  { data.slice(((tags[i-1] && tags[i-1].tagEnd) || 0), t.tagStart) }
+                </div>
+                <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }>
+                  { data.slice(t.tagStart,t.tagEnd) }
+                </div>
                 { i === tags.length - 1 && data.slice(t.tagEnd, ((tags[i+1] && tags[i+1].tagEnd)|| data.length)) }
               </div>
             )}

@@ -16,7 +16,6 @@ class SocialEntryInput extends Component {
       lastEditAt: undefined,
       text: (draftSocialEntry && draftSocialEntry.text) || '',
       searchText: '',
-      refreshText: false,
       draftSocialEntry: draftSocialEntry || initialDraftSocialEntry,
       tagSuggestions: [],
       tagSymbol: undefined,
@@ -26,7 +25,7 @@ class SocialEntryInput extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-      const { refreshText, searchText, tagSymbol, lastEditAt } = this.state
+      const { searchText, tagSymbol, lastEditAt } = this.state
       const { draftSocialEntry, requestedAt } = nextProps
 
       if ( lastEditAt >= requestedAt ) {
@@ -123,11 +122,12 @@ class SocialEntryInput extends Component {
 
   onPost = async () => {
     const { postSocialEntry } = this.props
+    const { text } = this.state
 
-    this.setState({ tagSuggestions: [], refreshText: true })
+    this.setState({ tagSuggestions: [] })
 
-    await postSocialEntry()
-    
+    await postSocialEntry(text)
+        
     this.props.toggleVisibility(false)
   }
   
