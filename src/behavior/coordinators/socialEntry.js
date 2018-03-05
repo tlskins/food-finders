@@ -7,16 +7,16 @@ export const loadDraftSocialEntry = ({ RestService, SessionService, pResponseUse
 }
 
 
-export const suggestTags = ({ RestService, pResponseTags }) => async ({ symbol, text }) => {
-  // TODO - Figoure out # encoding
-  if ( symbol === "#" ) {
-    symbol = "%23"
-  }
-  const payload = { symbol, text }
-
-  const tags = await RestService.get('/tags', payload )
-  return pResponseTags(tags)
-}
+// export const suggestTags = ({ RestService, pResponseTags }) => async ({ symbol, text }) => {
+//   // TODO - Figoure out # encoding
+//   if ( symbol === "#" ) {
+//     symbol = "%23"
+//   }
+//   const payload = { symbol, text }
+// 
+//   const tags = await RestService.get('/tags', payload )
+//   return pResponseTags(tags)
+// }
 
 
 export const updateDraftSocialEntry = ({ RestService, SessionService, pResponseUser }) => async (text, requestedAt) => {

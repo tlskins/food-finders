@@ -1,9 +1,43 @@
 export function searchDictionaryBy(dictionary, attribute, text, numResults = 5) {
   const pattern = new RegExp(text,'i')
-  const allMatches = Object.values(dictionary).filter( e => pattern.test(e[attribute]))
+  const allMatches = Object.values(dictionary).filter( e => {
+    const entry = getNestedAttribute(e, attribute)
+    return entry && pattern.test(entry)
+  })
   sortByAttribute(allMatches, attribute, false)
   allMatches.splice(numResults)
   return allMatches
+}
+
+
+export function searchDictionaryByArray(dictionary, attribute, text, numResults = 5) {
+  const pattern = new RegExp(text,'i')
+  const allMatches = Object.values(dictionary).filter( e => {
+    const entry = getNestedAttribute(e, attribute)
+    if ( entry ) {
+      return entry.includes( e => pattern.test(entry) )
+    }
+    else {
+      return false
+    }
+  })
+  allMatches.splice(numResults)
+  return allMatches
+}
+
+
+export function getNestedAttribute(target, attribute) {
+  const attributes = attribute.split('.')
+  let entry = null
+  attributes.forEach( a => {
+    if ( entry ) {
+      entry = entry[a]
+    }
+    else {
+      entry = target[a]
+    }
+  })
+  return entry
 }
 
 
@@ -19,6 +53,19 @@ export function sortByAttribute( list, attribute, reverse = false ) {
 
     return result * ( reverse ? -1 : 1 )
   })
+}
+
+
+export function getAllNestedValues(target) {
+  let results = []
+  for (var key in target) {
+    if (typeof target[key] === "object") {
+      results = [ ...results, ...getAllNestedValues(target[key])]
+    } else {
+      results = [ ...results, target[key]]
+    }
+  }
+  return results
 }
 
 

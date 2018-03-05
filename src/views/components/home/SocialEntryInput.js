@@ -3,7 +3,13 @@ import PropTypes from 'prop-types'
 
 import close from '@res/images/x-icon-gray.png'
 
-import { findWordAtCursor, searchDictionaryBy, stringDifference } from '~/utils'
+import { 
+  findWordAtCursor, 
+  getAllNestedValues,
+  searchDictionaryBy, 
+  searchDictionaryByArray, 
+  stringDifference,
+} from '~/utils'
 
 const initialDraftSocialEntry = { text: '', tags: []}
 
@@ -13,10 +19,10 @@ class SocialEntryInput extends Component {
     const { draftSocialEntry } = props
 
     this.state = {
-      enterPressed: false,
       lastEditAt: undefined,
       text: (draftSocialEntry && draftSocialEntry.text) || '',
       searchText: '',
+      searchStatus: undefined,
       draftSocialEntry: draftSocialEntry || initialDraftSocialEntry,
       tagSuggestions: [],
       tagSymbol: undefined,
@@ -27,7 +33,7 @@ class SocialEntryInput extends Component {
 
   componentWillReceiveProps(nextProps) {
       const { searchText, tagSymbol, lastEditAt } = this.state
-      const { draftSocialEntry, requestedAt } = nextProps
+      const { draftSocialEntry, requestedAt, tagSearches } = nextProps
 
       if ( lastEditAt >= requestedAt ) {
         this.setState({ draftSocialEntry })
@@ -35,93 +41,72 @@ class SocialEntryInput extends Component {
 
       if ( tagSymbol ) {
         this.populateTagSuggestions(nextProps, tagSymbol, searchText)
+        
+        if ( tagSearches[tagSymbol][searchText] ) {
+          const searchStatuses = getAllNestedValues(tagSearches[tagSymbol][searchText])
+          if ( searchStatuses.includes('START_TAG_SEARCH', 'INCOMPLETE_TAG_SEARCH')) {
+            this.setState({ searchStatus: `Loading suggestions for '${ searchText }'...` })
+          }
+          else {
+            this.setState({ searchStatus: `Loaded all suggestions for '${ searchText }'...` })
+          }
+        }
       }
   }
-
-  asyncSuggestSetTags = async (symbol, text) => {
-    const { addEntities, addHashtags, addFoods, suggestTags } = this.props
-    const tagSuggestions = await suggestTags({ symbol, text })
-
-    // Remove these hardcode symbols too
-    if ( symbol === '@' ) {
-      addEntities && addEntities(tagSuggestions)
+  
+  populateTagSuggestions = (props, tagSymbol, searchText, tagsCount = 5) => {
+    const { tags } = props
+    const tagsBySymbol = tags[tagSymbol]
+    if ( Object.values(tagsBySymbol).length > 0 ) {
+      let tagSuggestions = searchDictionaryBy(tagsBySymbol, 'name', searchText)
+      if ( tagSuggestions.length < tagsCount ) {
+        const remainingCount = tagsCount - tagSuggestions.length
+        tagSuggestions = [ ...tagSuggestions, ...searchDictionaryBy(tagsBySymbol, 'embeddedTaggable.description', searchText, remainingCount) ]
+      }
+      if ( tagSuggestions.length < tagsCount ) {
+        const remainingCount = tagsCount - tagSuggestions.length
+        tagSuggestions = [ ...tagSuggestions, ...searchDictionaryByArray(tagsBySymbol, 'embeddedTaggable.synonyms', searchText, remainingCount) ]
+      }
+      this.setState({ tagSuggestions })
     }
-    else if ( symbol === '#' ) {
-      addHashtags && addHashtags(tagSuggestions)
-    }
-    else if ( symbol === '^' ) {
-      addFoods && addFoods(tagSuggestions)
-    }
-  }
-
-  asyncSuggestSetYelp = async text => {
-    const { addYelpBusinessEntities, suggestYelp } = this.props
-    const yelpSuggestions = await suggestYelp( text )
-
-    addYelpBusinessEntities && addYelpBusinessEntities(yelpSuggestions)
-  }
-
-  populateTagSuggestions = (props, tagSymbol, searchText) => {
-    const { entities, hashtags, foods } = props
-
-    if ( tagSymbol === '@' ) {
-      this.setState({ tagSuggestions: searchDictionaryBy(entities, 'name', searchText) })
-    }
-    else if ( tagSymbol === '#' ) {
-      this.setState({ tagSuggestions: searchDictionaryBy(hashtags, 'name', searchText) })
-    }
-    else if ( tagSymbol === '^' ) {
-      this.setState({ tagSuggestions: searchDictionaryBy(foods, 'name', searchText) })
+    else {
+      this.clearTagSearch()
     }
   }
-
-  calculateTags = (text) => {
-    const { tagSymbol, searchText } = this.state
-    // search in redux
-    this.populateTagSuggestions(this.props, tagSymbol, searchText)
-
-    // async populate tags in redux
-    this.asyncSuggestSetTags(tagSymbol, searchText)
-    if ( tagSymbol === "@" ) {
-      this.asyncSuggestSetYelp(searchText)
-    }
-  }
-
-  addTag = (tag, currentEditAt) => () => {
-    const { symbol, handle } = tag
-    let { text, cursorBeginIndex, cursorEndIndex } = this.state
-    const newText = text.slice(0, cursorBeginIndex) + symbol + handle + text.slice(cursorEndIndex)
-
-    this.setState({ tagSuggestions: [], text: newText })
-    this.updateSocialEntry(newText, currentEditAt)
-  }
-    
-  updateCurrentEditData = (text, selectionStart) => {
-    const { currentWord, cursorBeginIndex, cursorEndIndex } = findWordAtCursor(text, selectionStart)
-    const tagSymbol = currentWord && currentWord[0]
-    const searchText = currentWord && currentWord.substr(1)
-
-    this.setState({ cursorBeginIndex, cursorEndIndex, tagSymbol, searchText })
-  }
-
+  
   updateText = e => {
     const newText = e.target.value
     const selectionStart = e.target.selectionStart
-    const { enterPressed, tagSuggestions, text } = this.state
+    const { tagSuggestions, text } = this.state
     const currentEditAt = new Date()
     
     console.log('newText=',newText)
     
     this.setState({ text: newText, lastEditAt: currentEditAt })
+    const editData = this.updateCurrentEditData(newText, selectionStart)
     
     if ( tagSuggestions.length > 0 && stringDifference(text,newText) === '\n' ) {
-      this.updateCurrentEditData(newText, selectionStart)
-      this.addTag(tagSuggestions[0], currentEditAt)()
+      this.addTag(tagSuggestions[0], currentEditAt, editData)()
     }
     else {
       this.updateSocialEntry(newText, currentEditAt)
-      this.updateCurrentEditData(newText, selectionStart)
-      this.calculateTags(newText)
+      this.calculateTags(newText, editData.tagSymbol, editData.searchText )
+    }
+  }
+  
+  updateCurrentEditData = (text, selectionStart) => {
+    const { currentWord, cursorBeginIndex, cursorEndIndex } = findWordAtCursor(text, selectionStart)
+    const { tags } = this.props
+    if ( currentWord && tags[currentWord[0]]) {
+      const tagSymbol = currentWord[0]
+      const searchText = currentWord.substr(1)
+
+      this.setState({ cursorBeginIndex, cursorEndIndex, tagSymbol, searchText })
+      return { cursorBeginIndex, cursorEndIndex, tagSymbol, searchText }
+    }
+    else {
+      this.setState({ cursorBeginIndex, cursorEndIndex, tagSymbol: undefined, searchText: '' })
+      return { cursorBeginIndex, cursorEndIndex, tagSymbol: undefined, searchText: '' }
     }
   }
 
@@ -130,16 +115,46 @@ class SocialEntryInput extends Component {
 
     await updateDraftSocialEntry( text, requestedAt )
   }
+  
+  addTag = (tag, currentEditAt, editData = null) => () => {
+    const { symbol, handle } = tag
+    let { text, cursorBeginIndex, cursorEndIndex } = this.state
+    if ( editData ) {
+      cursorBeginIndex = editData.cursorBeginIndex
+      cursorEndIndex = editData.cursorEndIndex
+    }
+    const newText = text.slice(0, cursorBeginIndex) + symbol + handle + text.slice(cursorEndIndex)
 
+    this.setState({ text: newText })
+    this.clearTagSearch()
+    this.updateSocialEntry(newText, currentEditAt)
+  }
+  
+  calculateTags = async (text, tagSymbol, searchText) => {
+    const { suggestTags } = this.props
+    
+    if ( tagSymbol && searchText ) {
+      this.populateTagSuggestions(this.props, tagSymbol, searchText)
+      await suggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
+    }
+    else {
+      this.clearTagSearch()
+    }
+  }
+  
   onPost = async () => {
     const { postSocialEntry } = this.props
     const { text } = this.state
 
-    this.setState({ tagSuggestions: [] })
+    this.clearTagSearch()
 
     await postSocialEntry(text)
         
     this.props.toggleVisibility(false)
+  }
+  
+  clearTagSearch = () => {
+    this.setState({ tagSuggestions: [], searchStatus: undefined, tagSymbol: undefined })
   }
   
   close = e => {
@@ -149,11 +164,9 @@ class SocialEntryInput extends Component {
   }
 
   render() {
-    const { text, draftSocialEntry, tagSuggestions  } = this.state
+    const { text, draftSocialEntry, searchStatus, tagSuggestions  } = this.state
     const { visible } = this.props
     const { tags } = draftSocialEntry
-    
-    console.log('tags=',tags)
     
     if ( !visible ) {
       return null
@@ -164,14 +177,17 @@ class SocialEntryInput extends Component {
         <div className="modal-form-container__screen"></div>
         <div className="modal-form-container__inner">
           <img className="close" src={ close } onClick={ this.close } />
-          <h1> Compose Message </h1>
+          <h1 className='social-entry-form-header'> { `What's on your mind grapes` } </h1>
           <div className="social-entry-form">
             <textarea type="text"
               className="social-entry-form__textarea"
               value={ text }
               onChange={ this.updateText }
               onKeyDown={ this.onKeyDown }
+              autoFocus
+              tabIndex={ 1 }
               />
+            { searchStatus && searchStatus }
             <div className="social-entry-form__tags">
               Existing Tags:
               { tags && tags.map( (t,i) =>
@@ -201,6 +217,7 @@ class SocialEntryInput extends Component {
                 className="btn btn-3 btn-3e"
                 type="submit" 
                 value="Post" 
+                tabIndex={ 2 }
                 onClick={ this.onPost }
               />
             </div>
@@ -212,19 +229,21 @@ class SocialEntryInput extends Component {
 }
 
 SocialEntryInput.propTypes = {
-  entities: PropTypes.object,
-  foods: PropTypes.object,
-  hashtags: PropTypes.object,
+  // entities: PropTypes.object,
+  // foods: PropTypes.object,
+  // hashtags: PropTypes.object,
+  draftSocialEntry: PropTypes.object,
+  tags: PropTypes.object,
   requestedAt: PropTypes.object,
   visible: PropTypes.bool,
 
-  addEntities: PropTypes.func,
-  addYelpBusinessEntities: PropTypes.func,
-  addHashtags: PropTypes.func,
-  addFoods: PropTypes.func,
+  // addEntities: PropTypes.func,
+  // addYelpBusinessEntities: PropTypes.func,
+  // addHashtags: PropTypes.func,
+  // addFoods: PropTypes.func,
   postSocialEntry: PropTypes.func,
   suggestTags: PropTypes.func,
-  suggestYelp: PropTypes.func,
+  // suggestYelp: PropTypes.func,
   toggleVisibility: PropTypes.func,
   updateDraftSocialEntry: PropTypes.func,
 }

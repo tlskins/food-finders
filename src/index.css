@@ -386,6 +386,15 @@ body {
   padding: 5px 50px 15px 15px;
 }
 
+.social-entry-form-header {
+  display: block;
+  margin: 10px 5px 20px 30px;
+  /* width: 45px;
+  height: 45px; */
+  /* z-index: 2; */
+  background: url("./_res/images/icons8-grapes-64.png") no-repeat;
+}
+
 .social-entry-form__textarea {
   padding: 10px;
   max-width: 100%;

@@ -8,7 +8,7 @@ import presenters from '@presenters'
 
 
 const mapStateToProps = state => {
-  const { entities, foods, hashtags, session, socialEntry } = state
+  const { session, socialEntry, tags, tagSearches } = state
   const { requestedAt, user } = session
   const { visible } = socialEntry
 
@@ -16,37 +16,40 @@ const mapStateToProps = state => {
 
   return {
     draftSocialEntry,
-    entities,
-    foods,
-    hashtags,
+    // entities,
+    // foods,
+    // hashtags,
+    tags,
+    tagSearches,
     requestedAt,
     visible,
   }
 }
 
 const mapDispatchToProps = () => {
-  const { RestService, EntityService, FoodService, HashtagService, SessionService, UIService } = services
+  // const { RestService, EntityService, FoodService, HashtagService, SessionService, UIService } = services
+  const { RestService, TagService, SessionService, UIService } = services
   const { pResponseGeneric, pResponseYelpBusinesses } = presenters.Api
   const pResponseUser = pResponseGeneric
   const pResponseTags = pResponseGeneric
-
+//
   const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
   const updateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService, pResponseUser })
   const postSocialEntry = coordinators.postSocialEntry({ RestService, SessionService, pResponseUser })
-  const suggestTags = coordinators.suggestTags({ RestService, pResponseTags })
-  const suggestYelp = coordinators.suggestYelp({ RestService, pResponseYelpBusinesses })
-  const { addEntities, addYelpBusinessEntities } = EntityService
-  const { addFoods } = FoodService
-  const { addHashtags } = HashtagService
+  const suggestTags = coordinators.suggestTags({ RestService, TagService, pResponseTags, pResponseYelpBusinesses })
+  // const suggestYelp = coordinators.suggestYelp({ RestService, pResponseYelpBusinesses })
+  // const { addEntities, addYelpBusinessEntities } = EntityService
+  // const { addFoods } = FoodService
+  // const { addHashtags } = HashtagService
 
   return {
-    addEntities,
-    addHashtags,
-    addFoods,
-    addYelpBusinessEntities,
+    // addEntities,
+    // addHashtags,
+    // addFoods,
+    // addYelpBusinessEntities,
     postSocialEntry,
     suggestTags,
-    suggestYelp,
+    // suggestYelp,
     toggleVisibility,
     updateDraftSocialEntry,
   }

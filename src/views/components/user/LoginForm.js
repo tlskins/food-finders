@@ -252,7 +252,7 @@ class LoginForm extends Component {
 
 LoginForm.propTypes = {
   errors: PropTypes.object,
-  mode: PropTypes.object,
+  mode: PropTypes.string,
   visible: PropTypes.bool,
 
   close: PropTypes.func,
