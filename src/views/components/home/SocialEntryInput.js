@@ -69,9 +69,6 @@ class SocialEntryInput extends Component {
       }
       this.setState({ tagSuggestions })
     }
-    else {
-      this.clearTagSearch()
-    }
   }
   
   updateText = e => {
@@ -82,15 +79,15 @@ class SocialEntryInput extends Component {
     
     console.log('newText=',newText)
     
-    this.setState({ text: newText, lastEditAt: currentEditAt })
     const editData = this.updateCurrentEditData(newText, selectionStart)
+    this.setState({ text: newText, lastEditAt: currentEditAt })
     
     if ( tagSuggestions.length > 0 && stringDifference(text,newText) === '\n' ) {
       this.addTag(tagSuggestions[0], currentEditAt, editData)()
     }
     else {
       this.updateSocialEntry(newText, currentEditAt)
-      this.calculateTags(newText, editData.tagSymbol, editData.searchText )
+      this.calculateTags(newText, editData['tagSymbol'], editData['searchText'] )
     }
   }
   
