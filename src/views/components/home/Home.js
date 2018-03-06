@@ -24,6 +24,13 @@ class Home extends Component {
       }
     }, 100 )
   }
+  
+  componentWillReceiveProps(nextProps) {
+    if ( !this.props.currentUser && nextProps.currentUser ) {
+      const { loadRootTags } = this.props
+      ( async() => await loadRootTags() )()
+    } 
+  }
 
   render() {
     const { currentUser, friendsManagerVisible } = this.props

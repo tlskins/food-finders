@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import Home from '@components/home/Home'
 
 import services from '@services'
+import coordinators from '@coordinators'
+import presenters from '@presenters'
 
 
 const mapStateToProps = state => {
@@ -17,11 +19,16 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  const { RouterService } = services
+  const { RouterService, RestService, TagService } = services
+  const { pResponseGeneric } = presenters.Api
+  const pResponseRoots = pResponseGeneric
+
 
   const redirect = () => RouterService.replace({ pathname: '/login' })
+  const loadRootTags = coordinators.loadRootTags({ TagService, RestService, pResponseRoots })
 
   return {
+    loadRootTags,
     redirect,
   }
 }

@@ -6,6 +6,9 @@ export class TagService extends BaseService {
   addTags = (symbol, tags) => {
     this.dispatch( actions.addTags(symbol, tags) )
   }
+  loadRootTags = (rootTags) => {
+    this.dispatch( actions.loadRootTags(rootTags) )
+  }
 
   // Tag Searches
   startTagSearch = ({ symbol, text, page, resultsPerPage, source }) => {

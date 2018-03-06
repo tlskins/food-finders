@@ -1,3 +1,10 @@
+export const loadRootTags = async ({ TagService, RestService, pResponseRoots }) => {
+  const response = await RestService.get('/tags/all_roots' )
+  const tags = pResponseRoots(response)
+  TagService.loadRootTags(tags)
+}
+
+
 const getPriorSearchStatus = ({ source, TagService, searchIndex }) => {
   const { tagSearches } = TagService.getState()
   const { symbol, text, resultsPerPage, page } = searchIndex

@@ -1,5 +1,7 @@
 export const ADD_TAGS = 'ADD_TAGS'
 
+export const LOAD_ROOT_TAGS = 'LOAD_ROOT_TAGS'
+
 export const START_TAG_SEARCH = 'START_TAG_SEARCH'
 
 export const INCOMPLETE_TAG_SEARCH = 'INCOMPLETE_TAG_SEARCH'
@@ -8,6 +10,8 @@ export const COMPLETE_TAG_SEARCH = 'COMPLETE_TAG_SEARCH'
 
 
 export const addTags = (symbol, tags) => ({ type: ADD_TAGS, symbol, tags })
+
+export const loadRootTags = rootTags => ({ type: LOAD_ROOT_TAGS, rootTags })
 
 export const startTagSearch = ({
   symbol,

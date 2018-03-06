@@ -1,5 +1,6 @@
 import {
   ADD_TAGS,
+  LOAD_ROOT_TAGS,
   START_TAG_SEARCH,
   INCOMPLETE_TAG_SEARCH,
   COMPLETE_TAG_SEARCH,
@@ -15,6 +16,9 @@ export const tags = (state = {...initialTagsState}, action) => {
       action.tags.forEach( e => state[e.symbol][e.handle] = e )
 
       return { ...state }
+    }
+    case LOAD_ROOT_TAGS: {
+      return { ...action.rootTags }
     }
 
     default:

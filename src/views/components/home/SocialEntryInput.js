@@ -57,7 +57,12 @@ class SocialEntryInput extends Component {
   populateTagSuggestions = (props, tagSymbol, searchText, tagsCount = 5) => {
     const { tags } = props
     const tagsBySymbol = tags[tagSymbol]
-    if ( Object.values(tagsBySymbol).length > 0 ) {
+    
+    if ( Object.values(tagsBySymbol).length < 1 ) {
+      return
+    }
+    
+    if ( searchText.length > 0 ) {
       let tagSuggestions = searchDictionaryBy(tagsBySymbol, 'name', searchText)
       if ( tagSuggestions.length < tagsCount ) {
         const remainingCount = tagsCount - tagSuggestions.length
@@ -68,6 +73,9 @@ class SocialEntryInput extends Component {
         tagSuggestions = [ ...tagSuggestions, ...searchDictionaryByArray(tagsBySymbol, 'embeddedTaggable.synonyms', searchText, remainingCount) ]
       }
       this.setState({ tagSuggestions })
+    }
+    else if ( tagsBySymbol['roots'] ) {
+      this.setState({ tagSuggestions: tagsBySymbol['roots'] })
     }
   }
   
@@ -130,9 +138,11 @@ class SocialEntryInput extends Component {
   calculateTags = async (text, tagSymbol, searchText) => {
     const { suggestTags } = this.props
     
-    if ( tagSymbol && searchText ) {
+    if ( tagSymbol  ) {
       this.populateTagSuggestions(this.props, tagSymbol, searchText)
-      await suggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
+      if ( searchText && searchText.length > 0 ) {
+        await suggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
+      }
     }
     else {
       this.clearTagSearch()
