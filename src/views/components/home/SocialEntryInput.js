@@ -226,21 +226,13 @@ class SocialEntryInput extends Component {
 }
 
 SocialEntryInput.propTypes = {
-  // entities: PropTypes.object,
-  // foods: PropTypes.object,
-  // hashtags: PropTypes.object,
   draftSocialEntry: PropTypes.object,
   tags: PropTypes.object,
   requestedAt: PropTypes.object,
   visible: PropTypes.bool,
 
-  // addEntities: PropTypes.func,
-  // addYelpBusinessEntities: PropTypes.func,
-  // addHashtags: PropTypes.func,
-  // addFoods: PropTypes.func,
   postSocialEntry: PropTypes.func,
   suggestTags: PropTypes.func,
-  // suggestYelp: PropTypes.func,
   toggleVisibility: PropTypes.func,
   updateDraftSocialEntry: PropTypes.func,
 }

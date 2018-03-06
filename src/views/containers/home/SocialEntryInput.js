@@ -16,9 +16,6 @@ const mapStateToProps = state => {
 
   return {
     draftSocialEntry,
-    // entities,
-    // foods,
-    // hashtags,
     tags,
     tagSearches,
     requestedAt,
@@ -27,29 +24,19 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  // const { RestService, EntityService, FoodService, HashtagService, SessionService, UIService } = services
   const { RestService, TagService, SessionService, UIService } = services
   const { pResponseGeneric, pResponseYelpBusinesses } = presenters.Api
   const pResponseUser = pResponseGeneric
   const pResponseTags = pResponseGeneric
-//
+
   const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
   const updateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService, pResponseUser })
   const postSocialEntry = coordinators.postSocialEntry({ RestService, SessionService, pResponseUser })
   const suggestTags = coordinators.suggestTags({ RestService, TagService, pResponseTags, pResponseYelpBusinesses })
-  // const suggestYelp = coordinators.suggestYelp({ RestService, pResponseYelpBusinesses })
-  // const { addEntities, addYelpBusinessEntities } = EntityService
-  // const { addFoods } = FoodService
-  // const { addHashtags } = HashtagService
 
   return {
-    // addEntities,
-    // addHashtags,
-    // addFoods,
-    // addYelpBusinessEntities,
     postSocialEntry,
     suggestTags,
-    // suggestYelp,
     toggleVisibility,
     updateDraftSocialEntry,
   }

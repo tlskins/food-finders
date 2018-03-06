@@ -4,10 +4,6 @@ testing avoiding importing browserHistory node module
 */
 
 import * as RestService from './rest'
-import * as YelpService from './yelp'
-import * as EntityService from './entity'
-import * as FoodService from './food'
-import * as HashtagService from './hashtag'
 import * as RouterService from './router'
 import * as SessionService from './session'
 import * as TagService from './tag'
@@ -15,11 +11,7 @@ import * as UsersService from './users'
 import UIService from './ui/index'
 
 const coreServices = {
-  ...EntityService,
   ...RestService,
-  ...YelpService,
-  ...HashtagService,
-  ...FoodService,
   ...RouterService,
   ...SessionService,
   ...TagService,
