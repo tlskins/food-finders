@@ -47,7 +47,7 @@ class SocialEntryInput extends Component {
 
         if ( tagSearches[tagSymbol][searchText] ) {
           const searchStatuses = getAllNestedValues(tagSearches[tagSymbol][searchText])
-          if ( searchStatuses.includes('START_TAG_SEARCH', 'INCOMPLETE_TAG_SEARCH')) {
+          if ( searchStatuses.some( s => ['START_TAG_SEARCH', 'INCOMPLETE_TAG_SEARCH'].includes(s) ) ) {
             this.setState({ searchStatus: `Loading suggestions for '${ searchText }'...` })
           }
           else {
@@ -59,7 +59,9 @@ class SocialEntryInput extends Component {
 
   populateTagSuggestions = (props, tagSymbol, searchText, tagsCount = 5) => {
     const { tags } = props
-    const tagsBySymbol = tags[tagSymbol]
+    const tagsBySymbol = { ...tags[tagSymbol] }
+    delete tagsBySymbol.roots
+    const roots = tags[tagSymbol].roots || []
 
     if ( Object.values(tagsBySymbol).length < 1 ) {
       return
@@ -77,8 +79,8 @@ class SocialEntryInput extends Component {
       }
       this.setState({ tagSuggestions, selectedTagIndex: 0 })
     }
-    else if ( tagsBySymbol['roots'] ) {
-      this.setState({ tagSuggestions: tagsBySymbol['roots'], selectedTagIndex: 0 })
+    else {
+      this.setState({ tagSuggestions: roots, selectedTagIndex: 0 })
     }
   }
 
@@ -87,7 +89,7 @@ class SocialEntryInput extends Component {
     const { tagSuggestions } = this.state
     if ( tagSuggestions.length > 0 ) {
       // down arrow key
-      if ( e.keyCode === 40 ) {
+      if ( e.keyCode === 38 ) {
         e.stopPropagation()
         e.preventDefault()
         selectedTagIndex -= 1
@@ -97,7 +99,7 @@ class SocialEntryInput extends Component {
         this.setState({ selectedTagIndex })
       }
       // up arrow key
-      if ( e.keyCode === 38 ) {
+      if ( e.keyCode === 40 ) {
         e.stopPropagation()
         e.preventDefault()
         selectedTagIndex += 1

@@ -6,6 +6,7 @@ export function searchDictionaryBy(dictionary, attribute, text, numResults = 5) 
   })
   sortByAttribute(allMatches, attribute, false)
   allMatches.splice(numResults)
+  allMatches.forEach( m => delete dictionary[m.handle] )
   return allMatches
 }
 
@@ -14,7 +15,7 @@ export function searchDictionaryByArray(dictionary, attribute, text, numResults 
   const pattern = new RegExp(text,'i')
   const allMatches = Object.values(dictionary).filter( e => {
     const entry = getNestedAttribute(e, attribute)
-    if ( entry ) {
+    if ( entry && typeof entry === 'object' && entry.constructor === Array ) {
       return entry.includes( e => pattern.test(entry) )
     }
     else {
@@ -22,6 +23,7 @@ export function searchDictionaryByArray(dictionary, attribute, text, numResults 
     }
   })
   allMatches.splice(numResults)
+  allMatches.forEach( m => delete dictionary[m.handle] )
   return allMatches
 }
 

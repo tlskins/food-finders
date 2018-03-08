@@ -18,7 +18,7 @@ class TagSuggestions extends Component {
     const { selectedTagIndex, tagSuggestions } = nextProps
     const selectedTag = tagSuggestions[selectedTagIndex]
     const childTags = (selectedTag && selectedTag.embeddedTaggable && selectedTag.embeddedTaggable.children) || []
-    const parentTaggableType = selectedTag && selectedTag.taggableType.toLowerCase()
+    const parentTaggableType = selectedTag && selectedTag.taggableType && selectedTag.taggableType.toLowerCase()
     const selectedTagChanged = (selectedTag && selectedTag.id) !== (this.state.selectedTag && this.state.selectedTag.id)
 
     this.setState({
