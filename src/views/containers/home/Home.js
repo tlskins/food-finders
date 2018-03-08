@@ -8,13 +8,13 @@ import presenters from '@presenters'
 
 
 const mapStateToProps = state => {
-  const { session, friendsManager } = state
-  const { visible } = friendsManager
+  const { session, friendsManager, socialEntry } = state
   const currentUser = session ? session.user : undefined
 
   return {
     currentUser,
-    friendsManagerVisible: visible,
+    friendsManagerVisible: friendsManager.visible,
+    socialEntryVisible: socialEntry.visible,
   }
 }
 

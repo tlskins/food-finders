@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import TagSuggestions from '@components/home/TagSuggestions'
 import close from '@res/images/x-icon-gray.png'
 
 import {
@@ -10,6 +11,7 @@ import {
   searchDictionaryByArray,
   stringDifference,
 } from '~/utils'
+
 
 const initialDraftSocialEntry = { text: '', tags: []}
 
@@ -202,10 +204,6 @@ class SocialEntryInput extends Component {
     const { text, draftSocialEntry, searchStatus, selectedTagIndex, tagSuggestions  } = this.state
     const { visible } = this.props
     const { tags } = draftSocialEntry
-    const selectedTag = tagSuggestions[selectedTagIndex]
-    const childTags = (selectedTag && selectedTag.embeddedTaggable && selectedTag.embeddedTaggable.children) || []
-    // const childTags = selectedTag ? (selectedTag.children || []) : []
-    const parentTaggableType = selectedTag && selectedTag.taggableType.toLowerCase()
 
     if ( !visible ) {
       return null
@@ -238,45 +236,15 @@ class SocialEntryInput extends Component {
                 </div>
               ) }
             </div>
+
             Tag Suggestions:
-            <div className='social-entry-form__suggestions-container'>
-              <div className='social-entry-form__suggestions'>
-                { tagSuggestions.map( (t,i) =>
-                  <div
-                    key={i}
-                    className={ 'social-entry-form__suggestions__item--' + (t.taggableType || '').toLowerCase() + (selectedTagIndex === i ? ' selected ' : '') }
-                    onClick={ this.addTag(t, new Date()) }
-                    onMouseEnter={ () => this.setState({ selectedTagIndex: i }) }
-                  >
-                    <div className={ 'social-entry-form__suggestions__icon--' + (t.taggableType || '').toLowerCase() }/>
-                    <div>
-                      { t.name }
-                    </div>
-                    <p className={ 'form__suggestions__item--description' }>
-                      { t.embeddedTaggable && t.embeddedTaggable.description && `${ t.embeddedTaggable.description }` }
-                    </p>
-                    <p className={ 'form__suggestions__item--description' }>
-                      { t.embeddedTaggable && t.embeddedTaggable.synonyms.length > 0 && `Synonyms: ${ t.embeddedTaggable.synonyms }` }
-                    </p>
-                  </div>
-                ) }
-              </div>
-              <div className='social-entry-form__suggestions-children'>
-                { childTags.map( (t,i) =>
-                  <div
-                    key={i}
-                    className={ 'social-entry-form__suggestions__shortitem--' + parentTaggableType }
-                  >
-                    <div>
-                      { t.name }
-                    </div>
-                    <p className={ 'form__suggestions__item--description' }>
-                      { t.description }
-                    </p>
-                  </div>
-                ) }
-              </div>
-            </div>
+            <TagSuggestions
+              tagSuggestions={ tagSuggestions }
+              selectedTagIndex={ selectedTagIndex }
+              onClickTag={ this.addTag }
+              onMouseOverTag={ (selectedTagIndex) => this.setState({ selectedTagIndex }) }
+            />
+
             <div className="social-entry-form__submit--container">
               <input
                 className="btn btn-3 btn-3e"

@@ -10,6 +10,7 @@ body {
 #root {
   font: 600 16px 'Merriweather Sans', sans-serif;
   overflow-x: hidden;
+  overflow-y: inherit;
 }
 
 .container {
@@ -561,6 +562,10 @@ body {
 
 /** Tags **/
 
+.social-entry-visible {
+  overflow: hidden;
+}
+
 .social-entry-form__tags {
   display: flex;
   flex-direction: row;
@@ -657,6 +662,10 @@ body {
   padding: 13px;
 }
 
+.parent-child-tag-line {
+  position: fixed;
+}
+
 [class^="social-entry-form__suggestions__shortitem"] {
   cursor: pointer;
   height: 25px;
@@ -672,7 +681,7 @@ body {
   border-color: rgb(147, 218, 246);
   border-radius: 7px;
   background-color: rgb(147, 218, 246);
-  margin-left: 6px;
+  margin-left: 40px;
   margin-right: 6px;
   padding: 13px;
 }
