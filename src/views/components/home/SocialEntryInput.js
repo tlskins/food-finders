@@ -9,7 +9,6 @@ import {
   getAllNestedValues,
   searchDictionaryBy,
   searchDictionaryByArray,
-  stringDifference,
 } from '~/utils'
 
 
@@ -88,6 +87,14 @@ class SocialEntryInput extends Component {
     let { selectedTagIndex } = this.state
     const { tagSuggestions } = this.state
     if ( tagSuggestions.length > 0 ) {
+      // left arrow key
+      if ( e.keyCode === 37 ) {
+
+      }
+      // right arrow key
+      if ( e.keyCode === 39 ) {
+
+      }
       // down arrow key
       if ( e.keyCode === 38 ) {
         e.stopPropagation()
@@ -108,41 +115,36 @@ class SocialEntryInput extends Component {
         }
         this.setState({ selectedTagIndex })
       }
+
+      // enter arrow key
+      if ( e.keyCode === 13 ) {
+        e.stopPropagation()
+        e.preventDefault()
+        this.addTag( tagSuggestions[selectedTagIndex], new Date() )()
+      }
     }
   }
 
   updateText = e => {
     const newText = e.target.value
     const selectionStart = e.target.selectionStart
-    const { selectedTagIndex, tagSuggestions, text } = this.state
     const currentEditAt = new Date()
 
-    console.log('newText=',newText)
-
-    const editData = this.updateCurrentEditData(newText, selectionStart)
-    this.setState({ text: newText, lastEditAt: currentEditAt })
-
-    if ( tagSuggestions.length > 0 && stringDifference(text,newText) === '\n' ) {
-      this.addTag(tagSuggestions[selectedTagIndex], currentEditAt, editData)()
-    }
-    else {
-      this.updateSocialEntry(newText, currentEditAt)
-      this.calculateTags(newText, editData['tagSymbol'], editData['searchText'] )
-    }
+    const cursorTextData = this.calculateCursorTextData(newText, selectionStart)
+    this.setState({ text: newText, lastEditAt: currentEditAt, ...cursorTextData }, () => this.calculateTags(newText) )
+    this.updateSocialEntry(newText, currentEditAt)
   }
 
-  updateCurrentEditData = (text, selectionStart) => {
+  calculateCursorTextData = (text, selectionStart) => {
     const { currentWord, cursorBeginIndex, cursorEndIndex } = findWordAtCursor(text, selectionStart)
     const { tags } = this.props
     if ( currentWord && tags[currentWord[0]]) {
       const tagSymbol = currentWord[0]
       const searchText = currentWord.substr(1)
 
-      this.setState({ cursorBeginIndex, cursorEndIndex, tagSymbol, searchText })
       return { cursorBeginIndex, cursorEndIndex, tagSymbol, searchText }
     }
     else {
-      this.setState({ cursorBeginIndex, cursorEndIndex, tagSymbol: undefined, searchText: '' })
       return { cursorBeginIndex, cursorEndIndex, tagSymbol: undefined, searchText: '' }
     }
   }
@@ -167,8 +169,9 @@ class SocialEntryInput extends Component {
     this.updateSocialEntry(newText, currentEditAt)
   }
 
-  calculateTags = async (text, tagSymbol, searchText) => {
+  calculateTags = async text => {
     const { suggestTags } = this.props
+    const { searchText, tagSymbol } = this.state
 
     if ( tagSymbol  ) {
       this.populateTagSuggestions(this.props, tagSymbol, searchText)
