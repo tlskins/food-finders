@@ -5,7 +5,7 @@ export const loadRootTags = async ({ TagService, RestService, pResponseRoots }) 
 }
 
 
-const getPriorSearchStatus = ({ source, TagService, searchIndex }) => {
+const _getPriorSearchStatus = ({ source, TagService, searchIndex }) => {
   const { tagSearches } = TagService.getState()
   const { symbol, text, resultsPerPage, page } = searchIndex
   let priorSearchStatus
@@ -19,7 +19,25 @@ const getPriorSearchStatus = ({ source, TagService, searchIndex }) => {
 }
 
 
-const searchCoreTags = async ({ TagService, RestService, pResponseTags, searchIndex }) => {
+const _getMissingTags = ({ symbol, TagService, handles }) => {
+  const { tags } = TagService.getState()
+  const tagsBySymbol = tags[symbol]
+  return handles.filter( h => !tagsBySymbol[h.slice(1)])
+}
+
+
+const _searchCoreTags = ({ TagService, RestService, pResponseTags, searchIndex }) => {
+  const { text, handles } = searchIndex
+  if ( text ) {
+    _searchCoreTagsByText({ TagService, RestService, pResponseTags, searchIndex })
+  }
+  else if ( handles ) {
+    _searchCoreTagsByHandles({ TagService, RestService, pResponseTags, searchIndex })
+  }
+}
+
+
+const _searchCoreTagsByText = async ({ TagService, RestService, pResponseTags, searchIndex }) => {
   const { symbol, text, resultsPerPage, page } = searchIndex
   let parsedSymbol = symbol
   if ( symbol === "#" ) {
@@ -40,6 +58,15 @@ const searchCoreTags = async ({ TagService, RestService, pResponseTags, searchIn
 }
 
 
+const _searchCoreTagsByHandles = async ({ TagService, RestService, pResponseTags, searchIndex }) => {
+  const { symbol, handles, resultsPerPage, page } = searchIndex
+  const payload = { handles: encodeURIComponent(handles), results_per_page: resultsPerPage, page }
+  const response = await RestService.get('/tags', payload )
+  const tags = pResponseTags(response)
+  TagService.addTags(symbol, tags)
+}
+
+
 const searchYelpTags = async ({ TagService, RestService, pResponseYelpBusinesses, searchIndex }) => {
   const { symbol, text } = searchIndex
   const yelpSearchIndex = { ...searchIndex, source: 'yelp' }
@@ -56,18 +83,27 @@ const searchYelpTags = async ({ TagService, RestService, pResponseYelpBusinesses
 }
 
 
-export const suggestTags = ({ RestService, TagService, pResponseTags, pResponseYelpBusinesses }) => ({ symbol, text, resultsPerPage, page }) => {
-  const searchIndex = { symbol, text, resultsPerPage, page }
+export const suggestTags = ({ RestService, TagService, pResponseTags, pResponseYelpBusinesses }) =>
+({ symbol, text, handles, resultsPerPage, page }) =>
+{
+  if ( text ) {
+    const searchIndex = { symbol, text, resultsPerPage, page }
+    if ( symbol === '@' ) {
+      const priorYelpSearchStatus = _getPriorSearchStatus({ source: 'yelp', TagService, searchIndex })
+      if ( !priorYelpSearchStatus || priorYelpSearchStatus === 'INCOMPLETE' ) {
+        searchYelpTags({ TagService, RestService, pResponseYelpBusinesses, searchIndex })
+      }
+    }
 
-  if ( symbol === '@' ) {
-    const priorYelpSearchStatus = getPriorSearchStatus({ source: 'yelp', TagService, searchIndex })
-    if ( !priorYelpSearchStatus || priorYelpSearchStatus === 'INCOMPLETE' ) {
-      searchYelpTags({ TagService, RestService, pResponseYelpBusinesses, searchIndex })
+    const priorCoreSearchStatus = _getPriorSearchStatus({ source: 'core', TagService, searchIndex })
+    if ( !priorCoreSearchStatus || priorCoreSearchStatus === 'INCOMPLETE' ) {
+      _searchCoreTags({ TagService, RestService, pResponseTags, searchIndex })
     }
   }
-
-  const priorCoreSearchStatus = getPriorSearchStatus({ source: 'core', TagService, searchIndex })
-  if ( !priorCoreSearchStatus || priorCoreSearchStatus === 'INCOMPLETE' ) {
-    searchCoreTags({ TagService, RestService, pResponseTags, searchIndex })
+  else if ( handles ) {
+    const missingTags = _getMissingTags({ symbol, TagService, handles })
+    if ( missingTags.length > 0 ) {
+      _searchCoreTags({ TagService, RestService, pResponseTags, searchIndex: { symbol, handles: missingTags, resultsPerPage, page } })
+    }
   }
 }

@@ -1,3 +1,4 @@
+// Mutates dictionary by splicing out found entry
 export function searchDictionaryBy(dictionary, attribute, text, numResults = 5) {
   const pattern = new RegExp(text,'i')
   const allMatches = Object.values(dictionary).filter( e => {
@@ -11,6 +12,7 @@ export function searchDictionaryBy(dictionary, attribute, text, numResults = 5) 
 }
 
 
+// Mutates dictionary by splicing out found entry
 export function searchDictionaryByArray(dictionary, attribute, text, numResults = 5) {
   const pattern = new RegExp(text,'i')
   const allMatches = Object.values(dictionary).filter( e => {
@@ -24,6 +26,17 @@ export function searchDictionaryByArray(dictionary, attribute, text, numResults 
   })
   allMatches.splice(numResults)
   allMatches.forEach( m => delete dictionary[m.handle] )
+  return allMatches
+}
+
+
+export function searchDictionaryByKeys(dictionary, keys, numResults = 5) {
+  let allMatches = []
+  Object.entries(dictionary).forEach( k => {
+    if ( keys.includes(k[0]) ) {
+      allMatches.push(k[1])
+    }
+  })
   return allMatches
 }
 

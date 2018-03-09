@@ -9,6 +9,7 @@ import {
   getAllNestedValues,
   searchDictionaryBy,
   searchDictionaryByArray,
+  searchDictionaryByKeys,
 } from '~/utils'
 
 
@@ -23,6 +24,7 @@ class SocialEntryInput extends Component {
       lastEditAt: undefined,
       text: (draftSocialEntry && draftSocialEntry.text) || '',
       searchText: '',
+      searchHandles: undefined,
       searchStatus: undefined,
       draftSocialEntry: draftSocialEntry || initialDraftSocialEntry,
       tagSuggestions: [],
@@ -35,14 +37,14 @@ class SocialEntryInput extends Component {
 
   componentWillReceiveProps(nextProps) {
       const { searchText, tagSymbol, lastEditAt } = this.state
-      const { draftSocialEntry, requestedAt, tagSearches } = nextProps
+      const { draftSocialEntry, requestedAt, tags, tagSearches } = nextProps
 
       if ( lastEditAt >= requestedAt ) {
         this.setState({ draftSocialEntry })
       }
 
       if ( tagSymbol ) {
-        this.populateTagSuggestions(nextProps, tagSymbol, searchText)
+        this.populateTagSuggestions(tags)
 
         if ( tagSearches[tagSymbol][searchText] ) {
           const searchStatuses = getAllNestedValues(tagSearches[tagSymbol][searchText])
@@ -56,8 +58,8 @@ class SocialEntryInput extends Component {
       }
   }
 
-  populateTagSuggestions = (props, tagSymbol, searchText, tagsCount = 5) => {
-    const { tags } = props
+  populateTagSuggestions = (tags, tagsCount = 5) => {
+    const { searchText, searchHandles, tagSymbol } = this.state
     const tagsBySymbol = { ...tags[tagSymbol] }
     delete tagsBySymbol.roots
     const roots = tags[tagSymbol].roots || []
@@ -66,20 +68,32 @@ class SocialEntryInput extends Component {
       return
     }
 
-    if ( searchText.length > 0 ) {
-      let tagSuggestions = searchDictionaryBy(tagsBySymbol, 'name', searchText)
-      if ( tagSuggestions.length < tagsCount ) {
-        const remainingCount = tagsCount - tagSuggestions.length
-        tagSuggestions = [ ...tagSuggestions, ...searchDictionaryBy(tagsBySymbol, 'embeddedTaggable.description', searchText, remainingCount) ]
+    if ( typeof searchText !== 'undefined' ) {
+      if ( searchText.length > 0 ) {
+        let tagSuggestions = searchDictionaryBy(tagsBySymbol, 'name', searchText)
+        if ( tagSuggestions.length < tagsCount ) {
+          const remainingCount = tagsCount - tagSuggestions.length
+          tagSuggestions = [ ...tagSuggestions, ...searchDictionaryBy(tagsBySymbol, 'embeddedTaggable.description', searchText, remainingCount) ]
+        }
+        if ( tagSuggestions.length < tagsCount ) {
+          const remainingCount = tagsCount - tagSuggestions.length
+          tagSuggestions = [ ...tagSuggestions, ...searchDictionaryByArray(tagsBySymbol, 'embeddedTaggable.synonyms', searchText, remainingCount) ]
+        }
+        this.setState({ tagSuggestions, selectedTagIndex: 0 })
       }
-      if ( tagSuggestions.length < tagsCount ) {
-        const remainingCount = tagsCount - tagSuggestions.length
-        tagSuggestions = [ ...tagSuggestions, ...searchDictionaryByArray(tagsBySymbol, 'embeddedTaggable.synonyms', searchText, remainingCount) ]
+      else {
+        this.setState({ tagSuggestions: roots, selectedTagIndex: 0 })
       }
-      this.setState({ tagSuggestions, selectedTagIndex: 0 })
     }
-    else {
-      this.setState({ tagSuggestions: roots, selectedTagIndex: 0 })
+    else if ( searchHandles ) {
+      const searchKeys = searchHandles.map( h => h.slice(1) )
+      if ( searchKeys.length > 0 ) {
+        const tagSuggestions = searchDictionaryByKeys(tagsBySymbol, searchKeys)
+        this.setState({ tagSuggestions })
+      }
+      else {
+        this.setState({ tagSuggestions: roots, selectedTagIndex: 0 })
+      }
     }
   }
 
@@ -87,26 +101,48 @@ class SocialEntryInput extends Component {
     let { selectedTagIndex } = this.state
     const { tagSuggestions } = this.state
     if ( tagSuggestions.length > 0 ) {
-      // left arrow key
-      if ( e.keyCode === 37 ) {
-
-      }
       // right arrow key
       if ( e.keyCode === 39 ) {
-
-      }
-      // down arrow key
-      if ( e.keyCode === 38 ) {
         e.stopPropagation()
         e.preventDefault()
-        selectedTagIndex -= 1
-        if ( selectedTagIndex < 0 ) {
-          selectedTagIndex = tagSuggestions.length - 1
+        const selectedTag = tagSuggestions[selectedTagIndex]
+        const selectedTaggable = selectedTag.embeddedTaggable
+        if ( selectedTaggable && selectedTaggable.children && selectedTaggable.children.length > 0 ) {
+          const childTagHandles = selectedTaggable.children.map( c => c.tagSymbol + c.tagHandle )
+          this.setState({
+            searchHandles: childTagHandles,
+            searchText: undefined,
+            selectedTagIndex: 0,
+            searchStatus: `Loading ${ selectedTag.name }...`,
+          }, () => this.calculateTags() )
         }
-        this.setState({ selectedTagIndex })
       }
-      // up arrow key
-      if ( e.keyCode === 40 ) {
+      // left arrow key
+      else if ( e.keyCode === 37 ) {
+        e.stopPropagation()
+        e.preventDefault()
+        const selectedTag = tagSuggestions[selectedTagIndex]
+        if ( selectedTag.embeddedTaggable && selectedTag.embeddedTaggable.parent ) {
+          const parentTaggable = selectedTag.embeddedTaggable.parent
+          const parentHandle = parentTaggable.tagSymbol + parentTaggable.tagHandle
+          const parentSiblingHandles = (parentTaggable && parentTaggable.siblings) || []
+          this.setState({
+            searchHandles: [parentHandle, ...parentSiblingHandles],
+            searchText: undefined,
+            selectedTagIndex: 0,
+            searchStatus: `Loading ${ selectedTag.name }...`,
+          }, () => this.calculateTags() )
+        }
+        else {
+          this.setState({
+            searchHandles: [],
+            searchText: undefined,
+            selectedTagIndex: 0,
+          }, () => this.calculateTags() )
+        }
+      }
+      // down arrow key
+      else if ( e.keyCode === 40 ) {
         e.stopPropagation()
         e.preventDefault()
         selectedTagIndex += 1
@@ -115,9 +151,18 @@ class SocialEntryInput extends Component {
         }
         this.setState({ selectedTagIndex })
       }
-
+      // up arrow key
+      else if ( e.keyCode === 38 ) {
+        e.stopPropagation()
+        e.preventDefault()
+        selectedTagIndex -= 1
+        if ( selectedTagIndex < 0 ) {
+          selectedTagIndex = tagSuggestions.length - 1
+        }
+        this.setState({ selectedTagIndex })
+      }
       // enter arrow key
-      if ( e.keyCode === 13 ) {
+      else if ( e.keyCode === 13 ) {
         e.stopPropagation()
         e.preventDefault()
         this.addTag( tagSuggestions[selectedTagIndex], new Date() )()
@@ -169,14 +214,20 @@ class SocialEntryInput extends Component {
     this.updateSocialEntry(newText, currentEditAt)
   }
 
-  calculateTags = async text => {
-    const { suggestTags } = this.props
-    const { searchText, tagSymbol } = this.state
+  calculateTags = async (text = null) => {
+    const { suggestTags, tags } = this.props
+    const { searchHandles, searchText, tagSymbol } = this.state
 
-    if ( tagSymbol  ) {
-      this.populateTagSuggestions(this.props, tagSymbol, searchText)
-      if ( searchText && searchText.length > 0 ) {
-        await suggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
+    if ( tagSymbol ) {
+      if ( typeof searchText !== 'undefined' ) {
+        this.populateTagSuggestions(tags)
+        if ( searchText.length > 0 ) {
+          await suggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
+        }
+      }
+      else if ( searchHandles ) {
+        this.populateTagSuggestions(tags)
+        await suggestTags({ symbol: tagSymbol, handles: searchHandles, resultsPerPage: 5, page: 1 })
       }
     }
     else {
