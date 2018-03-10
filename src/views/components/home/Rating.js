@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import { Badge, Button, ButtonGroup } from 'react-bootstrap'
+
 
 class Rating extends Component {
   constructor(props) {
@@ -49,30 +51,19 @@ class Rating extends Component {
     }
   }
 
-  renderRatingComponentHeader = text => {
-    return (
-      <div className='rating-component-header'>
-        <p>
-          { text }
-        </p>
-      </div>
-    )
-  }
-
-  renderRatingComponentTags = component => {
+  renderBadge = component => {
     if ( Array.isArray(component) ) {
       if ( component.length < 1 ) {
         return null
       }
       else {
         return (
-          <div className='rating-component-tags-container'>
+          <div className='rating-component-badges'>
             { component.map( m =>
-              <div className={ 'social-entry-tag__' + (m.taggableType || '').toLowerCase() }
-                key={ m.id }>
-                <p>
+              <div className='badge-container'>
+                <Badge>
                   { m.symbol + m.handle }
-                </p>
+                </Badge>
               </div>
             ) }
           </div>
@@ -85,10 +76,10 @@ class Rating extends Component {
       }
       else {
         return (
-          <div className={ 'social-entry-tag__' + (component.taggableType || '').toLowerCase() }>
-            <p>
+          <div className='badge-container'>
+            <Badge>
               { component.symbol + component.handle }
-            </p>
+            </Badge>
           </div>
         )
       }
@@ -109,34 +100,27 @@ class Rating extends Component {
     }
 
     return (
-      <div className='rating-container'>
-        Rating Components
-        <div className='rating-container-inner'>
-          <div className='rating-component-outer-container--rating-type'>
-            <div className='rating-component-inner-container'>
-              { this.renderRatingComponentHeader('Rating Type') }
-              { this.renderRatingComponentTags(ratingType) }
+      <div>
+        <ButtonGroup vertical>
+          <Button bsStyle="warning">
+            Rating
+            <div className='rating-component-badges'>
+              { this.renderBadge(ratingType) }
             </div>
-          </div>
-          <div className='rating-component-outer-container--rateable'>
-            <div className='rating-component-inner-container'>
-              { this.renderRatingComponentHeader('Food') }
-              { this.renderRatingComponentTags(rateable) }
-            </div>
-          </div>
-          <div className='rating-component-outer-container--ratee'>
-            <div className='rating-component-inner-container'>
-              { this.renderRatingComponentHeader('Restaurant') }
-              { this.renderRatingComponentTags(ratee) }
-            </div>
-          </div>
-          <div className='rating-component-outer-container--rating-metrics'>
-            <div className='rating-component-inner-container'>
-              { this.renderRatingComponentHeader('Rating Metrics') }
-              { this.renderRatingComponentTags(ratingMetrics) }
-            </div>
-          </div>
-        </div>
+          </Button>
+          <Button bsStyle="warning">
+            Food
+            { this.renderBadge(rateable) }
+          </Button>
+          <Button bsStyle="warning">
+            Entity
+            { this.renderBadge(ratee) }
+          </Button>
+          <Button bsStyle="warning">
+            Metrics
+            { this.renderBadge(ratingMetrics) }
+          </Button>
+        </ButtonGroup>
       </div>
     )
   }

@@ -275,15 +275,17 @@ class SocialEntryInput extends Component {
           <img className="close" src={ close } onClick={ this.close } />
           <h1 className='social-entry-form-header'> { `What's on your mind grapes` } </h1>
           <div className="social-entry-form">
-            <textarea type="text"
-              className="social-entry-form__textarea"
-              value={ text }
-              onChange={ this.updateText }
-              onKeyDown={ this.onKeyDown }
-              autoFocus
-              tabIndex={ 1 }
-              />
-            <Rating user={ user } tags={ tags } />
+            <div className="social-entry-form-rating-container">
+              <textarea type="text"
+                className="social-entry-form__textarea"
+                value={ text }
+                onChange={ this.updateText }
+                onKeyDown={ this.onKeyDown }
+                autoFocus
+                tabIndex={ 1 }
+                />
+              <Rating user={ user } tags={ tags } />
+            </div>
             <div className="social-entry-form__tags">
               Current Tags:
               { tags && tags.map( (t,i) =>

@@ -51,19 +51,23 @@ class NewsFeed extends Component {
           { feedItems.map( (f,i) =>
             <li key={ i } className='newsfeed__item--parent'>
               <div className='newsfeed__item__content'>
-                <h3 className='p-header'>
-                  { f.metadata.authorName }
-                </h3>
-                { f.renderContent() }
-                <p className='p-footer'>
-                  Posted at { Moment(f.conductedAt).format( 'MM-DD-YY h:mma' ) }
-                </p>
-                { f.metadata.foodRatingTags &&
-                  <Rating
-                    user={ f.metadata.foodRating.rater }
-                    tags={ f.metadata.foodRatingTags }
-                    />
-                }
+                <div>
+                  <h3 className='p-header'>
+                    { f.metadata.authorName }
+                  </h3>
+                    { f.renderContent() }
+                  <p className='p-footer'>
+                    Posted at { Moment(f.conductedAt).format( 'MM-DD-YY h:mma' ) }
+                  </p>
+                </div>
+                <div>
+                  { f.metadata.foodRatingTags &&
+                    <Rating
+                      user={ f.metadata.foodRating.rater }
+                      tags={ f.metadata.foodRatingTags }
+                      />
+                  }
+                </div>
               </div>
             </li>
           ) }

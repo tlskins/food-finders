@@ -3,12 +3,12 @@ import {
 } from '@actions/hierarchies'
 
 
-const initialHierarchiesState = { '@': {}, '#': {}, '^': {}, '&': {}}
+const initialHierarchiesState = {}
 
 export const hierarchies = (state = { ...initialHierarchiesState }, action) => {
   switch (action.type) {
     case ADD_TREE: {
-      state[action.symbol] = action.tree
+      state[action.className] = action.tree
 
       return { ...state }
     }
