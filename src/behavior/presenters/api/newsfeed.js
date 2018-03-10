@@ -8,6 +8,17 @@ export const pResponseFeedItems = json => {
 
   newsfeedItems.forEach( n => {
     const { metadata } = n
+    if ( metadata.foodRating ) {
+      n.metadata.foodRatingTags = []
+      Object.values( metadata.foodRating ).forEach( t => {
+        if ( Array.isArray(t) ) {
+          n.metadata.foodRatingTags = [...n.metadata.foodRatingTags, ...t]
+        }
+        else {
+          n.metadata.foodRatingTags.push(t)
+        }
+      })
+    }
     n.renderContent = () => {
       const { data, tags } = metadata
 

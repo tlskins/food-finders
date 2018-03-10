@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import TagSuggestions from '@components/home/TagSuggestions'
+import Rating from '@components/home/Rating'
 import close from '@res/images/x-icon-gray.png'
 
 import {
@@ -108,7 +109,9 @@ class SocialEntryInput extends Component {
         const selectedTag = tagSuggestions[selectedTagIndex]
         const selectedTaggable = selectedTag.embeddedTaggable
         if ( selectedTaggable && selectedTaggable.children && selectedTaggable.children.length > 0 ) {
-          const childTagHandles = selectedTaggable.children.map( c => c.tagSymbol + c.tagHandle )
+          const childTagHandles = selectedTaggable.children.filter( c => {
+            return c.tagSymbol && c.tagHandle
+          }).map( c => c.tagSymbol + c.tagHandle )
           this.setState({
             searchHandles: childTagHandles,
             searchText: undefined,
@@ -258,7 +261,7 @@ class SocialEntryInput extends Component {
 
   render() {
     const { text, draftSocialEntry, searchStatus, selectedTagIndex, tagSuggestions  } = this.state
-    const { visible } = this.props
+    const { user, visible } = this.props
     const { tags } = draftSocialEntry
 
     if ( !visible ) {
@@ -280,9 +283,9 @@ class SocialEntryInput extends Component {
               autoFocus
               tabIndex={ 1 }
               />
-            { searchStatus && searchStatus }
+            <Rating user={ user } tags={ tags } />
             <div className="social-entry-form__tags">
-              Existing Tags:
+              Current Tags:
               { tags && tags.map( (t,i) =>
                 <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }
                   key={ i }>
@@ -293,6 +296,7 @@ class SocialEntryInput extends Component {
               ) }
             </div>
 
+            { searchStatus && searchStatus }
             Tag Suggestions:
             <TagSuggestions
               tagSuggestions={ tagSuggestions }
@@ -320,6 +324,7 @@ class SocialEntryInput extends Component {
 SocialEntryInput.propTypes = {
   draftSocialEntry: PropTypes.object,
   tags: PropTypes.object,
+  user: PropTypes.object,
   requestedAt: PropTypes.object,
   visible: PropTypes.bool,
 

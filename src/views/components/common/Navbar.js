@@ -9,7 +9,7 @@ class NavBar extends Component {
   state = {
     showUserDropdown: false,
   }
-  
+
   render() {
     const {
       signOut,
@@ -29,10 +29,10 @@ class NavBar extends Component {
             <NavLink to="#"> Bests </NavLink>
           </li>
           <li>
-            <NavLink to="#"> Food Map </NavLink>
+            <NavLink to="/hierarchies"> Tag Manager </NavLink>
           </li>
         </ul>
-        
+
         <div className='main-nav--user' onClick={ () => this.setState({ showUserDropdown: !showUserDropdown })} >
           { userName }
         </div>

@@ -397,7 +397,6 @@ body {
 }
 
 .social-entry-form__textarea {
-  padding: 10px;
   max-width: 100%;
   border: 1px solid #3d4853;
   border-radius: 4px;
@@ -741,4 +740,59 @@ body {
 .social-entry-form__suggestions__icon--user {
   background: url("./_res/images/icons8-street-view-48.png") no-repeat;
   background-size: contain;
+}
+
+
+/* Ratings */
+
+.rating-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 5px 0 10px 5px;
+  padding: 4px 4px;
+  font-size: 12px;
+
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(75, 173, 2);
+  border-radius: 4px;
+  background: rgb(255, 255, 255);
+  transition: all 0.25s ease;
+}
+
+.rating-container-inner {
+  margin-top: 3px;
+  display: flex;
+  flex-direction: row;
+}
+
+[class^="rating-component-outer-container"] {
+  margin: 0 5px 0px 5px;
+  color: black;
+  border-width: 1px;
+  border-style: solid;
+  border-color: black;
+  border-radius: 4px;
+  background: rgb(232,232,232);
+  transition: all 0.25s ease;
+}
+
+.rating-component-inner-container {
+  margin: 3px 5px 5px 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.rating-component-tags-container {
+  display: inherit;
+  flex-direction: row;
+}
+
+.rating-component-header > p {
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  margin: 0 4px 4px 4px;
 }

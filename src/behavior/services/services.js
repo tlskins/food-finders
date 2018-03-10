@@ -8,6 +8,7 @@ import * as RouterService from './router'
 import * as SessionService from './session'
 import * as TagService from './tag'
 import * as UsersService from './users'
+import * as HierarchiesService from './hierarchies'
 import UIService from './ui/index'
 
 const coreServices = {
@@ -16,6 +17,7 @@ const coreServices = {
   ...SessionService,
   ...TagService,
   ...UsersService,
+  ...HierarchiesService,
   UIService,
 }
 

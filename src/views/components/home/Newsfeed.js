@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import Rating from '@components/home/Rating'
+
 import Moment from 'moment'
 
 
@@ -11,7 +13,7 @@ class NewsFeed extends Component {
 
   componentDidMount() {
     this.reloadFeedItems()
-    this.interval = setInterval(this.reloadFeedItems, 10000)
+    // this.interval = setInterval(this.reloadFeedItems, 10000)
   }
 
   componentWillUnmount() {
@@ -29,7 +31,7 @@ class NewsFeed extends Component {
   render() {
     const { feedItems } = this.state
     const { toggleVisibility } = this.props
-    
+
     const emptyFeed = feedItems.length === 0
     console.log('feedItems=',feedItems)
 
@@ -38,10 +40,10 @@ class NewsFeed extends Component {
         <ul className='newsfeed'>
           <div className='newsfeed__header-container'>
             <h1 className='newsfeed__header'>
-              Feed 
+              Feed
               <input className='compose-social-entry-btn'
-                type='button' 
-                onClick={ () => toggleVisibility(true) } 
+                type='button'
+                onClick={ () => toggleVisibility(true) }
               />
             </h1>
           </div>
@@ -56,6 +58,12 @@ class NewsFeed extends Component {
                 <p className='p-footer'>
                   Posted at { Moment(f.conductedAt).format( 'MM-DD-YY h:mma' ) }
                 </p>
+                { f.metadata.foodRatingTags &&
+                  <Rating
+                    user={ f.metadata.foodRating.rater }
+                    tags={ f.metadata.foodRatingTags }
+                    />
+                }
               </div>
             </li>
           ) }

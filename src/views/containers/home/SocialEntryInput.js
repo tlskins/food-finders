@@ -18,6 +18,7 @@ const mapStateToProps = state => {
     draftSocialEntry,
     tags,
     tagSearches,
+    user,
     requestedAt,
     visible,
   }
