@@ -2,6 +2,7 @@ import * as sessionsActions from './sessions'
 import * as usersActions from './users'
 import * as tagsActions from './tags'
 import * as hierarchiesActions from './hierarchies'
+import * as foodRatingMetricsActions from './foodRatingMetrics'
 import uiActions from './ui'
 
 
@@ -10,6 +11,7 @@ const actions = Object.freeze({
   ...usersActions,
   ...tagsActions,
   ...hierarchiesActions,
+  ...foodRatingMetricsActions,
   ...uiActions,
 })
 

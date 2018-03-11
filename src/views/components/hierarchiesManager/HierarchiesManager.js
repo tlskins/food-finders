@@ -29,7 +29,7 @@ class HierarchiesManager extends Component {
     currentTagSymbol: '&',
     selectedTag: undefined,
     tree: undefined,
-    locked: false,
+    locked: true,
   }
   baseRootX = 20
   baseRootY = 20
@@ -54,8 +54,8 @@ class HierarchiesManager extends Component {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    const { hierarchies } = nextProps
-    const { currentHierarchy, locked } = this.state
+    const { visible, hierarchies } = nextProps
+    const { currentHierarchy } = this.state
 
     if ( hierarchies !== this.props.hierarchies && hierarchies[currentHierarchy] ) {
       console.log('trigger re draw!')
@@ -63,10 +63,17 @@ class HierarchiesManager extends Component {
       const tree = hierarchies[currentHierarchy].tree
       Object.values(tree).forEach( (v,i) => this.addRootNode(v, i, model))
 
-      model.setLocked(locked)
+      model.setLocked(!visible)
       this.engine.setDiagramModel(model)
       // trigger re render
       this.setState({ tree })
+    }
+
+    if ( visible !== this.props.visible ) {
+      console.log('trigger model lock!')
+      let model = this.engine.getDiagramModel()
+      model.setLocked(!visible)
+      this.forceUpdate()
     }
   }
 
@@ -100,17 +107,17 @@ class HierarchiesManager extends Component {
     }
   }
 
-  selectTag = (tag) => {
-    const { editTag } = this.props
-    const { currentTagSymbol } = this.state
+  selectTag = (taggable) => {
+    const { editFoodRatingMetric } = this.props
 
-    editTag(currentTagSymbol, tag)
+    editFoodRatingMetric(taggable.id)
 
-    this.setState({ selectedTag: tag })
+    this.setState({ selectedTag: taggable })
   }
 
   render() {
     const { currentUser, visible } = this.props
+    // const { locked } = this.state
 
     if ( !currentUser || !this.engine ) {
       return null
@@ -147,7 +154,8 @@ HierarchiesManager.propTypes = {
   //
   loadHierarchy: PropTypes.func,
   redirect: PropTypes.func,
-  editTag: PropTypes.func,
+  // editTag: PropTypes.func,
+  editFoodRatingMetric: PropTypes.fund,
 }
 
 export default HierarchiesManager

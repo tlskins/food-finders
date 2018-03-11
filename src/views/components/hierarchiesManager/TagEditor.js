@@ -17,50 +17,28 @@ import {
 
 class TagEditor extends Component {
   state = {
-    editTag: {},
+    editedTaggable: {},
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props !== nextProps) {
-      const { editTag } = nextProps
-      this.setState({ editTag })
+      const { editedFoodRatingMetric } = nextProps
+      this.setState({ editedTaggable: editedFoodRatingMetric })
     }
   }
 
   selectTag = metaTag => {
-    const { updateTag } = this.props
-    const { tagHandle, tagSymbol } = metaTag
-    const tag = { handle: tagHandle, symbol: tagSymbol }
+    const { editFoodRatingMetric } = this.props
+    console.log('mettag=',metaTag)
 
-    updateTag(tagSymbol, tag)
+    editFoodRatingMetric(metaTag.taggableId)
   }
-
-  // updateText = e => {
-  //   const { searchUsersByText, users } = this.props
-  //   const { value } = e.target
-  //   this.setState({
-  //     searchText: value,
-  //     suggestions: searchDictionaryBy(users, 'name', value)
-  //   })
-  //   searchUsersByText && searchUsersByText(value)
-  // }
-  //
-  // renderEditRelationshipButton = (isFollowing, targetId) => {
-  //   const { updateUserRelationship } = this.props
-  //   const type = isFollowing === 'Yes' ? 'unfollow' : 'follow'
-  //   const buttonText = isFollowing === 'Yes' ? '-' : '+'
-  //   return (
-  //     <button type='button' onClick={ () => updateUserRelationship({targetId, type}) } >
-  //       { buttonText }
-  //     </button>
-  //   )
-  // }
 
   render() {
     const { visible, toggleVisibility } = this.props
-    const { editTag } = this.state
-    const formVisible = visible && editTag
-    console.log('edittag=',editTag)
+    const { editedTaggable } = this.state
+    const formVisible = visible && editedTaggable
+    console.log('editedTaggable=',editedTaggable)
 
     return (
       <div className='tag-editor-container'>
@@ -72,19 +50,21 @@ class TagEditor extends Component {
         <div className='form-container'>
           { formVisible &&
             <Form vertical={ true } >
-              <ControlLabel>Handle</ControlLabel>
-              <InputGroup className='form-title'>
-                <InputGroup.Addon>
-                  { editTag.symbol }
-                </InputGroup.Addon>
-                <FormControl
-                  type="text"
-                  value={ editTag.handle }
-                  disabled={ true }
-                />
-              </InputGroup>
+              {
+                // <ControlLabel>Handle</ControlLabel>
+                // <InputGroup className='form-title'>
+                //   <InputGroup.Addon>
+                //     { editedTaggable.symbol }
+                //   </InputGroup.Addon>
+                //   <FormControl
+                //     type="text"
+                //     value={ editedTaggable.handle }
+                //     disabled={ true }
+                //   />
+                // </InputGroup>
+              }
 
-              { editTag.embeddedTaggable &&
+              { editedTaggable &&
                 <div>
                   <Well bsSize="large">
                     <FormGroup>
@@ -92,7 +72,7 @@ class TagEditor extends Component {
                       <FormControl
                         type="text"
                         placeholder="Name"
-                        value={ editTag.embeddedTaggable.name }
+                        value={ editedTaggable.name }
                       />
                     </FormGroup>
 
@@ -101,7 +81,7 @@ class TagEditor extends Component {
                       <FormControl
                         componentClass="textarea"
                         placeholder="Description"
-                        value={ editTag.embeddedTaggable.description }
+                        value={ editedTaggable.description }
                         rows="5"
                       />
                     </FormGroup>
@@ -111,41 +91,43 @@ class TagEditor extends Component {
                       <FormControl
                         type="text"
                         placeholder="Synonyms"
-                        value={ editTag.embeddedTaggable.synonyms && editTag.embeddedTaggable.synonyms.join(', ') }
+                        value={ editedTaggable.synonyms && editedTaggable.synonyms.join(', ') }
                       />
                     </FormGroup>
                   </Well>
 
-                  <Well bsSize="large">
-                    <FormGroup>
-                      <InputGroup>
-                        <DropdownButton
-                          componentClass={InputGroup.Button}
-                          title="Parent"
-                        >
-                          <MenuItem key="1">Change Parent</MenuItem>
-                        </DropdownButton>
-                        <Button
-                          onClick={ () => this.selectTag(editTag.embeddedTaggable.parent) }
-                        >
-                          { editTag.embeddedTaggable.parent && editTag.embeddedTaggable.parent.name }
-                        </Button>
-                      </InputGroup>
-                    </FormGroup>
-
-                    <DropdownButton
-                      title={ "Children (" + ((editTag.embeddedTaggable.children && editTag.embeddedTaggable.children.length) || 0) + ")" }
-                    >
-                      { editTag.embeddedTaggable.children.map( (t,i) =>
-                        <MenuItem
-                          eventKey={ i }
-                          onClick={ () => this.selectTag(t) }
-                        >
-                          { t.name }
-                        </MenuItem>
-                      ) }
-                    </DropdownButton>
-                  </Well>
+                  {
+                    // <Well bsSize="large">
+                    //   <FormGroup>
+                    //     <InputGroup>
+                    //       <DropdownButton
+                    //         componentClass={InputGroup.Button}
+                    //         title="Parent"
+                    //       >
+                    //         <MenuItem key="1">Change Parent</MenuItem>
+                    //       </DropdownButton>
+                    //       <Button
+                    //         onClick={ () => this.selectTag(editTag.embeddedTaggable.parent) }
+                    //       >
+                    //         { editTag.embeddedTaggable.parent && editTag.embeddedTaggable.parent.name }
+                    //       </Button>
+                    //     </InputGroup>
+                    //   </FormGroup>
+                    //
+                    //   <DropdownButton
+                    //     title={ "Children (" + ((editTag.embeddedTaggable.children && editTag.embeddedTaggable.children.length) || 0) + ")" }
+                    //   >
+                    //     { editTag.embeddedTaggable.children.map( (t,i) =>
+                    //       <MenuItem
+                    //         eventKey={ i }
+                    //         onClick={ () => this.selectTag(t) }
+                    //       >
+                    //         { t.name }
+                    //       </MenuItem>
+                    //     ) }
+                    //   </DropdownButton>
+                    // </Well>
+                  }
                 </div>
               }
 
@@ -164,13 +146,13 @@ class TagEditor extends Component {
 }
 
 TagEditor.propTypes = {
-  editTag: PropTypes.object,
-  tags: PropTypes.arrayOf(PropTypes.object),
+  editedFoodRatingMetric: PropTypes.object,
+  // tags: PropTypes.arrayOf(PropTypes.object),
   visible: PropTypes.bool,
   // followingCount: PropTypes.number,
   // followersCount: PropTypes.number,
   //
-  updateTag: PropTypes.func,
+  editFoodRatingMetric: PropTypes.func,
   toggleVisibility: PropTypes.func,
   // updateUserRelationship: PropTypes.func,
 }

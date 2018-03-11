@@ -21,20 +21,24 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  const { RouterService, HierarchiesService, RestService, TagService, UIService } = services
+  const { FoodRatingMetricsService, RouterService, HierarchiesService, RestService, UIService } = services
   const { pResponseGeneric } = presenters.Api
   const pResponseHierarchyTree = pResponseGeneric
-  const pResponseTags = pResponseGeneric
-  const pResponseYelpBusinesses = pResponseGeneric
+  const pResponseFoodRatingMetric = pResponseGeneric
 
   const loadHierarchy = coordinators.loadHierarchy({ RestService, HierarchiesService, pResponseHierarchyTree })
   const redirect = () => RouterService.replace({ pathname: '/login' })
-  const editTag = coordinators.EditTag({ RestService, TagService, pResponseTags, pResponseYelpBusinesses, UIService })
+  const editFoodRatingMetric = coordinators.EditFoodRatingMetric({
+    RestService,
+    FoodRatingMetricsService,
+    pResponseFoodRatingMetric,
+    UIService
+  })
 
   return {
+    editFoodRatingMetric,
     loadHierarchy,
     redirect,
-    editTag,
   }
 }
 

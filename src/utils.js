@@ -115,11 +115,11 @@ export function camelCaseify( val ) {
       const newVal = {}
       for ( let k in val ) {
         const v = val[k]
-        if ( k === '_id' ) {
+        if ( v && k === '_id' && v.$oid ) {
           k = 'id'
           newVal[k] = v.$oid
         }
-        else if ( RegExp('_id$').test(k) && v.$oid ) {
+        else if ( v && RegExp('_id$').test(k) && v.$oid ) {
           k = k.replace( /_(\w)/g, s => s[1].toUpperCase())
           newVal[k] = v.$oid
         }
