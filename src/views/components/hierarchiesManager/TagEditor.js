@@ -1,7 +1,18 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import { Form, Col, FormControl, Button, ControlLabel, FormGroup } from 'react-bootstrap'
+import {
+  Form,
+  Col,
+  FormControl,
+  Button,
+  ControlLabel,
+  FormGroup,
+  InputGroup,
+  Well,
+  MenuItem,
+  DropdownButton,
+} from 'react-bootstrap'
 
 
 class TagEditor extends Component {
@@ -14,6 +25,14 @@ class TagEditor extends Component {
       const { editTag } = nextProps
       this.setState({ editTag })
     }
+  }
+
+  selectTag = metaTag => {
+    const { updateTag } = this.props
+    const { tagHandle, tagSymbol } = metaTag
+    const tag = { handle: tagHandle, symbol: tagSymbol }
+
+    updateTag(tagSymbol, tag)
   }
 
   // updateText = e => {
@@ -40,7 +59,8 @@ class TagEditor extends Component {
   render() {
     const { visible, toggleVisibility } = this.props
     const { editTag } = this.state
-    // const searchTextEmpty = searchText.length === 0
+    const formVisible = visible && editTag
+    console.log('edittag=',editTag)
 
     return (
       <div className='tag-editor-container'>
@@ -50,33 +70,82 @@ class TagEditor extends Component {
           <div className='tag-editor--icon'/>
         </div>
         <div className='form-container'>
-          { editTag &&
-            <Form horizontal>
-              <FormGroup>
-                <ControlLabel>Name</ControlLabel>
-                <FormControl type="text" placeholder="Name" value={ editTag.name } />
-              </FormGroup>
+          { formVisible &&
+            <Form vertical={ true } >
+              <ControlLabel>Handle</ControlLabel>
+              <InputGroup className='form-title'>
+                <InputGroup.Addon>
+                  { editTag.symbol }
+                </InputGroup.Addon>
+                <FormControl
+                  type="text"
+                  value={ editTag.handle }
+                  disabled={ true }
+                />
+              </InputGroup>
 
               { editTag.embeddedTaggable &&
                 <div>
-                  <FormGroup>
-                    <ControlLabel>Description</ControlLabel>
-                    <FormControl
-                      componentClass="textarea"
-                      placeholder="Description"
-                      value={ editTag.embeddedTaggable.description }
-                      rows="5"
-                    />
-                  </FormGroup>
+                  <Well bsSize="large">
+                    <FormGroup>
+                      <ControlLabel>Name</ControlLabel>
+                      <FormControl
+                        type="text"
+                        placeholder="Name"
+                        value={ editTag.embeddedTaggable.name }
+                      />
+                    </FormGroup>
 
-                  <FormGroup>
-                    <ControlLabel>Synonyms</ControlLabel>
-                    <FormControl
-                      type="text"
-                      placeholder="Synonyms"
-                      value={ editTag.embeddedTaggable.synonyms && editTag.embeddedTaggable.synonyms.join(', ') }
-                    />
-                  </FormGroup>
+                    <FormGroup>
+                      <ControlLabel>Description</ControlLabel>
+                      <FormControl
+                        componentClass="textarea"
+                        placeholder="Description"
+                        value={ editTag.embeddedTaggable.description }
+                        rows="5"
+                      />
+                    </FormGroup>
+
+                    <FormGroup>
+                      <ControlLabel>Synonyms</ControlLabel>
+                      <FormControl
+                        type="text"
+                        placeholder="Synonyms"
+                        value={ editTag.embeddedTaggable.synonyms && editTag.embeddedTaggable.synonyms.join(', ') }
+                      />
+                    </FormGroup>
+                  </Well>
+
+                  <Well bsSize="large">
+                    <FormGroup>
+                      <InputGroup>
+                        <DropdownButton
+                          componentClass={InputGroup.Button}
+                          title="Parent"
+                        >
+                          <MenuItem key="1">Change Parent</MenuItem>
+                        </DropdownButton>
+                        <Button
+                          onClick={ () => this.selectTag(editTag.embeddedTaggable.parent) }
+                        >
+                          { editTag.embeddedTaggable.parent && editTag.embeddedTaggable.parent.name }
+                        </Button>
+                      </InputGroup>
+                    </FormGroup>
+
+                    <DropdownButton
+                      title={ "Children (" + ((editTag.embeddedTaggable.children && editTag.embeddedTaggable.children.length) || 0) + ")" }
+                    >
+                      { editTag.embeddedTaggable.children.map( (t,i) =>
+                        <MenuItem
+                          eventKey={ i }
+                          onClick={ () => this.selectTag(t) }
+                        >
+                          { t.name }
+                        </MenuItem>
+                      ) }
+                    </DropdownButton>
+                  </Well>
                 </div>
               }
 
@@ -101,7 +170,7 @@ TagEditor.propTypes = {
   // followingCount: PropTypes.number,
   // followersCount: PropTypes.number,
   //
-  suggestTags: PropTypes.func,
+  updateTag: PropTypes.func,
   toggleVisibility: PropTypes.func,
   // updateUserRelationship: PropTypes.func,
 }

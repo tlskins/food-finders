@@ -36,7 +36,7 @@ const mapDispatchToProps = () => {
   // const pResponseUser = pResponseGeneric
   // const pResponseUsers = pResponseGeneric
   // const pResponseRelationships = pResponseGeneric
-  const suggestTags = coordinators.suggestTags({ RestService, TagService, pResponseTags, pResponseYelpBusinesses, UIService })
+  const updateTag = coordinators.EditTag({ RestService, TagService, pResponseTags, pResponseYelpBusinesses, UIService })
   // const searchUsersByText = coordinators.searchUsersByText({
   //   RestService,
   //   UsersService,
@@ -54,7 +54,7 @@ const mapDispatchToProps = () => {
   // })
   //
   return {
-    suggestTags,
+    updateTag,
     toggleVisibility,
     // updateUserRelationship
   }
