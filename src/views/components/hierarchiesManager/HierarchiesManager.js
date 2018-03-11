@@ -16,10 +16,18 @@ import 'storm-react-diagrams/dist/style.min.css'
 import './test.css'
 
 import NavBar from '@containers/common/Navbar'
+import TagEditor from '@containers/hierarchiesManager/TagEditor'
+
+const HierarchySymbolMatric = {
+  FoodRatingMetric: '&',
+  FoodRatingType: '#',
+}
 
 class HierarchiesManager extends Component {
   state = {
     currentHierarchy: 'FoodRatingMetric',
+    currentTagSymbol: '&',
+    selectedTag: undefined,
     tree: undefined,
     locked: false,
   }
@@ -65,8 +73,8 @@ class HierarchiesManager extends Component {
   addRootNode = (taggable, index, model) => {
     const rootNode = new DefaultNodeModel(taggable.name, 'rgb(0,192,255)')
     rootNode.setPosition(this.baseRootX, this.baseRootY)
-    rootNode.addListener({ selectionChanged: () => { console.log('selectionchanged!') } })
-    const rootPort = rootNode.addOutPort("children")
+    rootNode.addListener({ selectionChanged: () => { this.selectTag(taggable) } })
+    const rootPort = rootNode.addOutPort("parent")
     model.addAll(rootNode)
 
     if ( taggable.children ) {
@@ -78,8 +86,8 @@ class HierarchiesManager extends Component {
     if ( parentTaggable.children ) {
       Object.values(parentTaggable.children).forEach( (v,i) => {
         const childNode = new DefaultNodeModel(v.name, "rgb(192,255,0)")
-        childNode.addListener({ selectionChanged: () => { console.log('selectionchanged!') } })
-        const childPort = childNode.addInPort("parent")
+        childNode.addListener({ selectionChanged: () => { this.selectTag(v) } })
+        const childPort = childNode.addInPort("child")
         childNode.setPosition(parentX + this.nodeXDistance, parentY + (this.nodeYDistance * i))
         this.baseRootY += this.nodeYDistance
         const link = parentPort.link(childPort)
@@ -92,51 +100,17 @@ class HierarchiesManager extends Component {
     }
   }
 
-  // saveModel = () => {
-  //   console.log("saving model")
-  //   const engine = this.state.engine
-  //   const model = engine.getDiagramModel()
-  //   this.setState({ saved : JSON.stringify(model.serializeDiagram()) })
-  // }
-  //
-  // clear = () => {
-  //   console.log("clearing")
-  //   const engine = this.state.engine
-  //   const model = engine.getDiagramModel()
-  //   const nodes = model.getNodes()
-  //   const links = model.getLinks()
-  //
-  //   let item = {}
-  //   for (item in links) {
-  //     model.removeLink(item)
-  //   }
-  //
-  //   for(item in nodes){
-  //     model.removeNode(item)
-  //   }
-  //
-  //   engine.version += 1
-  //   this.setState({ engine })
-  // }
-  //
-  // loadModel = () => {
-  //   if(!this.state.saved) {
-  //     return null
-  //   }
-  //
-  //   const engine = this.state.engine
-  //   const model = new SRD.DiagramModel()
-  //   console.log("loading model")
-  //
-  //   engine.setDiagramModel(model)
-  //   const diagram = JSON.parse(this.state.saved)
-  //   model.deSerializeDiagram(diagram, engine)
-  //   engine.version += 1
-  //   this.setState({ engine })
-  // }
+  selectTag = (tag) => {
+    const { editTag } = this.props
+    const { currentTagSymbol } = this.state
+
+    editTag(currentTagSymbol, tag)
+
+    this.setState({ selectedTag: tag })
+  }
 
   render() {
-    const { currentUser } = this.props
+    const { currentUser, visible } = this.props
 
     if ( !currentUser || !this.engine ) {
       return null
@@ -149,10 +123,11 @@ class HierarchiesManager extends Component {
   	}
 
     return (
-      <div>
+      <div className="page-container">
         <NavBar />
-        <div className={ 'hierarchies-manager-page' }>
-          <div>
+        <div className='hierarchies-manager-page'>
+          <TagEditor />
+          <div className={ 'hierarchies-manager-container ' + (visible ? ' show-tag-editor': '')}>
             <div>
               <DiagramWidget { ...props } />
             </div>
@@ -172,6 +147,7 @@ HierarchiesManager.propTypes = {
   //
   loadHierarchy: PropTypes.func,
   redirect: PropTypes.func,
+  editTag: PropTypes.func,
 }
 
 export default HierarchiesManager

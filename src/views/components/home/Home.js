@@ -29,7 +29,7 @@ class Home extends Component {
       const { loadRootTags } = this.props
       ( async() => await loadRootTags() )()
     }
-    
+
     if ( nextProps.socialEntryVisible && !this.props.socialEntryVisible ) {
       disableBodyScroll( document.querySelector('.social-container') )
     }
@@ -50,7 +50,7 @@ class Home extends Component {
     }
 
     return (
-      <div>
+      <div className='page-container'>
         <NavBar />
         <div className={ 'home-page' }>
           <FriendsManager />

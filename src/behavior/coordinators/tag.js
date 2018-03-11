@@ -64,6 +64,7 @@ const _searchCoreTagsByHandles = async ({ TagService, RestService, pResponseTags
   const response = await RestService.get('/tags', payload )
   const tags = pResponseTags(response)
   TagService.addTags(symbol, tags)
+  return tags
 }
 
 
@@ -105,5 +106,23 @@ export const suggestTags = ({ RestService, TagService, pResponseTags, pResponseY
     if ( missingTags.length > 0 ) {
       _searchCoreTags({ TagService, RestService, pResponseTags, searchIndex: { symbol, handles: missingTags, resultsPerPage, page } })
     }
+  }
+}
+
+
+export const EditTag = ({ RestService, TagService, pResponseTags, pResponseYelpBusinesses, UIService }) => async (symbol, tag) => {
+  const { handle } = tag
+  const { tags } = TagService.getState()
+  const editTag = tags[symbol][handle]
+  if ( editTag ) {
+    UIService.TagEditor.toggleVisibility(true)
+    TagService.editTag(editTag)
+  }
+  else {
+    const handles = [symbol + handle]
+    const searchIndex = { symbol, handles, resultsPerPage: 1, page: 1 }
+    UIService.TagEditor.toggleVisibility(true)
+    const foundTags = await _searchCoreTagsByHandles({ TagService, RestService, pResponseTags, searchIndex })
+    TagService.editTag(foundTags[0])
   }
 }

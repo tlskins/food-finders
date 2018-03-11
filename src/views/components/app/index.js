@@ -8,16 +8,14 @@ import FlashMessages from '@containers/common/FlashMessages'
 
 
 const App = () => (
-  <div>
+  <div className="app">
     <FlashMessages />
-    <main>
-      <Switch>
-        <Route exact path="/login" component={ LoginPage } />
-        <Route path="/hierarchies" component={ HierarchiesManager } />
-        <Route path="/" component={ Home } />
-      </Switch>
-      <Route path="/users/confirmation" component={ ConfirmEmail } />
-    </main>
+    <Switch>
+      <Route exact path="/login" component={ LoginPage } />
+      <Route path="/hierarchies" component={ HierarchiesManager } />
+      <Route path="/" component={ Home } />
+    </Switch>
+    <Route path="/users/confirmation" component={ ConfirmEmail } />
   </div>
 )
 

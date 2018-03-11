@@ -4,6 +4,7 @@ import LoginForm from './loginForm'
 import FlashMessage from './flashMessage'
 import FriendsManager from './friendsManager'
 import SocialEntry from './socialEntry'
+import TagEditor from './tagEditor'
 
 
 const SubServices = {
@@ -11,6 +12,7 @@ const SubServices = {
   FlashMessage,
   FriendsManager,
   SocialEntry,
+  TagEditor,
 }
 
 

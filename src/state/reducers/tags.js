@@ -1,5 +1,6 @@
 import {
   ADD_TAGS,
+  EDIT_TAG,
   LOAD_ROOT_TAGS,
   START_TAG_SEARCH,
   INCOMPLETE_TAG_SEARCH,
@@ -19,6 +20,18 @@ export const tags = (state = {...initialTagsState}, action) => {
     }
     case LOAD_ROOT_TAGS: {
       return { ...action.rootTags }
+    }
+
+    default:
+      return state
+  }
+}
+
+export const editTag = ( state = {}, action) => {
+  switch (action.type) {
+    case EDIT_TAG: {
+
+      return { ...action.tag }
     }
 
     default:
