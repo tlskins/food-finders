@@ -181,3 +181,54 @@ export function stringDifference(a, b) {
     }
     return result
 }
+
+
+export function formAdd( data, target, attr, targetAttr, transformOrValue ) {
+  const isFormData = target.constructor.name === 'FormData'
+  let hasVal = true
+  let value = data
+
+  if ( attr ) {
+    const attrParts = attr.split( '.' )
+    for ( const a of attrParts ) {
+      value = value[a]
+      if ( value === undefined ) {
+        hasVal = false
+        break
+      }
+    }
+  }
+  else {
+    value = data
+    hasVal = true
+  }
+
+  if ( hasVal ) {
+    if ( isFormData ) {
+      if ( transformOrValue ) {
+        if ( typeof transformOrValue === 'function' ) {
+          target.append( targetAttr, transformOrValue( value ))
+        }
+        else {
+          target.append( targetAttr, transformOrValue )
+        }
+      }
+      else {
+        target.append( targetAttr, value )
+      }
+    }
+    else {
+      if ( transformOrValue ) {
+        if ( typeof transformOrValue === 'function' ) {
+          target[targetAttr] = transformOrValue( value )
+        }
+        else {
+          target[targetAttr] = transformOrValue
+        }
+      }
+      else {
+        target[targetAttr] = value
+      }
+    }
+  }
+}

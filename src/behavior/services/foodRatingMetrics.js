@@ -9,4 +9,12 @@ export class FoodRatingMetricsService extends BaseService {
   editFoodRatingMetric = foodRatingMetric => {
     this.dispatch( actions.editFoodRatingMetric(foodRatingMetric) )
   }
+
+  loadFoodRatingMetric = foodRatingMetric => {
+    this.dispatch( actions.loadFoodRatingMetric(foodRatingMetric) )
+  }
+
+  resetFoodRatingMetric = () => {
+    this.dispatch( actions.resetFoodRatingMetric() )
+  }
 }

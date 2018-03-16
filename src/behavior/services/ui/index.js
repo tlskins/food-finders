@@ -5,6 +5,7 @@ import FlashMessage from './flashMessage'
 import FriendsManager from './friendsManager'
 import SocialEntry from './socialEntry'
 import TagEditor from './tagEditor'
+import HierarchiesManager from './hierarchiesManager'
 
 
 const SubServices = {
@@ -13,6 +14,7 @@ const SubServices = {
   FriendsManager,
   SocialEntry,
   TagEditor,
+  HierarchiesManager,
 }
 
 

@@ -110,8 +110,7 @@ export const suggestTags = ({ RestService, TagService, pResponseTags, pResponseY
 }
 
 
-export const EditTag = ({ RestService, TagService, pResponseTags, pResponseYelpBusinesses, UIService }) => async (symbol, tag) => {
-  const { handle } = tag
+export const EditTag = ({ RestService, TagService, pResponseTags, UIService }) => async (symbol, handle) => {
   const { tags } = TagService.getState()
   const editTag = tags[symbol][handle]
   if ( editTag ) {

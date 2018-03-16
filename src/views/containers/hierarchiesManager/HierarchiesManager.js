@@ -8,37 +8,61 @@ import presenters from '@presenters'
 
 
 const mapStateToProps = state => {
-  const { hierarchies, session, tagEditor } = state
+  const { editFoodRatingMetric, hierarchies, hierarchiesManager, session, tagEditor } = state
   const { visible } = tagEditor
   const currentUser = session ? session.user : undefined
-
+  const { status } = hierarchiesManager
+  const edited = editFoodRatingMetric && editFoodRatingMetric.edited
 
   return {
+    edited,
+    editedFoodRatingMetric: editFoodRatingMetric,
     currentUser,
     hierarchies,
+    hierarchiesManager,
+    status,
     visible,
   }
 }
 
 const mapDispatchToProps = () => {
-  const { FoodRatingMetricsService, RouterService, HierarchiesService, RestService, UIService } = services
-  const { pResponseGeneric } = presenters.Api
-  const pResponseHierarchyTree = pResponseGeneric
+  const {
+    FoodRatingMetricsService,
+    RouterService,
+    TagService,
+    HierarchiesService,
+    RestService,
+    UIService,
+  } = services
+  const { pResponseGeneric, pResponseHierarchyTree } = presenters.Api
+  const pResponseTags = pResponseGeneric
   const pResponseFoodRatingMetric = pResponseGeneric
 
-  const loadHierarchy = coordinators.loadHierarchy({ RestService, HierarchiesService, pResponseHierarchyTree })
+  const loadHierarchy = coordinators.LoadHierarchy({ RestService, HierarchiesService, pResponseHierarchyTree })
+  const toggleTagEditorVisibility = visible => UIService.TagEditor.toggleVisibility(visible)
   const redirect = () => RouterService.replace({ pathname: '/login' })
-  const editFoodRatingMetric = coordinators.EditFoodRatingMetric({
+  const setHierarchiesManagerStatus = status => UIService.HierarchiesManager.setHierarchiesManagerStatus(status)
+  const resetFoodRatingMetric = () => FoodRatingMetricsService.resetFoodRatingMetric()
+  const setTagEditorTagSymbol = (tagSymbol) => UIService.TagEditor.setTagSymbol(tagSymbol)
+  const editTag = coordinators.EditTag({ RestService, TagService, pResponseTags, UIService })
+  const loadFoodRatingMetric = coordinators.LoadFoodRatingMetric({
     RestService,
     FoodRatingMetricsService,
     pResponseFoodRatingMetric,
     UIService
   })
+  const updateFoodRatingMetric = (foodRatingMetric) => FoodRatingMetricsService.editFoodRatingMetric(foodRatingMetric)
 
   return {
-    editFoodRatingMetric,
+    editTag,
+    loadFoodRatingMetric,
     loadHierarchy,
     redirect,
+    resetFoodRatingMetric,
+    setHierarchiesManagerStatus,
+    setTagEditorTagSymbol,
+    toggleTagEditorVisibility,
+    updateFoodRatingMetric,
   }
 }
 

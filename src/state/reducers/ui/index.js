@@ -3,6 +3,7 @@ import * as flashMessageUIReducers from './flashMessage'
 import * as friendsManagerUIReducers from './friendsManager'
 import * as socialEntryUIReducers from './socialEntry'
 import * as tagEditorUIReducers from './tagEditor'
+import * as hierarchiesManagerUIReducers from './hierarchiesManager'
 
 
 export default {
@@ -11,4 +12,5 @@ export default {
   ...loginFormUIReducers,
   ...socialEntryUIReducers,
   ...tagEditorUIReducers,
+  ...hierarchiesManagerUIReducers,
 }
