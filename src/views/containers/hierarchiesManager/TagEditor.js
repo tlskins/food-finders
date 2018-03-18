@@ -54,6 +54,7 @@ const mapDispatchToProps = () => {
     FoodRatingMetricsService,
     pResponseFoodRatingMetric,
     pRequestFoodRatingMetric,
+    HandleError,
   })
 
   return {

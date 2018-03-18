@@ -21,13 +21,26 @@ export const SaveFoodRatingMetric = ({
   LoadHierarchy,
   FoodRatingMetricsService,
   pResponseFoodRatingMetric,
-  pRequestFoodRatingMetric
+  pRequestFoodRatingMetric,
+  HandleError,
 }) => async json => {
     const { id } = json
     const params = { food_rating_metric: pRequestFoodRatingMetric(json) }
-    const response = await RestService.put(`food_rating_metrics/${ id }`, params)
-    const foodRatingMetric = pResponseFoodRatingMetric(response)
-    FoodRatingMetricsService.addFoodRatingMetrics([foodRatingMetric])
-    FoodRatingMetricsService.editFoodRatingMetric(foodRatingMetric)
-    LoadHierarchy()
+
+    try {
+      let response = undefined
+      if ( id ) {
+        response = await RestService.put(`food_rating_metrics/${ id }`, params)
+      }
+      else {
+        response = await RestService.post(`food_rating_metrics/`, params)
+      }
+      const foodRatingMetric = pResponseFoodRatingMetric(response)
+      FoodRatingMetricsService.addFoodRatingMetrics([foodRatingMetric])
+      FoodRatingMetricsService.editFoodRatingMetric(foodRatingMetric)
+      LoadHierarchy()
+    }
+    catch ( error ) {
+      HandleError({ error, namespace: 'foodRatingMetric'})
+    }
 }

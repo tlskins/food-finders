@@ -97,6 +97,11 @@ class TagEditor extends Component {
     if ( !editedTaggable ) {
       return null
     }
+    const { name, description } = editedTaggable
+    let { synonyms } = editedTaggable
+    if ( synonyms ) {
+      synonyms = synonyms.join(', ')
+    }
     return (
       <Well bsSize="large">
         <FormGroup>
@@ -104,7 +109,7 @@ class TagEditor extends Component {
           <FormControl
             type="text"
             placeholder="Name"
-            value={ editedTaggable.name }
+            value={ name }
             onChange={ e => this.editTaggable('name', e.target.value) }
           />
         </FormGroup>
@@ -114,7 +119,7 @@ class TagEditor extends Component {
           <FormControl
             componentClass="textarea"
             placeholder="Description"
-            value={ editedTaggable.description }
+            value={ description }
             onChange={ e => this.editTaggable('description', e.target.value) }
             rows="5"
           />
@@ -125,7 +130,7 @@ class TagEditor extends Component {
           <FormControl
             type="text"
             placeholder="Synonyms"
-            value={ editedTaggable.synonyms && editedTaggable.synonyms.join(', ') }
+            value={ synonyms }
             onChange={ e => this.editTaggable('synonyms', e.target.value.split(', ')) }
           />
         </FormGroup>
@@ -150,7 +155,7 @@ class TagEditor extends Component {
 
         <FormGroup>
           <ButtonToolbar>
-            <SplitButton dropup pullLeft
+            <SplitButton dropup
               bsStyle={ parent && "primary" }
               title={ `Parent: ${ parentName }` }
               onClick={ () => parent ? this.selectTag(parent.id, tag.symbol, parent.handle) : null }
@@ -169,7 +174,7 @@ class TagEditor extends Component {
         { editParent &&
           <FormGroup>
             <ButtonToolbar>
-              <SplitButton dropup pullLeft
+              <SplitButton dropup
                 bsStyle="primary"
                 title="Select Parent"
                 id="selectParentButton"
@@ -214,7 +219,8 @@ class TagEditor extends Component {
         <div className='form-container'>
           { formVisible && editedTaggable &&
             <Form>
-              { this.renderTag(tag) }
+              { //this.renderTag(tag)
+              }
               { this.renderTaggable(editedTaggable) }
               { this.renderTaggableRelationships(editedTaggable, tag) }
               { editedTaggable.edited &&

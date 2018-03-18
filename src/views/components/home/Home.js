@@ -25,8 +25,8 @@ class Home extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const { loadRootTags } = this.props
     if ( !this.props.currentUser && nextProps.currentUser ) {
-      const { loadRootTags } = this.props
       ( async() => await loadRootTags() )()
     }
 
@@ -43,7 +43,7 @@ class Home extends Component {
   }
 
   render() {
-    const { currentUser, friendsManagerVisible, socialEntryVisible } = this.props
+    const { currentUser, friendsManagerVisible } = this.props
 
     if ( !currentUser ) {
       return null

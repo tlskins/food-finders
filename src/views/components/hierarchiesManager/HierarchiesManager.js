@@ -16,6 +16,7 @@ import {
 	ButtonToolbar,
 	ButtonGroup,
   Button,
+	FormControl,
 } from 'react-bootstrap'
 
 import './test.css'
@@ -32,20 +33,18 @@ const initialState = {
 	currentHierarchy: 'FoodRatingMetric',
 	currentTagSymbol: '&',
 	currentHierarchyName: 'Rating Metric',
+	edited: false,
 	selectedTaggable: undefined,
+	newTaggableName: '',
 	mode: 'Select Taggable',
-	tree: undefined,
 }
 
 const initialDiagramsState = {
 	baseRootX: 20,
-  baseRootY: 20,
+  baseRootY: 30,
   nodeXDistance: 100,
   nodeYDistance: 70,
-	tree: {},
 	dictionary: {},
-	nodeMapper: {},
-	linkToParentMapper: {},
 	nodeColor: "rgb(0,192,255)",
 	selectedNodeColor: "rgb(192,255,0)",
 }
@@ -58,8 +57,7 @@ class HierarchiesManager extends Component {
     this.engine.registerNodeFactory(new DefaultNodeFactory())
     this.engine.registerLinkFactory(new DefaultLinkFactory())
 		this.props.setTagEditorTagSymbol( this.state.currentTagSymbol )
-		this.loadInitialDiagramState()
-
+		
     setTimeout(() => {
       const { currentUser, redirect, loadHierarchy } = this.props
       if ( !currentUser ) {
@@ -72,10 +70,11 @@ class HierarchiesManager extends Component {
   }
 
   componentWillReceiveProps = (nextProps) => {
-    const { hierarchies, visible } = nextProps
+    const { edited, hierarchies, visible } = nextProps
     const { currentHierarchy } = this.state
 
     if ( hierarchies !== this.props.hierarchies && hierarchies[currentHierarchy] ) {
+			this.loadInitialDiagramState()
       const model = new DiagramModel()
 			console.log('trigger re draw!, model=',model)
 			const { dictionary, tree } = hierarchies[currentHierarchy]
@@ -94,6 +93,10 @@ class HierarchiesManager extends Component {
 	      this.forceUpdate()
 			}
     }
+
+		if ( edited !== this.state.edited ) {
+			this.setState({ edited })
+		}
   }
 
 	loadInitialDiagramState = () => {
@@ -135,8 +138,7 @@ class HierarchiesManager extends Component {
   }
 
   selectTag = (e, taggable) => {
-		const { mode } = this.state
-		const { edited } = this.props
+		const { edited, mode } = this.state
 		const oldTaggable = this.state.selectedTaggable
 		if ( e.isSelected ) {
 			if ( !edited && mode === 'Select Taggable' ) {
@@ -204,33 +206,6 @@ class HierarchiesManager extends Component {
 		return inPort
 	}
 
-	// updateNode = (taggable) => {
-	// 	// const { setHierarchiesManagerStatus } = this.props
-	// 	const model = this.engine.getDiagramModel()
-	// 	const parentTaggable = this.dictionary[taggable.parentId]
-	//
-	// 	const taggableNode = this.getNode(taggable.name, model)
-	// 	const parentTaggableNode = parentTaggable && this.getNode(parentTaggable.name, model)
-	// 	const toParent = this.getToParentLink(taggable.name, model)
-	// 	const toParentLink = toParent && toParent['link']
-	// 	const childPort = toParent && toParent['port']
-	//
-	// 	if ( parentTaggable && !toParentLink ) {
-	// 		const link = this.linkFromTo(taggableNode, parentTaggableNode)
-	// 		model.addAll(link)
-	// 	}
-	// 	else if ( !parentTaggable && toParentLink ){
-	// 		childPort.removeLink(toParentLink)
-	// 		model.removeLink(toParentLink)
-	// 	}
-	// 	else if ( parentTaggable && toParentLink ) {
-	// 		toParentLink.setSourcePort(this.getOrCreateOutPort(parentTaggableNode))
-	// 	}
-	// 	console.log('model after updatenode=',model)
-	// 	this.engine.setDiagramModel(model)
-	// 	this.forceUpdate()
-	// }
-
 	unlinkTaggable = e => {
 		e.preventDefault()
 		const { selectedTaggable } = this.state
@@ -258,6 +233,15 @@ class HierarchiesManager extends Component {
 		}
 	}
 
+	selectParent = () => {
+		const { selectedTaggable } = this.state
+		const model = this.engine.getDiagramModel()
+		const selectedTaggableNode = this.getNode(selectedTaggable.name, model)
+		this.getOrCreateInPort(selectedTaggableNode)
+		this.setState({ mode: 'Select Parent' })
+		this.forceUpdate()
+	}
+
 	linkTaggable = parentTaggable => {
 		const { selectedTaggable } = this.state
 		let { editedFoodRatingMetric } = this.props
@@ -268,6 +252,7 @@ class HierarchiesManager extends Component {
 		const parentTaggableNode = parentTaggable && this.getNode(parentTaggable.name, model)
 		const toParent = this.getToParentLink(selectedTaggable.name, model)
 		const toParentLink = toParent && toParent['link']
+		parentTaggableNode.selected = false
 
 		if ( parentTaggable && !toParentLink ) {
 			const link = this.linkFromTo(taggableNode, parentTaggableNode)
@@ -282,6 +267,23 @@ class HierarchiesManager extends Component {
 		}
 	}
 
+	createTaggable = () => {
+		const { toggleTagEditorVisibility, updateFoodRatingMetric } = this.props
+		const { newTaggableName } = this.state
+		const newTaggable = { name: newTaggableName }
+
+		const model = this.engine.getDiagramModel()
+		const newTaggableNode = new DefaultNodeModel(newTaggable.name, this.selectedNodeColor)
+		newTaggableNode.setPosition(300, 200)
+		newTaggableNode.addListener({ selectionChanged: (e) => this.selectTag(e, newTaggable) })
+
+		this.setState({ selectedTaggable: newTaggable, mode: 'Select Taggable', newTaggableName: '' })
+		updateFoodRatingMetric( newTaggable )
+		toggleTagEditorVisibility(true)
+		model.addAll(newTaggableNode)
+		this.forceUpdate()
+	}
+
 	clearEdits = () => {
 		const { currentHierarchy } = this.state
 		const { loadHierarchy, resetFoodRatingMetric, toggleTagEditorVisibility } = this.props
@@ -289,12 +291,15 @@ class HierarchiesManager extends Component {
 		loadHierarchy(currentHierarchy)
 		resetFoodRatingMetric()
 		toggleTagEditorVisibility(false)
-		this.setState({ selectedTaggable: undefined})
+		this.setState({ selectedTaggable: undefined, mode: 'Select Taggable'})
 	}
 
   render() {
-    const { currentUser, edited, visible } = this.props
-    const { currentHierarchyName, selectedTaggable } = this.state
+    const { currentUser, visible } = this.props
+    const { currentHierarchyName, edited, mode, selectedTaggable } = this.state
+
+		const selectTaggableMode = mode === 'Select Taggable'
+		const createTaggableMode = mode === 'Create Taggable'
 
     if ( !currentUser || !this.engine ) {
       return null
@@ -318,16 +323,32 @@ class HierarchiesManager extends Component {
 									<Button onClick={ () => this.engine.zoomToFit() }>
 										Zoom To Fit
 									</Button>
-									{ !edited &&
-										<Button>Create { currentHierarchyName }</Button>
+									{ !edited && selectTaggableMode &&
+										<Button
+											onClick={ () => {
+												this.clearEdits()
+												this.setState({ mode: 'Create Taggable'})
+											}}>
+											New { currentHierarchyName }
+										</Button>
+									}
+									{ !edited && createTaggableMode &&
+										<div>
+											<FormControl
+												type="text"
+												placeholder={ currentHierarchyName + ' Name' }
+												onChange={ e => this.setState({ newTaggableName: e.target.value }) }
+											/>
+											<Button onClick={ this.createTaggable }>Create</Button>
+										</div>
 									}
 									{ selectedTaggable && selectedTaggable.parentId &&
 										<Button onClick={ this.unlinkTaggable }>Unlink Parent</Button>
 									}
 									{ selectedTaggable && !selectedTaggable.parentId &&
-										<Button onClick={ () => this.setState({ mode: 'Select Parent' }) }>Link Parent</Button>
+										<Button onClick={ this.selectParent }>Link Parent</Button>
 									}
-									{ selectedTaggable && edited &&
+									{ edited &&
 										<Button onClick={ this.clearEdits }>Clear Edits</Button>
 									}
 								</ButtonGroup>

@@ -59,8 +59,8 @@ class Rating extends Component {
       else {
         return (
           <div className='rating-component-badges'>
-            { component.map( m =>
-              <div className='badge-container'>
+            { component.map( (m, i) =>
+              <div key={ i } className='badge-container'>
                 <Badge>
                   { m.symbol + m.handle }
                 </Badge>
