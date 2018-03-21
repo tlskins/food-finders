@@ -9,62 +9,64 @@ import { HandleError } from '@coordinators/composed'
 
 
 const mapStateToProps = state => {
-  const { editFoodRatingMetric, editTag, tagEditor, hierarchies } = state
-  const { visible, tagSymbol } = tagEditor
-  let tree = {}
-  let dictionary = {}
-  if ( hierarchies && tagSymbol ) {
-    const hierarchy = Object.values(hierarchies).find( h => h.symbol === tagSymbol )
-    tree = hierarchy && hierarchy.tree
-    dictionary = hierarchy && hierarchy.dictionary
-  }
+  const { editTaggable, hierarchiesManager, tagEditor } = state
+  const { taggableType } = hierarchiesManager
+  const { visible } = tagEditor
+  const edited = editTaggable && editTaggable.edited
 
   return {
-    dictionary,
-    tag: editTag,
-    tagSymbol,
-    tree,
-    editedFoodRatingMetric: editFoodRatingMetric,
+    edited,
+    editTaggable,
+    taggableType,
     visible,
   }
 }
 
 const mapDispatchToProps = () => {
-  const { FoodRatingMetricsService, HierarchiesService, RestService, TagService, UIService } = services
-  const { pResponseGeneric, pRequestTaggable, pResponseHierarchyTree } = presenters.Api
-  const pResponseFoodRatingMetric = pResponseGeneric
-  const pResponseTags = pResponseGeneric
-  const pRequestFoodRatingMetric = pRequestTaggable
+  const {
+    TaggablesService,
+    RestService,
+    UIService,
+  } = services
+  const { pResponseGeneric, pRequestTaggable } = presenters.Api
+  const pResponseTaggable = pResponseGeneric
+  const pResponseTaggables = pResponseGeneric
 
   const toggleVisibility = visible => UIService.TagEditor.toggleVisibility(visible)
-  const setHierarchiesManagerStatus = status => UIService.HierarchiesManager.setHierarchiesManagerStatus(status)
-  const resetHierarchiesManager = () => UIService.HierarchiesManager.resetHierarchiesManager()
-  const updateFoodRatingMetric = (foodRatingMetric) => FoodRatingMetricsService.editFoodRatingMetric(foodRatingMetric)
-  const loadFoodRatingMetricHierarchy = () => coordinators.LoadHierarchy({ RestService, HierarchiesService, pResponseHierarchyTree })('FoodRatingMetric')
-  const editTag = coordinators.EditTag({ RestService, TagService, pResponseTags, UIService })
-  const loadFoodRatingMetric = coordinators.LoadFoodRatingMetric({
+  const toggleUnselectNodes = (status) => UIService.HierarchiesManager.toggleUnselectNodes(status)
+  const updateTaggable = (taggable) => TaggablesService.editTaggable(taggable)
+  const deleteTaggable = coordinators.DeleteTaggable({
     RestService,
-    FoodRatingMetricsService,
-    pResponseFoodRatingMetric,
-    UIService
+    TaggablesService,
+    pResponseTaggable,
+    pResponseTaggables,
+    pRequestTaggable,
+    HandleError,
+    UIService,
   })
-  const saveFoodRatingMetric = coordinators.SaveFoodRatingMetric({
+  const loadTaggables = coordinators.LoadTaggables({
     RestService,
-    LoadHierarchy: loadFoodRatingMetricHierarchy,
-    FoodRatingMetricsService,
-    pResponseFoodRatingMetric,
-    pRequestFoodRatingMetric,
+    TaggablesService,
+    pResponseTaggables,
+    UIService,
+  })
+  const saveTaggable = coordinators.SaveTaggable({
+    RestService,
+    TaggablesService,
+    UIService,
+    pResponseTaggable,
+    pResponseTaggables,
+    pRequestTaggable,
     HandleError,
   })
 
   return {
-    editTag,
-    loadFoodRatingMetric,
-    resetHierarchiesManager,
-    saveFoodRatingMetric,
-    setHierarchiesManagerStatus,
+    deleteTaggable,
+    loadTaggables,
+    saveTaggable,
+    toggleUnselectNodes,
     toggleVisibility,
-    updateFoodRatingMetric,
+    updateTaggable,
   }
 }
 

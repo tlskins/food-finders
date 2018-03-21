@@ -2,39 +2,27 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import {
-  ButtonToolbar,
-  SplitButton,
   Form,
   Col,
   FormControl,
   Button,
   ControlLabel,
   FormGroup,
-  InputGroup,
   Well,
-  MenuItem,
-  DropdownButton,
 } from 'react-bootstrap'
 
 
 class TagEditor extends Component {
   state = {
-    tag: undefined,
-    editedTaggable: undefined,
-    editParent: false,
+    editTaggable: undefined,
+    confirmedDelete: false,
   }
 
   componentWillReceiveProps(nextProps) {
-    const { editedFoodRatingMetric, tag } = nextProps
-    let newState = {}
-
-    if (this.props.editedFoodRatingMetric !== editedFoodRatingMetric || this.props.tag !== tag) {
-      newState = {
-        editedTaggable: editedFoodRatingMetric,
-        tag,
-      }
+    const { editTaggable } = nextProps
+    if (this.props.editTaggable !== editTaggable) {
+      this.setState({ editTaggable })
     }
-    this.setState(newState)
   }
 
   componentWillUnmount() {
@@ -42,63 +30,43 @@ class TagEditor extends Component {
     toggleVisibility(false)
   }
 
-  selectTag = (id, tagSymbol, tagHandle) => {
-    const { editTag, loadFoodRatingMetric } = this.props
+  updateTaggable = (key, value) => {
+    const { updateTaggable } = this.props
+    let { editTaggable } = this.state
+    editTaggable[key] = value
+    editTaggable = { ...editTaggable }
 
-    loadFoodRatingMetric(id)
-    editTag(tagSymbol, tagHandle)
+    this.setState({ editTaggable })
+
+    updateTaggable(editTaggable)
   }
 
-  selectParent = (id) => {
-    const { setHierarchiesManagerStatus } = this.props
-    this.editTaggable('parentId', id)
-    setHierarchiesManagerStatus('UPDATE')
-    this.setState({ editParent: false })
-  }
-
-  editTaggable = (key, value) => {
-    const { updateFoodRatingMetric } = this.props
-    const { editedTaggable } = this.state
-    editedTaggable[key] = value
-
-    this.setState({ editedTaggable })
-
-    updateFoodRatingMetric(editedTaggable)
-  }
-
-  saveTaggable = e => {
-    const { editedTaggable } = this.state
-    const { saveFoodRatingMetric } = this.props
+  onSaveTaggable = e => {
+    const { editTaggable } = this.state
+    const { saveTaggable, taggableType } = this.props
     e.stopPropagation()
     e.preventDefault()
 
-    saveFoodRatingMetric(editedTaggable)
+    saveTaggable(taggableType, editTaggable)
   }
 
-  renderTag = (tag) => {
-    if ( !tag ) {
-      return null
-    }
-    return (
-      <InputGroup className='form-title'>
-        <InputGroup.Addon>
-          { tag.symbol }
-        </InputGroup.Addon>
-        <FormControl
-          type="text"
-          value={ tag.handle }
-          disabled={ true }
-        />
-      </InputGroup>
-    )
+  deleteTaggable = e => {
+    const { editTaggable } = this.state
+    const { deleteTaggable, taggableType } = this.props
+    e.stopPropagation()
+    e.preventDefault()
+
+    deleteTaggable(taggableType, editTaggable.id)
+    this.setState({ confirmedDelete: false })
   }
 
-  renderTaggable = (editedTaggable) => {
-    if ( !editedTaggable ) {
+  renderTaggable = (editTaggable) => {
+    if ( !editTaggable ) {
       return null
     }
-    const { name, description } = editedTaggable
-    let { synonyms } = editedTaggable
+    const { toggleUnselectNodes } = this.props
+    const { name, description } = editTaggable
+    let { synonyms } = editTaggable
     if ( synonyms ) {
       synonyms = synonyms.join(', ')
     }
@@ -110,7 +78,8 @@ class TagEditor extends Component {
             type="text"
             placeholder="Name"
             value={ name }
-            onChange={ e => this.editTaggable('name', e.target.value) }
+            onChange={ e => this.updateTaggable('name', e.target.value) }
+            onFocus={ () => toggleUnselectNodes(true) }
           />
         </FormGroup>
 
@@ -120,7 +89,8 @@ class TagEditor extends Component {
             componentClass="textarea"
             placeholder="Description"
             value={ description }
-            onChange={ e => this.editTaggable('description', e.target.value) }
+            onChange={ e => this.updateTaggable('description', e.target.value) }
+            onFocus={ () => toggleUnselectNodes(true) }
             rows="5"
           />
         </FormGroup>
@@ -131,83 +101,47 @@ class TagEditor extends Component {
             type="text"
             placeholder="Synonyms"
             value={ synonyms }
-            onChange={ e => this.editTaggable('synonyms', e.target.value.split(', ')) }
+            onChange={ e => this.updateTaggable('synonyms', e.target.value.split(', ')) }
+            onFocus={ () => toggleUnselectNodes(true) }
           />
         </FormGroup>
       </Well>
     )
   }
 
-  renderTaggableRelationships = (editedTaggable, tag) => {
-    if ( !editedTaggable && !tag ) {
+  renderDeleteButtons = () => {
+    const { confirmedDelete, editTaggable } = this.state
+    if ( !editTaggable.id ) {
       return null
     }
-    const { dictionary } = this.props
-    const { editParent } = this.state
-    const { id, parentId } = editedTaggable
-    const parent = dictionary && parentId && dictionary[parentId]
-    const parentName = (parent && parent.name) || 'None'
-    const children = (tag.embeddedTaggable && tag.embeddedTaggable.children) || []
-    const childrenCount = children.length
     return (
-      <Well bsSize="large">
-        <ControlLabel>Relationships</ControlLabel>
-
-        <FormGroup>
-          <ButtonToolbar>
-            <SplitButton dropup
-              bsStyle={ parent && "primary" }
-              title={ `Parent: ${ parentName }` }
-              onClick={ () => parent ? this.selectTag(parent.id, tag.symbol, parent.handle) : null }
-              id="parentButton"
-            >
-              <MenuItem eventKey="1" onClick={ () => this.setState({ editParent: true })}>
-                Change Parent
-              </MenuItem>
-              <MenuItem eventKey="1" onClick={ () => this.selectParent()}>
-                Unlink Parent
-              </MenuItem>
-            </SplitButton>
-          </ButtonToolbar>
-        </FormGroup>
-
-        { editParent &&
-          <FormGroup>
-            <ButtonToolbar>
-              <SplitButton dropup
-                bsStyle="primary"
-                title="Select Parent"
-                id="selectParentButton"
-              >
-                { Object.values(dictionary).filter( d => d.id !== id ).map( (d,i) =>
-                  <MenuItem key={ i } eventKey={ i } onClick={ () => this.selectParent(d.id) }>
-                    { d.name }
-                  </MenuItem>
-                ) }
-              </SplitButton>
-            </ButtonToolbar>
-          </FormGroup>
-        }
-
-        <DropdownButton id="editChildrenTaggable" title={ "Children (" + childrenCount + ")" } >
-          { children.map( (t,i) =>
-            <MenuItem
-              key={ i }
-              eventKey={ i }
-              onClick={ () => this.selectTag(t.id, t.tagSymbol, t.tagHandle) }
-            >
-              { t.name }
-            </MenuItem>
-          ) }
-        </DropdownButton>
-      </Well>
+      <FormGroup>
+        <Col smOffset={2} sm={10}>
+          { confirmedDelete ?
+            <Button
+              type="submit"
+              bsStyle="warning"
+              onClick={ e => this.deleteTaggable(e) }
+            >Confirm Delete?</Button>
+            :
+            <Button
+              type="submit"
+              bsStyle="info"
+              onClick={ e => {
+                e.preventDefault()
+                this.setState({ confirmedDelete: true })
+              }}
+            >Delete</Button>
+          }
+        </Col>
+      </FormGroup>
     )
   }
 
   render() {
-    const { visible, toggleVisibility } = this.props
-    const { editedTaggable, tag } = this.state
-    const formVisible = visible && editedTaggable
+    const { edited, visible, toggleVisibility } = this.props
+    const { editTaggable } = this.state
+    const formVisible = visible && editTaggable
 
     return (
       <div className='tag-editor-container'>
@@ -217,19 +151,17 @@ class TagEditor extends Component {
           <div className='tag-editor--icon'/>
         </div>
         <div className='form-container'>
-          { formVisible && editedTaggable &&
+          { formVisible && editTaggable &&
             <Form>
-              { //this.renderTag(tag)
-              }
-              { this.renderTaggable(editedTaggable) }
-              { this.renderTaggableRelationships(editedTaggable, tag) }
-              { editedTaggable.edited &&
+              { this.renderTaggable(editTaggable) }
+              { this.renderDeleteButtons() }
+              { edited &&
                 <FormGroup>
                   <Col smOffset={2} sm={10}>
                     <Button
                       type="submit"
                       bsStyle="primary"
-                      onClick={ e => this.saveTaggable(e) }
+                      onClick={ e => this.onSaveTaggable(e) }
                     >Submit Changes</Button>
                   </Col>
                 </FormGroup>
@@ -244,18 +176,16 @@ class TagEditor extends Component {
 }
 
 TagEditor.propTypes = {
-  dictionary: PropTypes.object,
-  editedFoodRatingMetric: PropTypes.object,
-  tag: PropTypes.object,
-  tagSymbol: PropTypes.string,
+  edited: PropTypes.bool,
+  editTaggable: PropTypes.object,
+  taggableType: PropTypes.string,
   visible: PropTypes.bool,
 
-  editTag: PropTypes.func,
-  loadFoodRatingMetric: PropTypes.func,
-  resetHierarchiesManager: PropTypes.func,
+  loadTaggables: PropTypes.func,
+  saveTaggable: PropTypes.func,
+  toggleUnselectNodes: PropTypes.func,
   toggleVisibility: PropTypes.func,
-  setHierarchiesManagerStatus: PropTypes.func,
-  updateFoodRatingMetric: PropTypes.func,
+  updateTaggable: PropTypes.func,
 }
 
 export default TagEditor

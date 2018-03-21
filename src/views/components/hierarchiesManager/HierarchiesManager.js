@@ -8,8 +8,8 @@ import {
 	DefaultLinkFactory,
 	DiagramModel,
 	DefaultNodeModel,
-	DefaultPortModel,
-	LinkModel
+	// DefaultPortModel,
+	// LinkModel
 } from 'storm-react-diagrams'
 import 'storm-react-diagrams/dist/style.min.css'
 import {
@@ -24,15 +24,16 @@ import './test.css'
 import NavBar from '@containers/common/Navbar'
 import TagEditor from '@containers/hierarchiesManager/TagEditor'
 
-const HierarchySymbolMatrix = {
+const TaggableCrosswalk = {
   FoodRatingMetric: { symbol: '&', name: 'Rating Metric' },
   FoodRatingType: { symbol: '#', name: 'Rating Type' },
 }
 
 const initialState = {
-	currentHierarchy: 'FoodRatingMetric',
-	currentTagSymbol: '&',
-	currentHierarchyName: 'Rating Metric',
+	taggableType: 'food_rating_metrics',
+	taggableName: 'Rating Metric',
+	taggables: undefined,
+	rootTaggables: {},
 	edited: false,
 	selectedTaggable: undefined,
 	newTaggableName: '',
@@ -42,6 +43,7 @@ const initialState = {
 const initialDiagramsState = {
 	baseRootX: 20,
   baseRootY: 30,
+	maxNodeY: 30,
   nodeXDistance: 100,
   nodeYDistance: 70,
 	dictionary: {},
@@ -56,48 +58,58 @@ class HierarchiesManager extends Component {
   componentDidMount() {
     this.engine.registerNodeFactory(new DefaultNodeFactory())
     this.engine.registerLinkFactory(new DefaultLinkFactory())
-		this.props.setTagEditorTagSymbol( this.state.currentTagSymbol )
-		
     setTimeout(() => {
-      const { currentUser, redirect, loadHierarchy } = this.props
+			const { taggableType } = this.state
+      const { allTaggables, currentUser, redirect, loadTaggables } = this.props
       if ( !currentUser ) {
         redirect()
       }
       else {
-        ( async() => await loadHierarchy(this.state.currentHierarchy) )()
+        ( async() => {
+					if (!allTaggables[taggableType]) {
+						await loadTaggables(taggableType)
+					}
+					else {
+						const taggables = allTaggables[taggableType]
+						this.setTaggables(taggables)
+					}
+				} )()
       }
     }, 100 )
   }
 
   componentWillReceiveProps = (nextProps) => {
-    const { edited, hierarchies, visible } = nextProps
-    const { currentHierarchy } = this.state
+    const { edited, editTaggable, allTaggables, toggleUnselectNodes, unselectNodes } = nextProps
+    const { selectedTaggable, taggableType, taggables } = this.state
+		const newTaggables = allTaggables && allTaggables[taggableType]
+		if ( (!taggables && newTaggables) || newTaggables !== taggables ) {
+			this.setTaggables(newTaggables)
+    }
 
-    if ( hierarchies !== this.props.hierarchies && hierarchies[currentHierarchy] ) {
-			this.loadInitialDiagramState()
-      const model = new DiagramModel()
-			console.log('trigger re draw!, model=',model)
-			const { dictionary, tree } = hierarchies[currentHierarchy]
-			this.dictionary = dictionary
-      Object.values(tree).forEach( (v,i) => this.addRootNode(v, i, model))
-
-      model.setLocked(!visible)
-      this.engine.setDiagramModel(model)
+		if ( unselectNodes ) {
+			const model = this.engine.getDiagramModel()
+			toggleUnselectNodes(false)
+			this.unselectNodes(model)
 			this.forceUpdate()
-    }
-    else {
-			if ( visible !== this.props.visible ) {
-	      console.log('trigger model lock!')
-	      let model = this.engine.getDiagramModel()
-	      model.setLocked(!visible)
-	      this.forceUpdate()
-			}
-    }
+		}
 
-		if ( edited !== this.state.edited ) {
-			this.setState({ edited })
+		let newState = undefined
+		if ( edited !== this.props.edited ) {
+			newState = { ...newState, edited }
+		}
+
+		if ( selectedTaggable && editTaggable !== this.props.editTaggable ) {
+			newState = { ...newState, selectedTaggable: editTaggable }
+		}
+
+		if ( newState ) {
+			this.setState( newState )
 		}
   }
+
+	componentWillUnmount() {
+		this.reset()
+	}
 
 	loadInitialDiagramState = () => {
 		Object.entries(initialDiagramsState).forEach( e => {
@@ -105,46 +117,64 @@ class HierarchiesManager extends Component {
 		})
 	}
 
-  addRootNode = (taggable, index, model) => {
-    const rootNode = new DefaultNodeModel(taggable.name, this.nodeColor)
-    rootNode.setPosition(this.baseRootX, this.baseRootY)
-    rootNode.addListener({ selectionChanged: (e) => this.selectTag(e, taggable) })
-    // const rootPort = rootNode.addOutPort("parent")
-    model.addAll(rootNode)
-		console.log('added root node=',rootNode)
+	loadInitialState = () => {
+		const newState = {}
+		Object.entries(initialState).forEach( e => {
+			newState[e[0]] = e[1]
+		})
+		this.setState( newState )
+	}
 
-    if ( taggable.children ) {
-      this.addChildrenNodes(rootNode, taggable, model, this.baseRootX, this.baseRootY)
-    }
-  }
+	setTaggables = taggables => {
+		this.loadInitialDiagramState()
+		console.log('trigger reload taggables')
+		const rootTaggables = Object.values(taggables).filter( t => !t.parentId )
+		this.setState({ taggables, rootTaggables }, () => this.diagramTaggables() )
+	}
 
-  addChildrenNodes = (parentNode, parentTaggable, model, parentX, parentY) => {
-    if ( parentTaggable.children ) {
-      Object.values(parentTaggable.children).forEach( (v,i) => {
-				const childNode = new DefaultNodeModel(v.name, this.nodeColor)
-				v.parentId = parentTaggable.id
-        childNode.addListener({ selectionChanged: (e) => this.selectTag(e, v) })
-        childNode.setPosition(parentX + this.nodeXDistance, parentY + (this.nodeYDistance * i))
-        this.baseRootY += this.nodeYDistance
-				const link = this.linkFromTo(childNode, parentNode)
-				console.log('added link=',link)
-        model.addAll(childNode, link)
+	diagramTaggables = () => {
+		const { rootTaggables } = this.state
+		const model = new DiagramModel()
+		rootTaggables.forEach( (t, i) => this.recursiveAddTaggableNode(t, null, i, model) )
+		// model.setLocked(!visible)
+		this.engine.setDiagramModel(model)
+		this.forceUpdate()
+	}
 
-        if ( v.children ) {
-          this.addChildrenNodes(childNode, v, 0, model)
-        }
-      })
+	recursiveAddTaggableNode = ( taggable, parentNode, index, model ) => {
+		const { taggables } = this.state
+    const node = new DefaultNodeModel(taggable.name, this.nodeColor)
+		this.getOrCreateOutPort(node)
+    node.addListener({ selectionChanged: (e) => this.selectTag(e, taggable) })
+		if ( parentNode) {
+			const { x, y } = parentNode
+			node.setPosition(x + this.nodeXDistance, y + (this.nodeYDistance * index))
+			const link = this.linkFromTo(node, parentNode)
+			console.log('added link=',link)
+			model.addAll(node, link)
+		}
+		else {
+			node.setPosition(this.baseRootX, this.maxNodeY + (this.nodeYDistance * index))
+			model.addAll(node)
+		}
+
+		if ( node.y > this.maxNodeY ) {
+			this.maxNodeY = node.y
+		}
+		console.log('added node=',node)
+
+		const childrenTaggables = Object.values(taggables).filter( t => t.parentId === taggable.id )
+    if ( childrenTaggables.length > 0 ) {
+			childrenTaggables.forEach( (t, i) => this.recursiveAddTaggableNode(t, node, i, model) )
     }
   }
 
   selectTag = (e, taggable) => {
+		console.log('selectag e=',e)
 		const { edited, mode } = this.state
 		const oldTaggable = this.state.selectedTaggable
 		if ( e.isSelected ) {
 			if ( !edited && mode === 'Select Taggable' ) {
-				const { editTag, loadFoodRatingMetric } = this.props
-				const { currentTagSymbol } = this.state
-
 				// update selected / unselected node colors
 				const model = this.engine.getDiagramModel()
 				if ( oldTaggable ) {
@@ -153,18 +183,37 @@ class HierarchiesManager extends Component {
 				}
 				const selectedTaggableNode = this.getNode(taggable.name, model)
 				selectedTaggableNode.color = this.selectedNodeColor
+				selectedTaggableNode.selected = false
 
+				const { loadEditTaggable, toggleTagEditorVisibility } = this.props
 				this.engine.setDiagramModel(model)
 				this.forceUpdate()
-				loadFoodRatingMetric(taggable.id)
-				editTag(currentTagSymbol, taggable.handle)
 				this.setState({ selectedTaggable: taggable })
+				loadEditTaggable(taggable)
+				toggleTagEditorVisibility(true)
 			}
 			else if ( mode === 'Select Parent' && oldTaggable && oldTaggable.id !== taggable.id ) {
 				this.linkTaggable(taggable)
 			}
 		}
   }
+
+	reset = (setTaggables = true) => {
+		const { resetTaggable, toggleTagEditorVisibility } = this.props
+		const { taggables } = this.state
+		if ( setTaggables ) {
+			// this.setState({ selectedTaggable: undefined, mode: 'Select Taggable'}, () => this.setTaggables(taggables))
+			this.setState({ mode: 'Select Taggable'}, () => this.setTaggables(taggables))
+		}
+		else {
+			// this.setState({ selectedTaggable: undefined, mode: 'Select Taggable'})
+			this.setState({ mode: 'Select Taggable'})
+		}
+		resetTaggable()
+		toggleTagEditorVisibility(false)
+	}
+
+	// Diagram Helpers
 
 	getNode = (name, model) => {
 		return Object.values(model.nodes).find( n => n.name === name )
@@ -193,7 +242,7 @@ class HierarchiesManager extends Component {
 	getOrCreateOutPort = (node) => {
 		let outPort = node && node.getOutPorts()[0]
 		if ( !outPort ) {
-			outPort = node.addOutPort("parent")
+			outPort = node.addOutPort(" ")
 		}
 		return outPort
 	}
@@ -201,19 +250,18 @@ class HierarchiesManager extends Component {
 	getOrCreateInPort = (node) => {
 		let inPort = node && node.getInPorts()[0]
 		if ( !inPort ) {
-			inPort = node.addInPort("child")
+			inPort = node.addInPort(" ")
 		}
 		return inPort
 	}
 
 	unlinkTaggable = e => {
 		e.preventDefault()
-		const { selectedTaggable } = this.state
-		let { editedFoodRatingMetric } = this.props
-		const { updateFoodRatingMetric } = this.props
-
+		let { selectedTaggable } = this.state
+		const { taggables } = this.state
+		const { updateTaggable } = this.props
 		const model = this.engine.getDiagramModel()
-		const parentTaggable = this.dictionary[selectedTaggable.parentId]
+		const parentTaggable = taggables[selectedTaggable.parentId]
 
 		if ( parentTaggable ) {
 			const toParent = this.getToParentLink(selectedTaggable.name, model)
@@ -224,10 +272,10 @@ class HierarchiesManager extends Component {
 				childPort.removeLink(toParentLink)
 				model.removeLink(toParentLink)
 				console.log('model after unlinkTaggable=',model)
-				editedFoodRatingMetric = { ...editedFoodRatingMetric, parentId: null }
-				console.log('editedFoodRatingMetric after unlinkTaggable=',editedFoodRatingMetric)
-				this.setState({ selectedTaggable: { ...selectedTaggable, parentId: null }})
-				updateFoodRatingMetric(editedFoodRatingMetric)
+				selectedTaggable = { ...selectedTaggable, parentId: null }
+				console.log('selectedTaggable after unlinkTaggable=',selectedTaggable)
+				this.setState({ selectedTaggable })
+				updateTaggable(selectedTaggable)
 				this.forceUpdate()
 			}
 		}
@@ -243,9 +291,8 @@ class HierarchiesManager extends Component {
 	}
 
 	linkTaggable = parentTaggable => {
-		const { selectedTaggable } = this.state
-		let { editedFoodRatingMetric } = this.props
-		const { updateFoodRatingMetric } = this.props
+		let { selectedTaggable } = this.state
+		const { updateTaggable } = this.props
 
 		const model = this.engine.getDiagramModel()
 		const taggableNode = this.getNode(selectedTaggable.name, model)
@@ -258,101 +305,100 @@ class HierarchiesManager extends Component {
 			const link = this.linkFromTo(taggableNode, parentTaggableNode)
 			model.addAll(link)
 			console.log('model after linkTaggable=',model)
-			editedFoodRatingMetric = { ...editedFoodRatingMetric, parentId: parentTaggable.id }
-			console.log('editedFoodRatingMetric after linkTaggable=',editedFoodRatingMetric)
-			this.setState({ selectedTaggable: { ...selectedTaggable, parentId: parentTaggable.id }})
-			updateFoodRatingMetric(editedFoodRatingMetric)
+			selectedTaggable = { ...selectedTaggable, parentId: parentTaggable.id }
+			console.log('selectedTaggable after linkTaggable=',selectedTaggable)
+			this.setState({ selectedTaggable })
+			updateTaggable(selectedTaggable)
 			this.engine.setDiagramModel(model)
 			this.forceUpdate()
 		}
 	}
 
 	createTaggable = () => {
-		const { toggleTagEditorVisibility, updateFoodRatingMetric } = this.props
+		const { toggleTagEditorVisibility, updateTaggable } = this.props
 		const { newTaggableName } = this.state
 		const newTaggable = { name: newTaggableName }
 
 		const model = this.engine.getDiagramModel()
 		const newTaggableNode = new DefaultNodeModel(newTaggable.name, this.selectedNodeColor)
-		newTaggableNode.setPosition(300, 200)
+		newTaggableNode.setPosition(this.baseRootX, this.baseRootY)
 		newTaggableNode.addListener({ selectionChanged: (e) => this.selectTag(e, newTaggable) })
+		newTaggableNode.selected = false
 
 		this.setState({ selectedTaggable: newTaggable, mode: 'Select Taggable', newTaggableName: '' })
-		updateFoodRatingMetric( newTaggable )
+		updateTaggable( newTaggable )
 		toggleTagEditorVisibility(true)
 		model.addAll(newTaggableNode)
 		this.forceUpdate()
 	}
 
-	clearEdits = () => {
-		const { currentHierarchy } = this.state
-		const { loadHierarchy, resetFoodRatingMetric, toggleTagEditorVisibility } = this.props
-		this.loadInitialDiagramState()
-		loadHierarchy(currentHierarchy)
-		resetFoodRatingMetric()
-		toggleTagEditorVisibility(false)
-		this.setState({ selectedTaggable: undefined, mode: 'Select Taggable'})
+	unselectNodes = (model) => {
+	 	Object.values(model.nodes).filter( n => n.selected === true ).forEach( n => n.selected = false )
+	}
+
+	renderButtons = () => {
+		const { edited, mode, selectedTaggable, taggableName } = this.state
+		const selectTaggableMode = mode === 'Select Taggable'
+		const createTaggableMode = mode === 'Create Taggable'
+		const canEditRelations = edited || (selectedTaggable && selectedTaggable.id)
+
+		return(
+			<ButtonToolbar className='hierarchies-manager-button'>
+				<ButtonGroup>
+					<Button onClick={ () => this.engine.zoomToFit() }>
+						Zoom To Fit
+					</Button>
+					{ !edited && selectTaggableMode &&
+						<Button
+							onClick={ () => {
+								this.reset()
+								this.setState({ mode: 'Create Taggable'})
+							}}>
+							New { taggableName }
+						</Button>
+					}
+					{ canEditRelations && selectedTaggable.parentId &&
+						<Button onClick={ this.unlinkTaggable }>Unlink Parent</Button>
+					}
+					{ canEditRelations && !selectedTaggable.parentId &&
+						<Button onClick={ this.selectParent }>Link Parent</Button>
+					}
+					{ (edited || createTaggableMode) &&
+						<Button onClick={ this.reset }>Clear Edits</Button>
+					}
+					{ !edited && createTaggableMode &&
+						<div className='hierarchies-manager-button'>
+							<FormControl
+								type="text"
+								placeholder={ 'New ' + taggableName + ' Name' }
+								onChange={ e => this.setState({ newTaggableName: e.target.value }) }
+							/>
+							<Button onClick={ this.createTaggable }>Create</Button>
+						</div>
+					}
+				</ButtonGroup>
+			</ButtonToolbar>
+		)
 	}
 
   render() {
     const { currentUser, visible } = this.props
-    const { currentHierarchyName, edited, mode, selectedTaggable } = this.state
-
-		const selectTaggableMode = mode === 'Select Taggable'
-		const createTaggableMode = mode === 'Create Taggable'
-
-    if ( !currentUser || !this.engine ) {
+		if ( !currentUser || !this.engine ) {
       return null
     }
-
     let props = {
   		diagramEngine: this.engine,
   		allowLooseLinks: false,
       maxNumberPointsPerLink: 0,
   	}
-
     return (
       <div className="page-container">
         <NavBar />
         <div className='hierarchies-manager-page'>
-          <TagEditor />
+					<TagEditor />
           <div className={ 'hierarchies-manager-container ' + (visible ? ' show-tag-editor': '')}>
             <div>
-							<ButtonToolbar className='hierarchies-manager-button'>
-								<ButtonGroup>
-									<Button onClick={ () => this.engine.zoomToFit() }>
-										Zoom To Fit
-									</Button>
-									{ !edited && selectTaggableMode &&
-										<Button
-											onClick={ () => {
-												this.clearEdits()
-												this.setState({ mode: 'Create Taggable'})
-											}}>
-											New { currentHierarchyName }
-										</Button>
-									}
-									{ !edited && createTaggableMode &&
-										<div>
-											<FormControl
-												type="text"
-												placeholder={ currentHierarchyName + ' Name' }
-												onChange={ e => this.setState({ newTaggableName: e.target.value }) }
-											/>
-											<Button onClick={ this.createTaggable }>Create</Button>
-										</div>
-									}
-									{ selectedTaggable && selectedTaggable.parentId &&
-										<Button onClick={ this.unlinkTaggable }>Unlink Parent</Button>
-									}
-									{ selectedTaggable && !selectedTaggable.parentId &&
-										<Button onClick={ this.selectParent }>Link Parent</Button>
-									}
-									{ edited &&
-										<Button onClick={ this.clearEdits }>Clear Edits</Button>
-									}
-								</ButtonGroup>
-							</ButtonToolbar>
+							{ this.renderButtons() }
               <DiagramWidget { ...props } />
             </div>
           </div>
@@ -364,18 +410,23 @@ class HierarchiesManager extends Component {
 }
 
 HierarchiesManager.propTypes = {
-  currentUser: PropTypes.object,
-  hierarchies: PropTypes.object,
-	status: PropTypes.string,
+	allTaggables: PropTypes.object,
 	edited: PropTypes.bool,
+	editTaggable: PropTypes.object,
+	currentUser: PropTypes.object,
+	hierarchiesManager: PropTypes.object,
+	// status: PropTypes.string,
+	visible: PropTypes.bool,
 
-  loadHierarchy: PropTypes.func,
-  redirect: PropTypes.func,
-  editTag: PropTypes.func,
-  loadFoodRatingMetric: PropTypes.func,
-	resetFoodRatingMetric: PropTypes.func,
+	loadEditTaggable: PropTypes.func,
+	loadTaggables: PropTypes.func,
+	redirect: PropTypes.func,
+	resetTaggable: PropTypes.func,
+	// setHierarchiesManagerStatus: PropTypes.func,
 	toggleTagEditorVisibility: PropTypes.func,
-	updateFoodRatingMetric: PropTypes.func,
+	toggleUnselectNodes: PropTypes.func,
+	unselectNodes: PropTypes.func,
+	updateTaggable: PropTypes.func,
 }
 
 export default HierarchiesManager

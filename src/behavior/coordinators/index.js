@@ -6,6 +6,8 @@ import * as hierarchiesCoordinators from './hierarchies'
 import * as tagCoordinators from './tag'
 import * as usersCoordinators from './users'
 import * as foodRatingMetricsCoordinators from './foodRatingMetrics'
+import * as taggablesCoordinators from './taggables'
+import * as requestCoordinators from './request'
 
 
 export default Object.freeze({
@@ -17,4 +19,6 @@ export default Object.freeze({
   ...tagCoordinators,
   ...usersCoordinators,
   ...foodRatingMetricsCoordinators,
+  ...requestCoordinators,
+  ...taggablesCoordinators,
 })

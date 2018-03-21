@@ -8,61 +8,57 @@ import presenters from '@presenters'
 
 
 const mapStateToProps = state => {
-  const { editFoodRatingMetric, hierarchies, hierarchiesManager, session, tagEditor } = state
+  const { allTaggables, editTaggable, hierarchiesManager, session, tagEditor } = state
   const { visible } = tagEditor
   const currentUser = session ? session.user : undefined
-  const { status } = hierarchiesManager
-  const edited = editFoodRatingMetric && editFoodRatingMetric.edited
+  const { status, unselectNodes } = hierarchiesManager
+  const edited = editTaggable && editTaggable.edited
 
   return {
+    allTaggables,
+    editTaggable,
     edited,
-    editedFoodRatingMetric: editFoodRatingMetric,
     currentUser,
-    hierarchies,
     hierarchiesManager,
-    status,
+    // status,
+    unselectNodes,
     visible,
   }
 }
 
 const mapDispatchToProps = () => {
   const {
-    FoodRatingMetricsService,
     RouterService,
-    TagService,
-    HierarchiesService,
+    TaggablesService,
     RestService,
     UIService,
   } = services
-  const { pResponseGeneric, pResponseHierarchyTree } = presenters.Api
-  const pResponseTags = pResponseGeneric
-  const pResponseFoodRatingMetric = pResponseGeneric
+  const { pResponseGeneric } = presenters.Api
+  const pResponseTaggables = pResponseGeneric
 
-  const loadHierarchy = coordinators.LoadHierarchy({ RestService, HierarchiesService, pResponseHierarchyTree })
   const toggleTagEditorVisibility = visible => UIService.TagEditor.toggleVisibility(visible)
   const redirect = () => RouterService.replace({ pathname: '/login' })
-  const setHierarchiesManagerStatus = status => UIService.HierarchiesManager.setHierarchiesManagerStatus(status)
-  const resetFoodRatingMetric = () => FoodRatingMetricsService.resetFoodRatingMetric()
-  const setTagEditorTagSymbol = (tagSymbol) => UIService.TagEditor.setTagSymbol(tagSymbol)
-  const editTag = coordinators.EditTag({ RestService, TagService, pResponseTags, UIService })
-  const loadFoodRatingMetric = coordinators.LoadFoodRatingMetric({
+  // const setHierarchiesManagerStatus = status => UIService.HierarchiesManager.setHierarchiesManagerStatus(status)
+  const toggleUnselectNodes = (status) => UIService.HierarchiesManager.toggleUnselectNodes(status)
+  const resetTaggable = () => TaggablesService.resetTaggable()
+  const loadEditTaggable = (taggable) => TaggablesService.loadEditTaggable(taggable)
+  const updateTaggable = (taggable) => TaggablesService.editTaggable(taggable)
+  const loadTaggables = coordinators.LoadTaggables({
     RestService,
-    FoodRatingMetricsService,
-    pResponseFoodRatingMetric,
+    TaggablesService,
+    pResponseTaggables,
     UIService
   })
-  const updateFoodRatingMetric = (foodRatingMetric) => FoodRatingMetricsService.editFoodRatingMetric(foodRatingMetric)
 
   return {
-    editTag,
-    loadFoodRatingMetric,
-    loadHierarchy,
+    loadEditTaggable,
+    loadTaggables,
     redirect,
-    resetFoodRatingMetric,
-    setHierarchiesManagerStatus,
-    setTagEditorTagSymbol,
+    resetTaggable,
+    // setHierarchiesManagerStatus,
     toggleTagEditorVisibility,
-    updateFoodRatingMetric,
+    toggleUnselectNodes,
+    updateTaggable,
   }
 }
 

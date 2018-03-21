@@ -10,6 +10,7 @@ import * as TagService from './tag'
 import * as UsersService from './users'
 import * as HierarchiesService from './hierarchies'
 import * as FoodRatingMetricsService from './foodRatingMetrics'
+import * as TaggablesService from './taggables'
 import UIService from './ui/index'
 
 const coreServices = {
@@ -20,6 +21,7 @@ const coreServices = {
   ...UsersService,
   ...HierarchiesService,
   ...FoodRatingMetricsService,
+  ...TaggablesService,
   UIService,
 }
 

@@ -15,4 +15,8 @@ export default class HierarchiesManager extends BaseService {
   resetHierarchiesManager() {
     this.dispatch( actions.resetHierarchiesManager())
   }
+
+  toggleUnselectNodes(status) {
+    this.dispatch( actions.toggleUnselectNodes( status ) )
+  }
 }

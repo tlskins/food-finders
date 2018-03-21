@@ -6,6 +6,7 @@ import * as sessionsReducers from './sessions'
 import * as tagsReducers from './tags'
 import * as usersReducers from './users'
 import * as foodRatingMetricsReducers from './foodRatingMetrics'
+import * as taggablesReducers from './taggables'
 import uiReducers from './ui'
 
 
@@ -16,5 +17,6 @@ export default combineReducers({
   ...tagsReducers,
   ...usersReducers,
   ...foodRatingMetricsReducers,
+  ...taggablesReducers,
   ...uiReducers,
 })
