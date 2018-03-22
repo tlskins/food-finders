@@ -14,7 +14,7 @@ export const loadTaggables = (taggableType, taggables, overwrite = false) => ({ 
 
 export const deleteTaggable = (taggableType, taggableId) => ({ type: DELETE_TAGGABLE, taggableType, taggableId })
 
-export const loadEditTaggable = taggable => ({ type: LOAD_EDIT_TAGGABLE, taggable })
+export const loadEditTaggable = (taggableType, taggable) => ({ type: LOAD_EDIT_TAGGABLE, taggableType, taggable })
 
 export const editTaggable = taggable => ({ type: EDIT_TAGGABLE, taggable })
 

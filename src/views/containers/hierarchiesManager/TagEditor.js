@@ -9,10 +9,10 @@ import { HandleError } from '@coordinators/composed'
 
 
 const mapStateToProps = state => {
-  const { editTaggable, hierarchiesManager, tagEditor } = state
-  const { taggableType } = hierarchiesManager
+  const { editTaggable, tagEditor } = state
   const { visible } = tagEditor
   const edited = editTaggable && editTaggable.edited
+  const taggableType = editTaggable && editTaggable.taggableType
 
   return {
     edited,

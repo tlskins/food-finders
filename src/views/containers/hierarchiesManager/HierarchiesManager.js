@@ -11,7 +11,7 @@ const mapStateToProps = state => {
   const { allTaggables, editTaggable, hierarchiesManager, session, tagEditor } = state
   const { visible } = tagEditor
   const currentUser = session ? session.user : undefined
-  const { status, unselectNodes } = hierarchiesManager
+  const { unselectNodes } = hierarchiesManager
   const edited = editTaggable && editTaggable.edited
 
   return {
@@ -20,7 +20,6 @@ const mapStateToProps = state => {
     edited,
     currentUser,
     hierarchiesManager,
-    // status,
     unselectNodes,
     visible,
   }
@@ -38,10 +37,9 @@ const mapDispatchToProps = () => {
 
   const toggleTagEditorVisibility = visible => UIService.TagEditor.toggleVisibility(visible)
   const redirect = () => RouterService.replace({ pathname: '/login' })
-  // const setHierarchiesManagerStatus = status => UIService.HierarchiesManager.setHierarchiesManagerStatus(status)
   const toggleUnselectNodes = (status) => UIService.HierarchiesManager.toggleUnselectNodes(status)
   const resetTaggable = () => TaggablesService.resetTaggable()
-  const loadEditTaggable = (taggable) => TaggablesService.loadEditTaggable(taggable)
+  const loadEditTaggable = (taggableType, taggable) => TaggablesService.loadEditTaggable(taggableType, taggable)
   const updateTaggable = (taggable) => TaggablesService.editTaggable(taggable)
   const loadTaggables = coordinators.LoadTaggables({
     RestService,
@@ -55,7 +53,6 @@ const mapDispatchToProps = () => {
     loadTaggables,
     redirect,
     resetTaggable,
-    // setHierarchiesManagerStatus,
     toggleTagEditorVisibility,
     toggleUnselectNodes,
     updateTaggable,

@@ -34,8 +34,7 @@ export const SaveTaggable = ({
         response = await RestService.post(`${ taggableType }/`, params)
       }
       const taggable = pResponseTaggable(response)
-      // TaggablesService.loadTaggables(taggableType, [taggable])
-      TaggablesService.loadEditTaggable(taggable)
+      TaggablesService.loadEditTaggable(taggableType, taggable)
       UIService.TagEditor.toggleVisibility(true)
       await LoadTaggables({ RestService, TaggablesService, pResponseTaggables, UIService })(taggableType, true)
     }
@@ -56,7 +55,6 @@ export const DeleteTaggable = ({
 }) => async (taggableType, id) => {
     try {
       await RestService.delete(`${ taggableType }/${ id }`)
-      // TaggablesService.deleteTaggable(taggableType, id)
       TaggablesService.resetTaggable()
       UIService.TagEditor.toggleVisibility(false)
       await LoadTaggables({ RestService, TaggablesService, pResponseTaggables, UIService })(taggableType, true)

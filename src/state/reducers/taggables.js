@@ -7,7 +7,7 @@ import {
 } from '@actions/taggables'
 
 
-const editTaggableState = { edited: false }
+const initialEditTaggableState = { edited: false, taggableType: undefined }
 
 export const allTaggables = (state = {}, action) => {
   switch (action.type) {
@@ -31,16 +31,18 @@ export const allTaggables = (state = {}, action) => {
 }
 
 
-export const editTaggable = (state = { ...editTaggableState }, action) => {
+export const editTaggable = (state = initialEditTaggableState, action) => {
   switch (action.type) {
     case LOAD_EDIT_TAGGABLE: {
-      return { ...action.taggable, edited: false }
+      const { taggable, taggableType } = action
+
+      return { taggableType, ...taggable, edited: false }
     }
     case EDIT_TAGGABLE: {
       return { ...action.taggable, edited: true }
     }
     case RESET_TAGGABLE: {
-      return { ...editTaggableState }
+      return { ...initialEditTaggableState }
     }
 
     default:

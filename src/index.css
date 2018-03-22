@@ -35,6 +35,12 @@ body {
   height: 100%;
 }
 
+.tabs-container {
+  width: 100%;
+  /* background-color: white; */
+  color: black;
+}
+
 .form-container {
   width: 100%;
   display: flex;
@@ -804,23 +810,29 @@ body {
 .hierarchies-manager-container {
   height: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex: 1;
-  padding: 30px;
+  /* padding: 30px; */
   background: #eee;
   box-shadow: 0 0 5px rgba(0,0,0,1);
   transform: translate3d(43px,0,0);
   transition: transform .3s;
 }
 
+.hierarchies-manager-container > div {
+  display: flex;
+  flex-direction: column;
+}
+
 .hierarchies-manager-button {
+  margin-left: 5px;
   display: flex;
   flex-direction: row;
+  width: 50%;
 }
 
 .show-tag-editor {
   transform: translate3d(385px,0,0);
-  /* background-color: white; */
 }
 
 /** Tag Editor **/
