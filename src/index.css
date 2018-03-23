@@ -118,13 +118,12 @@ body {
   z-index: 100;
 }
 
-.sticky {
+/* .stick-header {
   position: fixed;
   top: 70px;
-  width: 100%;
   order: -1;
   transform: translate3d(0,0,0);
-}
+} */
 
 .sticky-header-title {
   /* height: 100%; */
@@ -197,7 +196,7 @@ body {
   width: 20px;
 }
 
-.sticky-sidebar-header {
+.sticky-sidebar-toggle {
   height: 100%;
   width: 245px;
   padding: 20px 30px 20px 30px;
@@ -210,10 +209,17 @@ body {
   transition: background-color .3s;
 }
 
-.sticky-sidebar-header:hover {
+.sticky-sidebar-toggle:hover {
   background: #eee;
   color: white;
   background-color: black;
+}
+
+.stick-sidebar-header {
+  position: fixed;
+  top: 145px;
+  order: -1;
+  transform: translate3d(0,0,0);
 }
 
 /* .sidebar-title {
@@ -603,10 +609,11 @@ body {
 
 .friends-manager--content--search {
   padding-left: 20px;
+  width: 100%;
 }
 
 .friends-manager--content--text-input {
-  width: 80%;
+  /* width: 80%; */
   font-size: 16px;
   padding: 7px 10px;
 }
@@ -828,10 +835,10 @@ body {
 
 .newsfeed-item-container {
   background: #fcfcfc;
-  padding: 32px 40px 32px 40px;
+  padding: 20px 30px 20px 30px;
   border: 1px solid rgb(218, 225, 233);
   border-radius: 3px;
-  margin: 15px 4px 15px 4px;
+  margin: 10px 4px 10px 4px;
 }
 
 .newsfeed-item-container:hover {
@@ -913,24 +920,19 @@ body {
   border-width: 1px;
   border-style: solid;
   border-color: rgb(147, 218, 246);
-  border-radius: 7px;
+  border-radius: 4px;
   background-color: rgb(147, 218, 246);
   color: black;
-  /* max-height: 40px;
-  max-width: 400px;
-  word-wrap: normal;
-  overflow-y: scroll;
-  overflow-x: scroll; */
-  margin: 0 6px 0 6px;
+  margin: 0 1px 0 1px;
 }
 
-[class^="social-entry-tag"] > p {
+/* [class^="social-entry-tag"] > p {
   font-size: 12px;
   display: flex;
   align-items: center;
   justify-content:center;
   margin: 2px 4px 2px 4px;
-}
+} */
 
 .social-entry-tag__food {
   background-color: rgb(79, 229, 211);
@@ -940,7 +942,7 @@ body {
   background-color: rgb(147, 218, 246);
 }
 
-.social-entry-tag__hashtag {
+.social-entry-tag__foodratingtype {
   background-color: rgb(240, 237, 86);
 }
 
@@ -1055,10 +1057,10 @@ body {
   background-size: contain;
 }
 
-.social-entry-form__suggestions__item--hashtag {
+.social-entry-form__suggestions__item--foodratingtype {
   background-color: rgb(240, 237, 86);
 }
-.social-entry-form__suggestions__icon--hashtag {
+.social-entry-form__suggestions__icon--foodratingtype {
   background: url("./_res/images/icons8-trophy-48.png") no-repeat;
   background-size: contain;
 }
@@ -1082,14 +1084,14 @@ body {
 
 /* Ratings */
 
-.rating-component-badges {
+/* .rating-component-badges {
   display: flex;
   flex-direction: column;
 }
 
 .badge-container {
   margin-top: 2px;
-}
+} */
 
 /** Hierarchies Manager **/
 

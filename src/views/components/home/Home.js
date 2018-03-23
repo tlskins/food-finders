@@ -13,16 +13,13 @@ import DropdownArrow from '@res/images/icons8-expand-arrow-48.png'
 class Header extends PureComponent {
   render() {
     const {
-      distanceFromTop,
       toggleFriendsManagerVisibility,
       toggleSocialEntryVisibility,
     } = this.props
-    const isSticky = distanceFromTop <= 70
-    const className = isSticky ? "sticky-header sticky" : "sticky-header"
 
     return (
-      <div className={ className } style={{ ...this.props.style }}>
-        <div className="sticky-sidebar-header"
+      <div className="sticky-header" style={{ ...this.props.style }}>
+        <div className="sticky-sidebar-toggle"
           onClick={ toggleFriendsManagerVisibility }
         >
           Buddies
