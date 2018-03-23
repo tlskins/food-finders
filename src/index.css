@@ -639,7 +639,7 @@ body {
   display: flex;
   flex-direction: row;
   flex: 1;
-  padding: 30px;
+  padding: 10px 30px 30px 30px;
   background: #eee;
   box-shadow: 0 0 5px rgba(0,0,0,1);
   transform: translate3d(0px,0,0);
@@ -804,7 +804,7 @@ body {
 /** Newsfeed **/
 
 .newsfeed {
-  list-style: none;
+  /* list-style: none; */
   margin: 0;
   padding: 0;
   width: 800px;
@@ -826,36 +826,69 @@ body {
   display: inline;
 }
 
-.newsfeed__header-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.newsfeed__header {
-  text-align: center;
-  padding: 15px;
-}
-
-[class^="newsfeed__item--"] {
+.newsfeed-item-container {
   background: #fcfcfc;
-  padding: 20px;
+  padding: 32px 40px 32px 40px;
   border: 1px solid rgb(218, 225, 233);
   border-radius: 3px;
-  margin: 4px;
+  margin: 15px 4px 15px 4px;
 }
 
-[class^="newsfeed__item--"]:hover {
+.newsfeed-item-container:hover {
   border-width: 1px;
   border-style: solid;
   border-color: rgb(75, 173, 2);
   border-radius: 4px;
 }
 
-.newsfeed__item__content {
+.newsfeed-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.newsfeed-item-header {
+  border-bottom: 1px solid transparent;
+  transition: border-bottom 0.2s ease-in-out;
+  color: #101820;
+  font-size: 22px;
+  letter-spacing: 0.086em;
+  text-transform: uppercase;
+}
+
+.newsfeed-item-header:hover {
+  border-bottom: 1px solid black;
+  transition: border-bottom 0.2s ease-in-out;
+}
+
+.newsfeed-item-sub-header{
+  color: #656666;
+  font-size: 15px;
+  letter-spacing: .013em;
+  margin-bottom: 3px;
+  margin-top: 2px;
+}
+
+.newsfeed-item-sub-header-item {
+  color: #656666;
+  font-size: 15px;
+  letter-spacing: .013em;
+}
+
+.rating {
+  color: #101820;
   display: flex;
   flex-direction: row;
+  font-size: 14px; /*'Calibre-Medium'*/
+  letter-spacing: .061em;
+  text-transform: uppercase;
+}
+
+.rating-component {
+  color: #101820;
+  font: 14px; /*'Calibre-Medium'*/
+  letter-spacing: .061em;
+  text-transform: uppercase;
+  margin: 0px 3px 0px 3px;
 }
 
 /** Tags **/
