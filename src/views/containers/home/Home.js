@@ -19,16 +19,19 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  const { RouterService, RestService, TagService } = services
+  const { RouterService, RestService, TagService, UIService } = services
   const { pResponseGeneric } = presenters.Api
   const pResponseRoots = pResponseGeneric
 
-
+  const toggleFriendsManagerVisibility = visible => UIService.FriendsManager.toggleVisibility(visible)
+  const toggleSocialEntryVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
   const redirect = () => RouterService.replace({ pathname: '/login' })
   const loadRootTags = coordinators.loadRootTags({ TagService, RestService, pResponseRoots })
 
   return {
     loadRootTags,
+    toggleFriendsManagerVisibility,
+    toggleSocialEntryVisibility,
     redirect,
   }
 }

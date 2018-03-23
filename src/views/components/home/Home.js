@@ -7,26 +7,44 @@ import Newsfeed from '@containers/home/Newsfeed'
 import SocialEntryInput from '@containers/home/SocialEntryInput'
 import FriendsManager from '@containers/home/FriendsManager'
 import NavBar from '@containers/common/Navbar'
+import DropdownArrow from '@res/images/icons8-expand-arrow-48.png'
 
 
 class Header extends PureComponent {
   render() {
-    const isSticky = this.props.distanceFromTop <= 70
+    const {
+      distanceFromTop,
+      toggleFriendsManagerVisibility,
+      toggleSocialEntryVisibility,
+    } = this.props
+    const isSticky = distanceFromTop <= 70
     const className = isSticky ? "sticky-header sticky" : "sticky-header"
+
     return (
       <div className={ className } style={{ ...this.props.style }}>
-        <div>Buddies</div>
-      </div>
-    );
+        <div className="sticky-sidebar-header"
+          onClick={ toggleFriendsManagerVisibility }
+        >
+          Buddies
+        </div>
+        <div className="sticky-header-title">Newsfeed</div>
+        <button className="sticky-header-dropdown">
+          <span className="sticky-header-dropdown-title">Sort by -</span>
+          <span className="sticky-header-dropdown-value">Topic</span>
+          <img className="dropdown-expand-icon" src={ DropdownArrow } alt="dropdown-arrow"/>
+        </button>
+        <button
+          className="sticky-header-button"
+          onClick={ toggleSocialEntryVisibility }
+        >
+          New Social Entry
+        </button>
+      </div> )
   }
 }
 
 
 class Home extends Component {
-  state = {
-    headerSticky: false,
-  }
-
   componentDidMount() {
     setTimeout(() => {
       const { currentUser, redirect } = this.props
@@ -54,22 +72,14 @@ class Home extends Component {
   //   clearAllBodyScrollLocks()
   // }
 
-  handleScroll = e => {
-    console.log('onsticky!, e =',e)
-    if ( this.header ) {
-      const sticky = this.header.offsetTop
-      console.log('onsticky!, window.pageYOffset=',window.pageYOffset)
-      console.log('onsticky!, sticky - 68 = ',sticky - 68)
-      if ( window.pageYOffset >= (sticky - 68) && window.pageYOffset > 459 ) {
-        this.setState({ headerSticky: true })
-      } else {
-        this.setState({ headerSticky: false })
-      }
-    }
-  }
-
   render() {
-    const { currentUser, friendsManagerVisible } = this.props
+    const {
+      currentUser,
+      friendsManagerVisible,
+      socialEntryVisible,
+      toggleFriendsManagerVisibility,
+      toggleSocialEntryVisibility,
+    } = this.props
     if ( !currentUser ) {
       return null
     }
@@ -94,7 +104,13 @@ class Home extends Component {
               if ( isSticky ) {
                 style = { ...style, top: '70px' }
               }
-              return <Header style={style} />
+              return (
+                <Header
+                  style={style}
+                  toggleFriendsManagerVisibility={ () => toggleFriendsManagerVisibility(!friendsManagerVisible) }
+                  toggleSocialEntryVisibility={ () => toggleSocialEntryVisibility(!socialEntryVisible)}
+                />
+              )
             }}
           </Sticky>
           <div className="home-page">
@@ -117,6 +133,8 @@ Home.propTypes = {
   socialEntryVisible: PropTypes.bool,
 
   redirect: PropTypes.func,
+  toggleFriendsManagerVisibility: PropTypes.func,
+  toggleSocialEntryVisibility: PropTypes.func,
 }
 
 export default Home

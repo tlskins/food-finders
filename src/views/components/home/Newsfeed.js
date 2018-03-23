@@ -57,7 +57,6 @@ class NewsFeed extends Component {
 
   render() {
     const { feedItems } = this.state
-    const { toggleVisibility } = this.props
 
     const emptyFeed = feedItems.length === 0
     console.log('feedItems=',feedItems)
@@ -65,15 +64,6 @@ class NewsFeed extends Component {
     return (
       <div>
         <ul className='newsfeed'>
-          <div className='newsfeed__header-container'>
-            <h1 className='newsfeed__header'>
-              Feed
-              <input className='compose-social-entry-btn'
-                type='button'
-                onClick={ () => toggleVisibility(true) }
-              />
-            </h1>
-          </div>
           { emptyFeed && `Empty Feed!` }
           { feedItems.map( (f,i) => this.renderFeedItem(f) ) }
         </ul>
@@ -84,7 +74,6 @@ class NewsFeed extends Component {
 
 NewsFeed.propTypes = {
   loadNewsfeed: PropTypes.func,
-  toggleVisibility: PropTypes.func,
 }
 
 export default NewsFeed

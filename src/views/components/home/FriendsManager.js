@@ -50,7 +50,7 @@ class FriendsManager extends Component {
   }
 
   render() {
-    const { followersCount, followingCount, visible, toggleVisibility } = this.props
+    const { followersCount, followingCount } = this.props
     const { suggestions, searchText } = this.state
     const searchTextEmpty = searchText.length === 0
 
@@ -58,9 +58,6 @@ class FriendsManager extends Component {
       <div className='friends-manager sidebar'>
         <div className='sidebar-content'>
           <div className="friends-manager-container">
-            <div className='friends-manager--clicker'
-              onClick={ () => toggleVisibility(!visible) }
-            />
             <div className='friends-manager--content'>
               <div className='friends-manager--content--search'>
                 <div>
