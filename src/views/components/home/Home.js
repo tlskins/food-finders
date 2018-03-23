@@ -1,11 +1,25 @@
-import React, { Component } from 'react'
+import React, { Component, PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
+// import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
+import { Sticky, StickyContainer } from 'react-sticky'
 
 import Newsfeed from '@containers/home/Newsfeed'
 import SocialEntryInput from '@containers/home/SocialEntryInput'
 import FriendsManager from '@containers/home/FriendsManager'
 import NavBar from '@containers/common/Navbar'
+
+
+class Header extends PureComponent {
+  render() {
+    const isSticky = this.props.distanceFromTop <= 70
+    const className = isSticky ? "sticky-header sticky" : "sticky-header"
+    return (
+      <div className={ className } style={{ ...this.props.style }}>
+        <div>Buddies</div>
+      </div>
+    );
+  }
+}
 
 
 class Home extends Component {
@@ -14,7 +28,6 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', this.handleScroll, true)
     setTimeout(() => {
       const { currentUser, redirect } = this.props
 
@@ -37,10 +50,9 @@ class Home extends Component {
     // }
   }
 
-  componentWillUnmount() {
-    // clearAllBodyScrollLocks()
-    window.removeEventListener('scroll', this.handleScroll)
-  }
+  // componentWillUnmount() {
+  //   clearAllBodyScrollLocks()
+  // }
 
   handleScroll = e => {
     console.log('onsticky!, e =',e)
@@ -58,18 +70,10 @@ class Home extends Component {
 
   render() {
     const { currentUser, friendsManagerVisible } = this.props
-    const { headerSticky } = this.state
     if ( !currentUser ) {
       return null
     }
-    
-    let stickyHeaderClass = "sticky-header"
-    let homePageClass = "home-page"
-
-    if ( headerSticky ) {
-      stickyHeaderClass += " sticky"
-      homePageClass += " sticky-content"
-    }
+    const socialContainerClass = friendsManagerVisible ? 'social-container show-friends-manager' : 'social-container'
 
     return (
       <div className='page-container'>
@@ -77,18 +81,30 @@ class Home extends Component {
         <div className="hero-container">
           <div className="hero-image-large"/>
         </div>
-        <div className={ stickyHeaderClass }
-          ref={ref => this.header = ref }
-        >
-          <div>Buddies</div>
-        </div>
-        <div className={ homePageClass }>
-          <FriendsManager />
-          <div className={ 'social-container' + (friendsManagerVisible ? ' show-friends-manager': '')}>
-            <Newsfeed />
-            <SocialEntryInput />
+        <StickyContainer>
+          <Sticky topOffset={-70}>
+            {({
+              isSticky,
+              wasSticky,
+              style,
+              distanceFromTop,
+              distanceFromBottom,
+              calculatedHeight
+            }) => {
+              if ( isSticky ) {
+                style = { ...style, top: '70px' }
+              }
+              return <Header style={style} />
+            }}
+          </Sticky>
+          <div className="home-page">
+            <FriendsManager />
+            <div className={ socialContainerClass }>
+              <Newsfeed />
+              <SocialEntryInput />
+            </div>
           </div>
-        </div>
+        </StickyContainer>
       </div>
     )
   }
