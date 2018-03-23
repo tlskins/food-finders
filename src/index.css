@@ -1,24 +1,37 @@
 @import 'bootstrap.css';
+/* @import 'styles.css'; */
+
+@font-face {
+  font-family: 'Calibre-Regular';
+  src: url('Calibre-Regular.eot') format('embedded-opentype'), /* IE6-IE8 */
+     url('Calibre-Regular.woff') format('woff'), /* Pretty Modern Browsers */
+     url('Calibre-Regular.ttf')  format('truetype'); /* Safari, Android, iOS */
+  font-weight: normal;
+  font-style: normal;
+}
+
 
 html, body, main, #root {
   height: 100%;
 }
 
 body {
-  background: rgb(244, 247, 247);
+  /* background: rgb(244, 247, 247); */
+  background-color: #f1f1f2;
   margin: 0;
 }
 
 #root {
-  font: 600 16px 'Merriweather Sans', sans-serif;
-  overflow-x: hidden;
+  font-family: 'Calibre-Regular', sans-serif;
+  /* font: 600 16px 'Merriweather Sans', sans-serif; */
+  /* overflow-x: hidden; */
   overflow-y: inherit;
 }
 
 .app {
   display: flex;
   flex-flow: column;
-  height: 100%;
+  min-height: 100%;
 }
 
 .container {
@@ -63,11 +76,73 @@ body {
   margin-right: 15px;
 }
 
+.hero-container {
+  display: flex;
+  width: 100%;
+  height: 528px;
+  background-color: black;
+  text-align: center;
+  vertical-align: center;
+}
+
+.hero-image-large {
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%;
+  background: url("./_res/images/food_photography_palm_beach_gardens_florida_parched_pig.jpg") no-repeat;
+  /* background-image: url("https://cf.ua/image?src=/m/blog/b5c556dd9023dbeeee7268ef6744b37b/images/32/57553d76dc12d_compressed20161005.jpg&width=1150"); */
+}
+
 .login-page {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
+/** Food Buddies tags **/
+
+/* .fb-sticky {
+  position: fixed;
+  top: 70px;
+  width: 100%;
+  transform: translate3d(0,0,0);
+} */
+
+/* .sticky-sidebar-header {
+  position: fixed;
+  top: 70px;
+  width: 100%;
+  transform: translate3d(0,0,0);
+} */
+
+.sticky-header {
+  background-color: #f1f1f2;
+  border-bottom: 1px solid #d0d2d3;
+  border-top: 2px solid #f1f1f2;
+  color: #101820;
+  font-size: 16px;
+  height: 75px;
+  padding: 20px 30px 20px 30px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  transition: color 0.3s ease;
+  vertical-align: middle;
+  width: 100%;
+  z-index: 100;
+}
+
+.sticky {
+  position: fixed;
+  top: 70px;
+  width: 100%;
+  order: -1;
+  transform: translate3d(0,0,0);
+}
+
+.sticky-content {
+  padding-top: 68px;
+}
+
 
 /** Alert **/
 
@@ -231,13 +306,16 @@ body {
 /** Header **/
 
 .main-nav {
+  position: fixed;
   display: flex;
-  order: -1;
-  /* background: #232c3b; */
-  background: rgb(6, 103, 208);
+  order: -2;
   align-items: center;
   justify-content: center;
+  width: 100%;
   height: 70px;
+  border-bottom: 1px solid #d0d2d3;
+  z-index: 100;
+  background-color: white;
 }
 
 .main-nav ul {
@@ -250,13 +328,20 @@ body {
   width: 200px;
 }
 
-.main-nav > [class^="main-nav"] > li > a {
-  color: #fcfcfc;
+.nav-links {
+  padding-right: 40px;
+  font-size: 15px;
+  color: #656666;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 0.086em;
 }
 
 .main-nav--user {
-  color: #fcfcfc;
-  background: url("./_res/images/ic_person_outline_white_24px.svg") no-repeat;
+  /* color: #fcfcfc; */
+  /* color: #656666;
+  border: 1px solid #d0d2d3; */
+  /* background: url("./_res/images/ic_person_outline_white_24px.svg") no-repeat; */
   padding-left: 30px;
   margin-right: 90px;
   height: 30px;
@@ -303,6 +388,88 @@ body {
   padding: 15px;
 }
 
+/** Sidebar **/
+
+.sidebar {
+  /* display: flex;
+  flex-direction: row; */
+  align-items: flex-start;
+  background-color: white;
+  border-top: 2px solid #f1f1f2;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  font-size: 15px;
+  height: 100%;
+  /* height: 200px; */
+  /* justify-content: space-between; */
+  letter-spacing: .086em;
+  position: absolute;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: default;
+}
+
+/* .sidebar-title {
+  background-color: white;
+  border-top: 2px solid #f1f1f2;
+  color: #101820;
+  width: 100%;
+  height: 75px;
+  font-size: 16px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 20px 30px 20px 30px;
+  transition: background-color 0.3s ease;
+  transition: color 0.3s ease;
+  z-index: 100;
+}
+
+.sidebar-title:hover {
+  background: #eee;
+  color: white;
+  background-color: black;
+} */
+
+.sidebar-content {
+  border-top: 2px solid #f1f1f2;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.sidebar-item {
+  transition: background-color 0.5s ease;
+  padding: 8px 0 8px 0;
+  color: #101820;
+}
+
+.sidebar-item:hover {
+  background: #eee;
+}
+
+.sidebar-item-title {
+  padding-left: 3px;
+  font-size: 15px;   /* Calibre-Regular */
+  color: #101820;
+  letter-spacing: .086em;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.sidebar-item-details {
+  padding-left: 7px;
+  color: #656666;
+  font-size: 13px; /* Calibre-Regular */
+  line-height: .85;
+  letter-spacing: 0.033em;
+  margin-bottom: 3px;
+  margin-top: 2px;
+  text-transform: none;
+}
+
 /** Home Page **/
 
 .home-page {
@@ -312,23 +479,35 @@ body {
 
 /** Friends Manager **/
 
-.friends-manager {
+/* .friends-manager {
   position: absolute;
   height: 100%;
   display: flex;
   flex-direction: row;
+} */
+
+.friends-manager-container {
+  border-top: 2px solid #f1f1f2;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
 }
 
 .friends-manager--content {
+  padding: 14px 24px 14px 40px;
   display: flex;
   flex-direction: column;
+  height: 100%;
   width: 200px;
-  padding: 20px;
+  padding: 20px 0 20px 0;
+}
+
+.friends-manager--content--search {
+  padding-left: 3px;
 }
 
 .friends-manager--content--text-input {
   width: 80%;
-  border: 1px solid #3d4853;
   font-size: 16px;
   padding: 7px 10px;
 }
@@ -338,40 +517,22 @@ body {
   flex-direction: column ;
 }
 
-.friends-manager--content--suggestions__item {
-  margin: 10px 5px 5px 0px;
-  padding: 7px;
-  background: rgb(255, 255, 255);
-  border-width: 1px;
-  border-style: solid;
-  border-color: rgb(218, 225, 233);
-  border-radius: 4px;
-}
-
-.friends-manager--content--suggestions__item > h4 {
-  font-weight: 200;
-  font-size: 14px;
-}
-
-.friends-manager--content--suggestions__item > p {
-  font-weight: 100;
-  font-size: 12px;
-}
-
 .friends-manager--clicker {
   position: relative;
   float: right;
+  height: 100%;
   width: 45px;
-  box-shadow: 2px 2px 2px rgba(0,0,0,1);
+  border-right: 2px solid #f1f1f2;
   cursor: pointer;
+  /* box-shadow: 2px 2px 2px rgba(0,0,0,1); */
 }
 
-.friends-manager--icon {
+/* .friends-manager--icon {
   width: 100%;
   height: 50px;
   margin-top: 40px;
   background: url("./_res/images/icons8-friends-48.png") no-repeat;
-}
+} */
 
 /** Social **/
 
@@ -388,7 +549,7 @@ body {
 }
 
 .social-container.show-friends-manager {
-  transform: translate3d(285px,0,0);
+  transform: translate3d(245px,0,0);
 }
 
 .compose-social-entry-btn {

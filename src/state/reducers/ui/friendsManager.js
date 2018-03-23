@@ -4,7 +4,7 @@ import {
 
 
 const initialState = {
-  visible: true,
+  visible: false,
 }
 
 

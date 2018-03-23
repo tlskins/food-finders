@@ -28,6 +28,33 @@ class NewsFeed extends Component {
     this.setState({ feedItems })
   }
 
+  renderFeedItem = item => {
+    const { conductedAt, metadata } = item
+    return (
+      <li className='newsfeed__item--parent'>
+        <div className='newsfeed__item__content'>
+          <div>
+            <h3 className='p-header'>
+              { metadata.authorName }
+            </h3>
+              { item.renderContent() }
+            <p className='p-footer'>
+              Posted at { Moment(conductedAt).format( 'MM-DD-YY h:mma' ) }
+            </p>
+          </div>
+          <div>
+            { item.metadata.foodRatingTags &&
+              <Rating
+                user={ metadata.foodRating.rater }
+                tags={ metadata.foodRatingTags }
+                />
+            }
+          </div>
+        </div>
+      </li>
+    )
+  }
+
   render() {
     const { feedItems } = this.state
     const { toggleVisibility } = this.props
@@ -48,29 +75,7 @@ class NewsFeed extends Component {
             </h1>
           </div>
           { emptyFeed && `Empty Feed!` }
-          { feedItems.map( (f,i) =>
-            <li key={ i } className='newsfeed__item--parent'>
-              <div className='newsfeed__item__content'>
-                <div>
-                  <h3 className='p-header'>
-                    { f.metadata.authorName }
-                  </h3>
-                    { f.renderContent() }
-                  <p className='p-footer'>
-                    Posted at { Moment(f.conductedAt).format( 'MM-DD-YY h:mma' ) }
-                  </p>
-                </div>
-                <div>
-                  { f.metadata.foodRatingTags &&
-                    <Rating
-                      user={ f.metadata.foodRating.rater }
-                      tags={ f.metadata.foodRatingTags }
-                      />
-                  }
-                </div>
-              </div>
-            </li>
-          ) }
+          { feedItems.map( (f,i) => this.renderFeedItem(f) ) }
         </ul>
       </div>
     )

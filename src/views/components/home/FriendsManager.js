@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import Sticky from 'react-stickynode'
 
 import { searchDictionaryBy } from '~/utils'
 
@@ -30,6 +31,13 @@ class FriendsManager extends Component {
     searchUsersByText && searchUsersByText(value)
   }
 
+  onSticky = status => {
+    console.log('onSticky, status=',status)
+    if (status.status === Sticky.STATUS_FIXED) {
+      console.log('the component is sticky')
+    }
+  }
+
   renderEditRelationshipButton = (isFollowing, targetId) => {
     const { updateUserRelationship } = this.props
     const type = isFollowing === 'Yes' ? 'unfollow' : 'follow'
@@ -45,36 +53,42 @@ class FriendsManager extends Component {
     const { followersCount, followingCount, visible, toggleVisibility } = this.props
     const { suggestions, searchText } = this.state
     const searchTextEmpty = searchText.length === 0
-    
+
     return (
-      <div className='friends-manager'>
-        <div className='friends-manager--clicker'
-          onClick={ () => toggleVisibility(!visible) }
-        >
-          <div className='friends-manager--icon'/>
-        </div>
-        <div className='friends-manager--content'>
-          { `followers: ${followersCount}` }<br />
-          { `following: ${followingCount}` }
-          <input type='text'
-            className='friends-manager--content--text-input'
-            value={ searchText }
-            onChange={ this.updateText }
-            placeholder='Find friends...'
+      <div className='friends-manager sidebar'>
+        <div className='sidebar-content'>
+          <div className="friends-manager-container">
+            <div className='friends-manager--clicker'
+              onClick={ () => toggleVisibility(!visible) }
             />
-          <div className='friends-manager--content--suggestions'>
-            { !searchTextEmpty && suggestions.map( (s,i) =>
-              <div key={ i } className='friends-manager--content--suggestions__item'>
-                <h4>
-                  @{ s.name }
-                </h4>
-                <p>
-                  { s.firstName } { s.lastName } <br />
-                  following: { s.following } { this.renderEditRelationshipButton(s.following, s.id) }<br />
-                  follower: { s.follower }
-                </p>                  
+            <div className='friends-manager--content'>
+              <div className='friends-manager--content--search'>
+                <div>
+                  { `followers: ${followersCount}` }<br />
+                  { `following: ${followingCount}` }
+                </div>
+                <input type='text'
+                  className='friends-manager--content--text-input'
+                  value={ searchText }
+                  onChange={ this.updateText }
+                  placeholder='Find friends...'
+                  />
               </div>
-            ) }
+              <div className='friends-manager--content--suggestions'>
+                { !searchTextEmpty && suggestions.map( (s,i) =>
+                  <div key={ i } className='sidebar-item'>
+                    <div className="sidebar-item-title">
+                      @{ s.name }
+                    </div>
+                    <div className="sidebar-item-details">
+                      { s.firstName } { s.lastName } <br />
+                      following: { s.following } { this.renderEditRelationshipButton(s.following, s.id) }<br />
+                      follower: { s.follower }
+                    </div>
+                  </div>
+                ) }
+              </div>
+            </div>
           </div>
         </div>
       </div>

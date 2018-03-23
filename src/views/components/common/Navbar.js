@@ -20,20 +20,20 @@ class NavBar extends Component {
     const { showUserDropdown } = this.state
 
     return (
-      <nav className='main-nav'>
+      <nav className='main-nav fb-sticky'>
         <ul className='main-nav--links'>
           <li>
-            <NavLink to="/"> Newsfeed </NavLink>
+            <NavLink className="nav-links" to="/"> Newsfeed </NavLink>
           </li>
           <li>
-            <NavLink to="#"> Bests </NavLink>
+            <NavLink className="nav-links" to="#"> Bests </NavLink>
           </li>
           <li>
-            <NavLink to="/hierarchies"> Tag Manager </NavLink>
+            <NavLink className="nav-links" to="/hierarchies"> Tag Manager </NavLink>
           </li>
         </ul>
 
-        <div className='main-nav--user' onClick={ () => this.setState({ showUserDropdown: !showUserDropdown })} >
+        <div className='main-nav--user nav-links' onClick={ () => this.setState({ showUserDropdown: !showUserDropdown })} >
           { userName }
         </div>
         { showUserDropdown &&
