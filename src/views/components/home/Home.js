@@ -42,11 +42,32 @@ class Header extends PureComponent {
 
 
 class Map extends PureComponent {
+  state = { marker: undefined }
+
+  componentWillReceiveProps(nextProps) {
+    const { selectedEntity } = nextProps
+    if ( selectedEntity !== this.props.selectedEntity) {
+      let marker = undefined
+      let mapCenter = {}
+      if ( selectedEntity && selectedEntity.yelpBusiness && selectedEntity.yelpBusiness ) {
+        const yelp = selectedEntity.yelpBusiness && selectedEntity.yelpBusiness
+        const { name, coordinates } = yelp
+        const position = { lat: coordinates['latitude'], lng: coordinates['longitude'] }
+        mapCenter = { ...position }
+        const title = yelp.categories.map( c => c.title ).join(', ')
+        marker = { position, name, title }
+      }
+      this.setState({ mapCenter, marker })
+    }
+  }
+
   render() {
     const { style } = this.props
+    const { mapCenter, marker } = this.state
+
     return (
       <div className="map" style={{ ...style }}>
-        <GoogleMap />
+        <GoogleMap center={ mapCenter } marker={ marker }/>
       </div>
     )
   }
@@ -54,6 +75,11 @@ class Map extends PureComponent {
 
 
 class Home extends Component {
+  state = {
+    selectedNewsfeedItem: undefined,
+    selectedEntity: undefined,
+  }
+
   componentDidMount() {
     setTimeout(() => {
       const { currentUser, redirect } = this.props
@@ -65,9 +91,26 @@ class Home extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { loadRootTags } = this.props
+    const { loadRootTags, selectedNewsfeedItem, loadTaggable, pTaggableClassToType } = nextProps
     if ( !this.props.currentUser && nextProps.currentUser ) {
       ( async() => await loadRootTags() )()
+    }
+
+    if ( this.props.selectNewsfeedItem !== selectedNewsfeedItem ) {
+      console.log('selectedNewsfeedItem change detected',selectedNewsfeedItem)
+      if ( selectedNewsfeedItem && selectedNewsfeedItem.metadata && selectedNewsfeedItem.metadata.foodRating ) {
+        ( async() => {
+          const ratee = selectedNewsfeedItem.metadata.foodRating.ratee
+          const taggableType = pTaggableClassToType(ratee.taggableType)
+          const selectedEntity = await loadTaggable( taggableType, ratee.taggableId )
+          console.log('selected entity = ',selectedEntity)
+          this.setState({ selectedNewsfeedItem, selectedEntity })
+        })()
+      }
+      else {
+        console.log('selected entity = ',undefined)
+        this.setState({ selectedNewsfeedItem, selectedEntity: undefined })
+      }
     }
   }
 
@@ -79,6 +122,7 @@ class Home extends Component {
       toggleFriendsManagerVisibility,
       toggleSocialEntryVisibility,
     } = this.props
+    const { selectedEntity } = this.state
     if ( !currentUser ) {
       return null
     }
@@ -118,7 +162,11 @@ class Home extends Component {
                       if ( isSticky ) {
                         style = { ...style, width: '100%', top: '155px' }
                       }
-                      return <Map style={ style } sidebarVisible={ friendsManagerVisible }/>
+                      return <Map
+                        style={ style }
+                        sidebarVisible={ friendsManagerVisible }
+                        selectedEntity={ selectedEntity }
+                      />
                     }}
                   </Sticky>
                   <div style={{ height: '100%' }}></div>
@@ -136,8 +184,11 @@ class Home extends Component {
 Home.propTypes = {
   currentUser: PropTypes.object,
   friendsManagerVisible: PropTypes.bool,
+  selectedNewsfeedItem: PropTypes.object,
   socialEntryVisible: PropTypes.bool,
 
+  loadTaggable: PropTypes.func,
+  pTaggableClassToType: PropTypes.func,
   redirect: PropTypes.func,
   toggleFriendsManagerVisibility: PropTypes.func,
   toggleSocialEntryVisibility: PropTypes.func,

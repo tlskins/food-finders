@@ -12,3 +12,11 @@ export const pRequestTaggable = data => {
 
   return req
 }
+
+const classToType = {
+  'Entity': 'entities',
+}
+
+export const pTaggableClassToType = taggableClass => {
+  return classToType[taggableClass]
+}

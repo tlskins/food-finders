@@ -4,6 +4,7 @@ import * as friendsManagerUIReducers from './friendsManager'
 import * as socialEntryUIReducers from './socialEntry'
 import * as tagEditorUIReducers from './tagEditor'
 import * as hierarchiesManagerUIReducers from './hierarchiesManager'
+import * as newsfeedUIReducers from './newsfeed'
 
 
 export default {
@@ -13,4 +14,5 @@ export default {
   ...socialEntryUIReducers,
   ...tagEditorUIReducers,
   ...hierarchiesManagerUIReducers,
+  ...newsfeedUIReducers,
 }

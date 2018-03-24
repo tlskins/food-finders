@@ -1,4 +1,4 @@
-export const loadRootTags = async ({ TagService, RestService, pResponseRoots }) => {
+export const LoadRootTags = async ({ TagService, RestService, pResponseRoots }) => {
   const response = await RestService.get('/tags/all_roots' )
   const tags = pResponseRoots(response)
   TagService.loadRootTags(tags)

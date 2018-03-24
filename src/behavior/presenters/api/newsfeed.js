@@ -24,7 +24,7 @@ export const pResponseFeedItems = json => {
 
       if ( tags && tags.length > 0 ) {
         return(
-          <p className='newsfeed-p'>
+          <div className='newsfeed-p'>
             { tags.map( (t,i) =>
               <div className='social-entry-text'>
                 <div className='social-entry-text'>
@@ -36,14 +36,14 @@ export const pResponseFeedItems = json => {
                 { i === tags.length - 1 && data.slice(t.tagEnd, ((tags[i+1] && tags[i+1].tagEnd)|| data.length)) }
               </div>
             )}
-          </p>
+          </div>
         )
       }
       else {
         return(
-          <p>
+          <div>
             { data }
-          </p>
+          </div>
         )
       }
     }

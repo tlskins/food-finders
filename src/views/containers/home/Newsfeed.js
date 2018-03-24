@@ -7,13 +7,15 @@ import coordinators from '@coordinators'
 import presenters from '@presenters'
 
 const mapDispatchToProps = () => {
-  const { RestService, SessionService } = services
+  const { RestService, SessionService, UIService } = services
   const { pResponseFeedItems } = presenters.Api
 
   const loadNewsfeed = coordinators.loadNewsfeed({ RestService, SessionService, pResponseFeedItems })
+  const selectNewsfeedItem = selectedItem => UIService.Newsfeed.selectNewsfeedItem(selectedItem)
 
   return {
     loadNewsfeed,
+    selectNewsfeedItem,
   }
 }
 

@@ -11,7 +11,7 @@ import Moment from 'moment'
 class NewsFeed extends Component {
   state = {
     feedItems: [],
-    hoveredItem: undefined,
+    selectedItem: undefined,
   }
 
   componentDidMount() {
@@ -50,6 +50,18 @@ class NewsFeed extends Component {
     )
   }
 
+  selectItem = item => {
+    const { selectNewsfeedItem } = this.props
+    this.setState({ selectedItem: item })
+    selectNewsfeedItem(item)
+  }
+
+  unselectItem = () => {
+    const { selectNewsfeedItem } = this.props
+    this.setState({ selectedItem: undefined })
+    selectNewsfeedItem(undefined)
+  }
+
   renderRatingFeedItem = item => {
     const { conductedAt, metadata } = item
     const { foodRating, authorName } = metadata
@@ -59,7 +71,10 @@ class NewsFeed extends Component {
     const ratingTypeName = ratingType && (ratingType.symbol + ratingType.handle)
 
     return (
-      <div className="newsfeed-item-container">
+      <div className="newsfeed-item-container"
+        onMouseEnter={ () => this.selectItem(item) }
+        onMouseLeave={ () => this.unselectItem(item) }
+      >
         <div className="newsfeed-item">
           <div className="newsfeed-item-header">
             { rateableName }
@@ -117,6 +132,7 @@ class NewsFeed extends Component {
 
 NewsFeed.propTypes = {
   loadNewsfeed: PropTypes.func,
+  selectNewsfeedItem: PropTypes.func,
 }
 
 export default NewsFeed

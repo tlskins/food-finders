@@ -6,6 +6,7 @@ import FriendsManager from './friendsManager'
 import SocialEntry from './socialEntry'
 import TagEditor from './tagEditor'
 import HierarchiesManager from './hierarchiesManager'
+import Newsfeed from './newsfeed'
 
 
 const SubServices = {
@@ -15,6 +16,7 @@ const SubServices = {
   SocialEntry,
   TagEditor,
   HierarchiesManager,
+  Newsfeed,
 }
 
 

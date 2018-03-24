@@ -1,4 +1,20 @@
 
+export const LoadTaggable = ({ RestService, TaggablesService, pResponseTaggable, UIService }) => async (taggableType, id) => {
+  const { allTaggables } = TaggablesService.getState()
+  const taggables = allTaggables[taggableType]
+
+  if (taggables && taggables[id]) {
+    return taggables[id]
+  }
+  else {
+    const response = await RestService.get(`${ taggableType }/${ id }`)
+    const taggable = pResponseTaggable(response)
+    TaggablesService.loadTaggables(taggableType, taggable)
+    return taggable
+  }
+}
+
+
 export const LoadTaggables = ({ RestService, TaggablesService, pResponseTaggables, UIService }) => async (taggableType, overwrite = false) => {
   const { allTaggables } = TaggablesService.getState()
   let taggables = allTaggables[taggableType]

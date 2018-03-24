@@ -911,7 +911,35 @@ body {
   font: 14px; /*'Calibre-Medium'*/
   letter-spacing: .061em;
   text-transform: uppercase;
-  margin: 0px 3px 0px 3px;
+  margin: 0px 6px 0px 0px;
+}
+
+/** Google Maps **/
+
+.gm-style-iw {
+  border-radius: 5px;
+}
+
+.gm-info-window-header {
+  border-bottom: 1px solid transparent;
+  transition: border-bottom 0.2s ease-in-out;
+  color: #101820;
+  font-size: 22px;
+  letter-spacing: 0.086em;
+  text-transform: uppercase;
+}
+
+.gm-info-window-header:hover {
+  border-bottom: 1px solid black;
+  transition: border-bottom 0.2s ease-in-out;
+}
+
+.gm-info-window-sub-header {
+  color: #656666;
+  font-size: 15px;
+  letter-spacing: .013em;
+  margin-bottom: 3px;
+  margin-top: 2px;
 }
 
 /** Tags **/
