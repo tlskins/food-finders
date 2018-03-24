@@ -71,8 +71,26 @@ class FriendsManager extends Component {
     )
   }
 
-  render() {
+  renderStickySearchHeader = ({ isSticky, style }) => {
     const { followersCount, followingCount, visible } = this.props
+    const { searchText } = this.state
+    if ( isSticky ) {
+      style = { ...style, top: '160px' }
+    }
+    return (
+      <SearchHeader
+        style={style}
+        followersCount={ followersCount }
+        followingCount={ followingCount }
+        updateText={ this.updateText }
+        searchText={ searchText }
+        visible={ visible }
+      />
+    )
+  }
+
+  render() {
+    const { visible } = this.props
     const { suggestions, searchText } = this.state
     const searchTextEmpty = searchText.length === 0
     let className = "friends-manager sidebar"
@@ -87,21 +105,7 @@ class FriendsManager extends Component {
             <div className="friends-manager-container">
               <div className='friends-manager--content'>
                 <Sticky topOffset={-145}>
-                  {({ isSticky, style }) => {
-                    if ( isSticky ) {
-                      style = { ...style, top: '160px' }
-                    }
-                    return (
-                      <SearchHeader
-                        style={style}
-                        followersCount={ followersCount }
-                        followingCount={ followingCount }
-                        updateText={ this.updateText }
-                        searchText={ searchText }
-                        visible={ visible }
-                      />
-                    )
-                  }}
+                  { this.renderStickySearchHeader }
                 </Sticky>
                 <div className='friends-manager--content--suggestions'>
                   { !searchTextEmpty && suggestions.map( (s,i) =>

@@ -114,15 +114,43 @@ class Home extends Component {
     }
   }
 
+  renderStickyHeader = ({ isSticky, style }) => {
+    const {
+      toggleFriendsManagerVisibility,
+      toggleSocialEntryVisibility,
+      friendsManagerVisible,
+      socialEntryVisible,
+    } = this.props
+    if ( isSticky ) {
+      style = { ...style, top: '70px' }
+    }
+    return (
+      <Header
+        style={style}
+        toggleFriendsManagerVisibility={ () => toggleFriendsManagerVisibility(!friendsManagerVisible) }
+        toggleSocialEntryVisibility={ () => toggleSocialEntryVisibility(!socialEntryVisible)}
+      />
+    )
+  }
+
+  renderStickyMap = ({ isSticky, style, }) => {
+    const { friendsManagerVisible } = this.props
+    const { selectedEntity } = this.state
+    if ( isSticky ) {
+      style = { ...style, width: '100%', top: '155px' }
+    }
+    return <Map
+      style={ style }
+      sidebarVisible={ friendsManagerVisible }
+      selectedEntity={ selectedEntity }
+    />
+  }
+
   render() {
     const {
       currentUser,
       friendsManagerVisible,
-      socialEntryVisible,
-      toggleFriendsManagerVisibility,
-      toggleSocialEntryVisibility,
     } = this.props
-    const { selectedEntity } = this.state
     if ( !currentUser ) {
       return null
     }
@@ -139,18 +167,7 @@ class Home extends Component {
         </div>
         <StickyContainer>
           <Sticky topOffset={-70}>
-            {({ isSticky, style, }) => {
-              if ( isSticky ) {
-                style = { ...style, top: '70px' }
-              }
-              return (
-                <Header
-                  style={style}
-                  toggleFriendsManagerVisibility={ () => toggleFriendsManagerVisibility(!friendsManagerVisible) }
-                  toggleSocialEntryVisibility={ () => toggleSocialEntryVisibility(!socialEntryVisible)}
-                />
-              )
-            }}
+            { this.renderStickyHeader }
           </Sticky>
           <div className="home-page">
             <FriendsManager />
@@ -158,16 +175,7 @@ class Home extends Component {
                 <Newsfeed />
                 <div className="home-page-map-container">
                   <Sticky topOffset={-70}>
-                    {({ isSticky, style, }) => {
-                      if ( isSticky ) {
-                        style = { ...style, width: '100%', top: '155px' }
-                      }
-                      return <Map
-                        style={ style }
-                        sidebarVisible={ friendsManagerVisible }
-                        selectedEntity={ selectedEntity }
-                      />
-                    }}
+                    { this.renderStickyMap }
                   </Sticky>
                   <div style={{ height: '100%' }}></div>
                 </div>
