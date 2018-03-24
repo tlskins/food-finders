@@ -1,8 +1,8 @@
 import React, { Component, PureComponent } from 'react'
 import PropTypes from 'prop-types'
-// import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import { Sticky, StickyContainer } from 'react-sticky'
 
+import GoogleMap from '@components/common/GoogleMapContainer'
 import Newsfeed from '@containers/home/Newsfeed'
 import SocialEntryInput from '@containers/home/SocialEntryInput'
 import FriendsManager from '@containers/home/FriendsManager'
@@ -41,6 +41,18 @@ class Header extends PureComponent {
 }
 
 
+class Map extends PureComponent {
+  render() {
+    const { style } = this.props
+    return (
+      <div className="map" style={{ ...style }}>
+        <GoogleMap />
+      </div>
+    )
+  }
+}
+
+
 class Home extends Component {
   componentDidMount() {
     setTimeout(() => {
@@ -57,17 +69,7 @@ class Home extends Component {
     if ( !this.props.currentUser && nextProps.currentUser ) {
       ( async() => await loadRootTags() )()
     }
-    // if ( nextProps.socialEntryVisible && !this.props.socialEntryVisible ) {
-    //   disableBodyScroll( document.querySelector('.social-container') )
-    // }
-    // else if ( !nextProps.socialEntryVisible && this.props.socialEntryVisible ) {
-    //   enableBodyScroll( document.querySelector('.social-container') )
-    // }
   }
-
-  // componentWillUnmount() {
-  //   clearAllBodyScrollLocks()
-  // }
 
   render() {
     const {
@@ -80,7 +82,10 @@ class Home extends Component {
     if ( !currentUser ) {
       return null
     }
-    const socialContainerClass = friendsManagerVisible ? 'social-container show-friends-manager' : 'social-container'
+    let socialContainerClass = "social-container"
+    if ( friendsManagerVisible ) {
+      socialContainerClass += " show-sidebar"
+    }
 
     return (
       <div className='page-container'>
@@ -90,14 +95,7 @@ class Home extends Component {
         </div>
         <StickyContainer>
           <Sticky topOffset={-70}>
-            {({
-              isSticky,
-              wasSticky,
-              style,
-              distanceFromTop,
-              distanceFromBottom,
-              calculatedHeight
-            }) => {
+            {({ isSticky, style, }) => {
               if ( isSticky ) {
                 style = { ...style, top: '70px' }
               }
@@ -112,10 +110,21 @@ class Home extends Component {
           </Sticky>
           <div className="home-page">
             <FriendsManager />
-            <div className={ socialContainerClass }>
-              <Newsfeed />
-              <SocialEntryInput />
-            </div>
+              <div className={ socialContainerClass }>
+                <Newsfeed />
+                <div className="home-page-map-container">
+                  <Sticky topOffset={-70}>
+                    {({ isSticky, style, }) => {
+                      if ( isSticky ) {
+                        style = { ...style, width: '100%', top: '155px' }
+                      }
+                      return <Map style={ style } sidebarVisible={ friendsManagerVisible }/>
+                    }}
+                  </Sticky>
+                  <div style={{ height: '100%' }}></div>
+                </div>
+                <SocialEntryInput />
+              </div>
           </div>
         </StickyContainer>
       </div>

@@ -12,7 +12,11 @@ class SearchHeader extends PureComponent {
       followingCount,
       searchText,
       updateText,
+      visible,
     } = this.props
+    if (!visible) {
+      return <div />
+    }
     return (
       <div className="friends-manager--content--search" style={{ ...this.props.style }}>
         <div>
@@ -68,26 +72,22 @@ class FriendsManager extends Component {
   }
 
   render() {
-    const { followersCount, followingCount } = this.props
+    const { followersCount, followingCount, visible } = this.props
     const { suggestions, searchText } = this.state
     const searchTextEmpty = searchText.length === 0
+    let className = "friends-manager sidebar"
+    if (!visible) {
+      className += " hide-sidebar"
+    }
 
     return (
-      <div className='friends-manager sidebar'>
+      <div className={ className }>
         <StickyContainer style={{ height: '100%' }}>
           <div className='sidebar-content'>
             <div className="friends-manager-container">
               <div className='friends-manager--content'>
                 <Sticky topOffset={-145}>
-                  {({
-                    isSticky,
-                    wasSticky,
-                    style,
-                    distanceFromTop,
-                    distanceFromBottom,
-                    calculatedHeight
-                  }) => {
-                    console.log('sticky, distanceFromTop=',distanceFromTop,' isSticky=',isSticky)
+                  {({ isSticky, style }) => {
                     if ( isSticky ) {
                       style = { ...style, top: '160px' }
                     }
@@ -98,6 +98,7 @@ class FriendsManager extends Component {
                         followingCount={ followingCount }
                         updateText={ this.updateText }
                         searchText={ searchText }
+                        visible={ visible }
                       />
                     )
                   }}

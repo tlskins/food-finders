@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import Rating from '@components/home/Rating'
+// import Rating from '@components/home/Rating'
+// import GoogleMap from '@components/common/GoogleMapContainer'
+// import {GoogleApiWrapper} from 'google-maps-react'
 
 import Moment from 'moment'
 
@@ -42,14 +44,6 @@ class NewsFeed extends Component {
             <p className='p-footer'>
               Posted at { Moment(conductedAt).format( 'MM-DD-YY h:mma' ) }
             </p>
-          </div>
-          <div>
-            { item.metadata.foodRatingTags &&
-              <Rating
-                user={ metadata.foodRating.rater }
-                tags={ metadata.foodRatingTags }
-                />
-            }
           </div>
         </div>
       </div>

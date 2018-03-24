@@ -509,6 +509,11 @@ body {
   text-transform: uppercase;
   white-space: nowrap;
   cursor: default;
+  transition: display .3s;
+}
+
+.hide-sidebar {
+  display: none;
 }
 
 /* .sidebar-title {
@@ -580,6 +585,11 @@ body {
   position: relative;
 }
 
+.home-page-map-container {
+  width: 100%;
+  min-height: 100%;
+}
+
 /** Friends Manager **/
 
 /* .friends-manager {
@@ -649,12 +659,18 @@ body {
   padding: 10px 30px 30px 30px;
   background: #eee;
   box-shadow: 0 0 5px rgba(0,0,0,1);
-  transform: translate3d(0px,0,0);
-  transition: transform .3s;
+  /* transform: translate3d(0px,0,0); */
+  /* transition: transform .3s; */
+  transition: margin-left .3s;
 }
 
-.social-container.show-friends-manager {
-  transform: translate3d(245px,0,0);
+.map {
+  transition: margin-left .3s;
+}
+
+.show-sidebar {
+  /* transform: translate3d(245px,0,0); */
+  margin-left: 245px;
 }
 
 .compose-social-entry-btn {
@@ -838,7 +854,7 @@ body {
   padding: 20px 30px 20px 30px;
   border: 1px solid rgb(218, 225, 233);
   border-radius: 3px;
-  margin: 10px 4px 10px 4px;
+  margin: 0 4px 10px 4px;
 }
 
 .newsfeed-item-container:hover {
