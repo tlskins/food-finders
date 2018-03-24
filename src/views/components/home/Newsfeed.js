@@ -76,11 +76,11 @@ class NewsFeed extends Component {
         onMouseLeave={ () => this.unselectItem(item) }
       >
         <div className="newsfeed-item">
-          <div className="newsfeed-item-header">
+          <div className="item-header newsfeed-item-header">
             { rateableName }
           </div>
-          <div className="newsfeed-item-sub-header">
-            <span className="newsfeed-item-sub-header-item">{ rateeName }</span>
+          <div className="item-sub-header">
+            <span className="item-sub-header-component">{ rateeName }</span>
           </div>
           <div className="rating">
             <span className="rating-component">{ ratingTypeName }</span>

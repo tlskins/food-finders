@@ -100,7 +100,7 @@ class FriendsManager extends Component {
 
     return (
       <div className={ className }>
-        <StickyContainer style={{ height: '100%' }}>
+        <StickyContainer style={{ height: '100%', width: '100%' }}>
           <div className='sidebar-content'>
             <div className="friends-manager-container">
               <div className='friends-manager--content'>

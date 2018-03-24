@@ -26,7 +26,7 @@ class Header extends PureComponent {
         </div>
         <div className="sticky-header-title">Newsfeed</div>
         <button className="sticky-header-dropdown">
-          <span className="sticky-header-dropdown-title">Sort by -</span>
+          <span className="sticky-header-dropdown-title">Sort by - </span>
           <span className="sticky-header-dropdown-value">Topic</span>
           <img className="dropdown-expand-icon" src={ DropdownArrow } alt="dropdown-arrow"/>
         </button>
@@ -61,12 +61,49 @@ class Map extends PureComponent {
     }
   }
 
+  renderEntityPanel = yelpBusiness => {
+    const { price, rating, reviewCount, url, name, categories } = yelpBusiness
+    const categoriesString = categories.map( c => c.title ).join(', ')
+
+    return (
+      <div className="entity-panel">
+        <div className="entity-panel-header item-header">
+          <a classNAme="entity_url" href={ url } target="_blank"> { name } </a>
+        </div>
+        <div className="item-sub-header">
+          { categoriesString }
+        </div>
+        <div className="item-sub-header">
+          <span className="entity-attribute">
+            Price
+          </span>
+          <span className="entity-value">
+            { ` ${ price }` } •
+          </span>
+          <span className="entity-attribute">
+            Rating
+          </span>
+          <span className="entity-value">
+            { ` ${ rating }` } •
+          </span>
+          <span className="entity-attribute">
+            Review Count
+          </span>
+          <span className="entity-value">
+            { ` ${ reviewCount }` }
+          </span>
+        </div>
+      </div>
+    )
+  }
+
   render() {
-    const { style } = this.props
+    const { selectedEntity, style } = this.props
     const { mapCenter, marker } = this.state
 
     return (
       <div className="map" style={{ ...style }}>
+        { selectedEntity && this.renderEntityPanel(selectedEntity.yelpBusiness) }
         <GoogleMap center={ mapCenter } marker={ marker }/>
       </div>
     )
@@ -139,11 +176,15 @@ class Home extends Component {
     if ( isSticky ) {
       style = { ...style, width: '100%', top: '155px' }
     }
-    return <Map
-      style={ style }
-      sidebarVisible={ friendsManagerVisible }
-      selectedEntity={ selectedEntity }
-    />
+    return (
+      <div>
+        <Map
+          style={ style }
+          sidebarVisible={ friendsManagerVisible }
+          selectedEntity={ selectedEntity }
+        />
+      </div>
+    )
   }
 
   render() {
@@ -173,7 +214,7 @@ class Home extends Component {
             <FriendsManager />
               <div className={ socialContainerClass }>
                 <Newsfeed />
-                <div className="home-page-map-container">
+                <div className="home-page-entity-container">
                   <Sticky topOffset={-70}>
                     { this.renderStickyMap }
                   </Sticky>
