@@ -258,6 +258,67 @@ class SocialEntryInput extends Component {
     this.props.toggleVisibility(false)
   }
 
+  renderCurrentTags = tags => {
+    return (
+      <div className="tags-container item-sub-header">
+        <div className="bold-attribute tags-header">
+          Current Tags
+        </div>
+        <div className="tags-inner-container">
+          { tags && tags.map( (t,i) =>
+            <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }
+              key={ i }
+            >
+              { t.symbol + t.handle }
+            </div> )
+          }
+        </div>
+      </div>
+    )
+  }
+
+  renderRating = tags => {
+    const foodRatingTypeTags = tags && tags.filter( t => t.taggableType === 'FoodRatingType' )
+    if ( !foodRatingTypeTags || foodRatingTypeTags.length === 0 ) {
+      return null
+    }
+    const foodRatingTypeMetrics = tags.filter( t => t.taggableType === 'FoodRatingMetric' )
+    const foods = tags.filter( t => t.taggableType === 'Food' )
+    const entities = tags.filter( t => t.taggableType === 'Entity' )
+    const { symbol, handle } = foodRatingTypeTags[0]
+    const ratingTypeName = symbol + handle
+    const foodName = foods && foods[0].name
+    const entityName = entities && entities[0].name
+
+    return (
+      <div className="rating">
+        { foodName &&
+          <div className="rating-sub-header">
+            <span class="item-sub-header-component"> { foodName } </span>
+          </div>
+        }
+        { entityName &&
+          <div className="rating-sub-header">
+            <span class="item-sub-header-component"> { entityName } </span>
+          </div>
+        }
+        <div className="rating-inner-container">
+          <span className="rating-component">{ ratingTypeName }</span>
+          <span className="rating-component"> • </span>
+          { foodRatingTypeMetrics && foodRatingTypeMetrics.map( (m,i) => {
+            const renderBullet = i !== foodRatingTypeMetrics.length - 1
+            return (
+              <div>
+                <span className="rating-component">{ m.symbol + m.handle }</span>
+                { renderBullet && <span className="rating-component"> • </span> }
+              </div>
+            ) } )
+          }
+        </div>
+      </div>
+    )
+  }
+
   render() {
     const { text, draftSocialEntry, searchStatus, selectedTagIndex, tagSuggestions  } = this.state
     const { user, visible } = this.props
@@ -274,6 +335,7 @@ class SocialEntryInput extends Component {
           <div className="modal-section">
             <img className="close" src={ close } onClick={ this.close } alt="close-form"/>
             <div className='social-entry-form-header item-header'> New Social Entry </div>
+            { this.renderRating(tags) }
           </div>
           <div className="social-entry-form">
             <textarea type="text"
@@ -284,20 +346,8 @@ class SocialEntryInput extends Component {
               autoFocus
               tabIndex={ 1 }
               />
-            <div className="tags-container item-sub-header">
-              <div className="bold-attribute tags-header">
-                Current Tags
-              </div>
-              <div className="tags-inner-container">
-                { tags && tags.map( (t,i) =>
-                  <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }
-                    key={ i }
-                  >
-                    { t.symbol + t.handle }
-                  </div> )
-                }
-              </div>
-            </div>
+
+            { tags && this.renderCurrentTags(tags) }
 
             { searchStatus && searchStatus }
             <TagSuggestions

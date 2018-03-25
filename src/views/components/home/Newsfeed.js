@@ -79,17 +79,19 @@ class NewsFeed extends Component {
             <span className="item-sub-header-component">{ rateeName }</span>
           </div>
           <div className="rating">
-            <span className="rating-component">{ ratingTypeName }</span>
-            <span className="rating-component"> • </span>
-            { ratingMetrics && ratingMetrics.map( (m,i) => {
-              const renderBullet = i !== ratingMetrics.length - 1
-              return (
-                <div>
-                  <span className="rating-component">{ m.symbol + m.handle }</span>
-                  { renderBullet && <span className="rating-component"> • </span> }
-                </div>
-              ) } )
-            }
+            <div className="rating-inner-container">
+              <span className="rating-component">{ ratingTypeName }</span>
+              <span className="rating-component"> • </span>
+              { ratingMetrics && ratingMetrics.map( (m,i) => {
+                const renderBullet = i !== ratingMetrics.length - 1
+                return (
+                  <div>
+                    <span className="rating-component">{ m.symbol + m.handle }</span>
+                    { renderBullet && <span className="rating-component"> • </span> }
+                  </div>
+                ) } )
+              }
+            </div>
           </div>
           <div>
             { item.renderContent() }

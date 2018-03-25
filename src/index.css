@@ -405,6 +405,7 @@ body {
 
 .modal-section {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -727,7 +728,7 @@ body {
 .social-entry-form {
   display: flex;
   flex-direction: column;
-  padding: 5px 50px 15px 15px;
+  padding: 0 50px 15px 15px;
 }
 
 .social-entry-form-header {
@@ -737,6 +738,7 @@ body {
   width: 25%;
   display: block;
   border-bottom: 1px solid black;
+  margin-bottom: 5px;
 }
 
 .social-entry-form-textarea {
@@ -746,7 +748,7 @@ body {
   border-radius: 4px;
   font-size: 16px;
   padding: 7px 10px;
-  margin: 20px 10px 0 0;
+  margin: 5px 10px 0 0;
 }
 
 /* .social-entry-form__submit--container {
@@ -831,7 +833,7 @@ body {
   transition: border-bottom 0.2s ease-in-out;
 }
 
-.item-sub-header{
+.item-sub-header {
   color: #656666;
   font-size: 15px;
   letter-spacing: .013em;
@@ -847,11 +849,23 @@ body {
 .rating {
   color: #101820;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   font-size: 14px; /*'Calibre-Medium'*/
   font-family: "Calibre-Medium";
   letter-spacing: .061em;
   text-transform: uppercase;
+}
+
+.rating-inner-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.rating-sub-header {
+  line-height: 1.1;
+  color: #656666;
+  font-size: 15px;
+  letter-spacing: .013em;
 }
 
 .rating-component {
