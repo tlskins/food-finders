@@ -30,6 +30,7 @@ class SocialEntryInput extends Component {
       tagSuggestions: [],
       tagSymbol: undefined,
       selectedTagIndex: undefined,
+      creatableTags: [],
       cursorBeginIndex: 0,
       cursorEndIndex: 0,
     }
@@ -173,13 +174,14 @@ class SocialEntryInput extends Component {
   }
 
   updateText = e => {
+    const { creatableTags } = this.state
     const newText = e.target.value
     const selectionStart = e.target.selectionStart
     const currentEditAt = new Date()
 
     const cursorTextData = this.calculateCursorTextData(newText, selectionStart)
     this.setState({ text: newText, lastEditAt: currentEditAt, ...cursorTextData }, () => this.calculateTags(newText) )
-    this.updateSocialEntry(newText, currentEditAt)
+    this.updateSocialEntry(newText, creatableTags, currentEditAt)
   }
 
   calculateCursorTextData = (text, selectionStart) => {
@@ -196,10 +198,9 @@ class SocialEntryInput extends Component {
     }
   }
 
-  updateSocialEntry = async (text, requestedAt) => {
+  updateSocialEntry = async (text, creatableTags, requestedAt) => {
     const { updateDraftSocialEntry } = this.props
-
-    await updateDraftSocialEntry( text, requestedAt )
+    await updateDraftSocialEntry( text, creatableTags, requestedAt )
   }
 
   addTag = (tag, currentEditAt, editData = null) => () => {
@@ -210,10 +211,19 @@ class SocialEntryInput extends Component {
       cursorEndIndex = editData.cursorEndIndex
     }
     const newText = text.slice(0, cursorBeginIndex) + symbol + handle + text.slice(cursorEndIndex)
+    const creatableTags = this.addCreatableEntityTag(tag)
 
-    this.setState({ text: newText })
+    this.setState({ text: newText, creatableTags })
     this.clearTagSearch()
-    this.updateSocialEntry(newText, currentEditAt)
+    this.updateSocialEntry(newText, creatableTags, currentEditAt)
+  }
+
+  addCreatableEntityTag = tag => {
+    let { creatableTags } = this.state
+    if ( !tag.id && tag.yelpBusiness ) {
+      creatableTags = [...creatableTags, tag.symbol + tag.handle]
+    }
+    return creatableTags
   }
 
   calculateTags = async (text = null) => {
@@ -239,11 +249,11 @@ class SocialEntryInput extends Component {
 
   onPost = async () => {
     const { postSocialEntry } = this.props
-    const { text } = this.state
+    const { text, creatableTags } = this.state
 
     this.clearTagSearch()
 
-    await postSocialEntry(text)
+    await postSocialEntry(text, creatableTags)
 
     this.props.toggleVisibility(false)
   }
@@ -288,7 +298,7 @@ class SocialEntryInput extends Component {
     const { symbol, handle } = foodRatingTypeTags[0]
     const ratingTypeName = symbol + handle
     const foodName = foods && foods[0].name
-    const entityName = entities && entities[0].name
+    const entityName = entities && entities[0] && entities[0].name
 
     return (
       <div className="rating">
