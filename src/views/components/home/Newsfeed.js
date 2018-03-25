@@ -1,10 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-// import Rating from '@components/home/Rating'
-// import GoogleMap from '@components/common/GoogleMapContainer'
-// import {GoogleApiWrapper} from 'google-maps-react'
-
 import Moment from 'moment'
 
 

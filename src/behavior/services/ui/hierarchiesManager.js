@@ -19,4 +19,8 @@ export default class HierarchiesManager extends BaseService {
   toggleUnselectNodes(status) {
     this.dispatch( actions.toggleUnselectNodes( status ) )
   }
+
+  setHierarchiesManagerTaggable(taggableType, taggableName) {
+    this.dispatch( actions.setHierarchiesManagerTaggable(taggableType, taggableName))
+  }
 }

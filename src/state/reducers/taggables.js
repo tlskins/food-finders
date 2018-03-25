@@ -15,7 +15,7 @@ export const allTaggables = (state = {}, action) => {
       if ( !state[action.taggableType] || action.overwrite) {
         state[action.taggableType] = {}
       }
-      
+
       if ( Array.isArray(action.taggables) ) {
         action.taggables.forEach( t => state[action.taggableType][t.id] = t )
       }

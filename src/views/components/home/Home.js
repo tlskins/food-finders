@@ -31,7 +31,7 @@ class Header extends PureComponent {
           <img className="dropdown-expand-icon" src={ DropdownArrow } alt="dropdown-arrow"/>
         </button>
         <button
-          className="sticky-header-button"
+          className="header-button"
           onClick={ toggleSocialEntryVisibility }
         >
           New Social Entry
@@ -74,22 +74,22 @@ class Map extends PureComponent {
           { categoriesString }
         </div>
         <div className="item-sub-header">
-          <span className="entity-attribute">
+          <span className="bold-attribute">
             Price
           </span>
-          <span className="entity-value">
+          <span className="bold-value">
             { ` ${ price }` } •
           </span>
-          <span className="entity-attribute">
+          <span className="bold-attribute">
             Rating
           </span>
-          <span className="entity-value">
+          <span className="bold-value">
             { ` ${ rating }` } •
           </span>
-          <span className="entity-attribute">
+          <span className="bold-attribute">
             Review Count
           </span>
-          <span className="entity-value">
+          <span className="bold-value">
             { ` ${ reviewCount }` }
           </span>
         </div>

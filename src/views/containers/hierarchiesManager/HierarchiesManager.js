@@ -38,6 +38,7 @@ const mapDispatchToProps = () => {
   const toggleTagEditorVisibility = visible => UIService.TagEditor.toggleVisibility(visible)
   const redirect = () => RouterService.replace({ pathname: '/login' })
   const toggleUnselectNodes = (status) => UIService.HierarchiesManager.toggleUnselectNodes(status)
+  const setHierarchiesManagerTaggable = (taggableType, taggableName) => UIService.HierarchiesManager.setHierarchiesManagerTaggable(taggableType, taggableName)
   const resetTaggable = () => TaggablesService.resetTaggable()
   const loadEditTaggable = (taggableType, taggable) => TaggablesService.loadEditTaggable(taggableType, taggable)
   const updateTaggable = (taggable) => TaggablesService.editTaggable(taggable)
@@ -53,6 +54,7 @@ const mapDispatchToProps = () => {
     loadTaggables,
     redirect,
     resetTaggable,
+    setHierarchiesManagerTaggable,
     toggleTagEditorVisibility,
     toggleUnselectNodes,
     updateTaggable,

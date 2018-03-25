@@ -2,20 +2,33 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import {
-  Form,
   Col,
   FormControl,
   Button,
   ControlLabel,
-  FormGroup,
   Well,
 } from 'react-bootstrap'
 
 
+const editTaggableNewState = {
+  name: "",
+  synonyms: [],
+  description: "",
+}
+
 class TagEditor extends Component {
-  state = {
-    editTaggable: undefined,
-    confirmedDelete: false,
+  // state = {
+  //   editTaggable: { ...editTaggableInitialState },
+  //   confirmedDelete: false,
+  // }
+  constructor(props) {
+    super(props)
+    const { editTaggable } = props
+
+    this.state = {
+      editTaggable,
+      confirmedDelete: false,
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -61,50 +74,44 @@ class TagEditor extends Component {
   }
 
   renderTaggable = (editTaggable) => {
-    if ( !editTaggable ) {
-      return null
+    if (!editTaggable.name) {
+      return <div>
+        No Tag Selected
+      </div>
     }
     const { toggleUnselectNodes } = this.props
-    const { name, description } = editTaggable
-    let { synonyms } = editTaggable
-    if ( synonyms ) {
-      synonyms = synonyms.join(', ')
-    }
+    const { name, synonyms, description } = editTaggable
+    const synonymsString = (synonyms && synonyms.join(', ')) || ''
+
     return (
       <Well bsSize="large">
-        <FormGroup>
-          <ControlLabel>Name</ControlLabel>
-          <FormControl
-            type="text"
-            placeholder="Name"
-            value={ name }
-            onChange={ e => this.updateTaggable('name', e.target.value) }
-            onFocus={ () => toggleUnselectNodes(true) }
-          />
-        </FormGroup>
+        <ControlLabel>Name</ControlLabel>
+        <FormControl
+          type="text"
+          placeholder="Name"
+          value={ name }
+          onChange={ e => this.updateTaggable('name', e.target.value) }
+          onFocus={ () => toggleUnselectNodes(true) }
+        />
 
-        <FormGroup>
-          <ControlLabel>Description</ControlLabel>
-          <FormControl
-            componentClass="textarea"
-            placeholder="Description"
-            value={ description }
-            onChange={ e => this.updateTaggable('description', e.target.value) }
-            onFocus={ () => toggleUnselectNodes(true) }
-            rows="5"
-          />
-        </FormGroup>
+        <ControlLabel>Description</ControlLabel>
+        <FormControl
+          componentClass="textarea"
+          placeholder="Description"
+          value={ description }
+          onChange={ e => this.updateTaggable('description', e.target.value) }
+          onFocus={ () => toggleUnselectNodes(true) }
+          rows="5"
+        />
 
-        <FormGroup>
-          <ControlLabel>Synonyms</ControlLabel>
-          <FormControl
-            type="text"
-            placeholder="Synonyms"
-            value={ synonyms }
-            onChange={ e => this.updateTaggable('synonyms', e.target.value.split(', ')) }
-            onFocus={ () => toggleUnselectNodes(true) }
-          />
-        </FormGroup>
+        <ControlLabel>Synonyms</ControlLabel>
+        <FormControl
+          type="text"
+          placeholder="Synonyms"
+          value={ synonymsString }
+          onChange={ e => this.updateTaggable('synonyms', e.target.value.split(', ')) }
+          onFocus={ () => toggleUnselectNodes(true) }
+        />
       </Well>
     )
   }
@@ -115,58 +122,53 @@ class TagEditor extends Component {
       return null
     }
     return (
-      <FormGroup>
-        <Col smOffset={2} sm={10}>
-          { confirmedDelete ?
-            <Button
-              type="submit"
-              bsStyle="warning"
-              onClick={ e => this.deleteTaggable(e) }
-            >Confirm Delete?</Button>
-            :
-            <Button
-              type="submit"
-              bsStyle="info"
-              onClick={ e => {
-                e.preventDefault()
-                this.setState({ confirmedDelete: true })
-              }}
-            >Delete</Button>
-          }
-        </Col>
-      </FormGroup>
+      <Col smOffset={2} sm={10}>
+        { confirmedDelete ?
+          <Button
+            type="submit"
+            bsStyle="warning"
+            onClick={ e => this.deleteTaggable(e) }
+          >Confirm Delete?</Button>
+          :
+          <Button
+            type="submit"
+            bsStyle="info"
+            onClick={ e => {
+              e.preventDefault()
+              this.setState({ confirmedDelete: true })
+            }}
+          >Delete</Button>
+        }
+      </Col>
     )
   }
 
   render() {
-    const { edited, visible, toggleVisibility } = this.props
+    const { edited, visible } = this.props
     const { editTaggable } = this.state
     const formVisible = visible && editTaggable
+    let className = "tag-editor-container sidebar"
+    if ( !formVisible ) {
+      className += " hide-sidebar"
+    }
 
     return (
-      <div className='tag-editor-container'>
-        <div className='tag-editor--clicker'
-          onClick={ () => toggleVisibility(!visible) }
-        >
-          <div className='tag-editor--icon'/>
-        </div>
-        <div className='form-container'>
-          { formVisible && editTaggable &&
-            <Form>
+      <div className={ className }>
+        <div className='sidebar-content'>
+          { formVisible &&
+            <div>
               { this.renderTaggable(editTaggable) }
               { this.renderDeleteButtons() }
               { edited &&
-                <FormGroup>
-                  <Col smOffset={2} sm={10}>
-                    <Button
-                      type="submit"
-                      bsStyle="primary"
-                      onClick={ e => this.onSaveTaggable(e) }
-                    >Submit Changes</Button>
-                  </Col>
-                </FormGroup>
+                <Col smOffset={2} sm={10}>
+                  <Button
+                    type="submit"
+                    bsStyle="primary"
+                    onClick={ e => this.onSaveTaggable(e) }
+                  >Submit Changes</Button>
+                </Col>
               }
-            </Form>
+            </div>
           }
         </div>
       </div>

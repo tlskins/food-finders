@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import TagSuggestions from '@components/home/TagSuggestions'
-import Rating from '@components/home/Rating'
 import close from '@res/images/x-icon-gray.png'
 
 import {
@@ -269,37 +268,38 @@ class SocialEntryInput extends Component {
     }
 
     return (
-      <div className={ `modal-form-container` }>
-        <div className="modal-form-container__screen"></div>
-        <div className="modal-form-container__inner">
-          <img className="close" src={ close } onClick={ this.close } />
-          <h1 className='social-entry-form-header'> { `What's on your mind grapes` } </h1>
+      <div className="modal-form-container">
+        <div className="modal-screen"></div>
+        <div className="modal-inner-container">
+          <div className="modal-section">
+            <img className="close" src={ close } onClick={ this.close } alt="close-form"/>
+            <div className='social-entry-form-header item-header'> New Social Entry </div>
+          </div>
           <div className="social-entry-form">
-            <div className="social-entry-form-rating-container">
-              <textarea type="text"
-                className="social-entry-form__textarea"
-                value={ text }
-                onChange={ this.updateText }
-                onKeyDown={ this.onKeyDown }
-                autoFocus
-                tabIndex={ 1 }
-                />
-              <Rating user={ user } tags={ tags } />
-            </div>
-            <div className="social-entry-form__tags">
-              Current Tags:
-              { tags && tags.map( (t,i) =>
-                <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }
-                  key={ i }>
-                  <p>
+            <textarea type="text"
+              className="social-entry-form-textarea"
+              value={ text }
+              onChange={ this.updateText }
+              onKeyDown={ this.onKeyDown }
+              autoFocus
+              tabIndex={ 1 }
+              />
+            <div className="tags-container item-sub-header">
+              <div className="bold-attribute tags-header">
+                Current Tags
+              </div>
+              <div className="tags-inner-container">
+                { tags && tags.map( (t,i) =>
+                  <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }
+                    key={ i }
+                  >
                     { t.symbol + t.handle }
-                  </p>
-                </div>
-              ) }
+                  </div> )
+                }
+              </div>
             </div>
 
             { searchStatus && searchStatus }
-            Tag Suggestions:
             <TagSuggestions
               tagSuggestions={ tagSuggestions }
               selectedTagIndex={ selectedTagIndex }
@@ -307,14 +307,14 @@ class SocialEntryInput extends Component {
               onMouseOverTag={ (selectedTagIndex) => this.setState({ selectedTagIndex }) }
             />
 
-            <div className="social-entry-form__submit--container">
-              <input
-                className="btn btn-3 btn-3e"
-                type="submit"
-                value="Post"
+            <div className="modal-section">
+              <button
+                className="header-button"
                 tabIndex={ 2 }
                 onClick={ this.onPost }
-              />
+              >
+                Post
+              </button>
             </div>
           </div>
         </div>
