@@ -118,6 +118,7 @@ class Home extends Component {
   }
 
   componentDidMount() {
+    window.scrollTo(0, 0)
     setTimeout(() => {
       const { currentUser, redirect } = this.props
 

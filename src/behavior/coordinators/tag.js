@@ -73,7 +73,7 @@ const searchYelpTags = async ({ TagService, RestService, pResponseYelpBusinesses
   const yelpSearchIndex = { ...searchIndex, source: 'yelp' }
   TagService.startTagSearch(yelpSearchIndex)
   try {
-    const response = await RestService.get('/yelp_search', { term: text } )
+    const response = await RestService.get('/entities/yelp_businesses_search', { term: text } )
     const tags = pResponseYelpBusinesses(response)
     TagService.addTags(symbol, tags)
     TagService.completeTagSearch(yelpSearchIndex)

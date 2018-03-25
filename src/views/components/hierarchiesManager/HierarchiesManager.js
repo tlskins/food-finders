@@ -58,6 +58,7 @@ class HierarchiesManager extends Component {
 	}
 
   componentDidMount() {
+		window.scrollTo(0, 0)
     this.engine.registerNodeFactory(new DefaultNodeFactory())
     this.engine.registerLinkFactory(new DefaultLinkFactory())
     setTimeout(() => {
