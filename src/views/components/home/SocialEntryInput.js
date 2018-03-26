@@ -17,6 +17,7 @@ const initialDraftSocialEntry = { text: '', tags: []}
 
 class SocialEntryInput extends Component {
   constructor(props) {
+    console.log('SocialEntryInput constructor called')
     super(props)
     const { draftSocialEntry } = props
 
@@ -30,7 +31,7 @@ class SocialEntryInput extends Component {
       tagSuggestions: [],
       tagSymbol: undefined,
       selectedTagIndex: undefined,
-      creatableTags: [],
+      creatableTags: (draftSocialEntry && draftSocialEntry.creatableTags) || [],
       cursorBeginIndex: 0,
       cursorEndIndex: 0,
     }
@@ -221,7 +222,8 @@ class SocialEntryInput extends Component {
   addCreatableEntityTag = tag => {
     let { creatableTags } = this.state
     if ( !tag.id && tag.yelpBusiness ) {
-      creatableTags = [...creatableTags, tag.symbol + tag.handle]
+      const { taggableType, symbol, handle } = tag
+      creatableTags = [...creatableTags, { taggableType, symbol, handle }]
     }
     return creatableTags
   }
@@ -268,21 +270,51 @@ class SocialEntryInput extends Component {
     this.props.toggleVisibility(false)
   }
 
-  renderCurrentTags = tags => {
+  renderCurrentTags = (tags, creatableTags) => {
+    const noTags = !tags || tags.length === 0
+    const noCreatableTags = !creatableTags || creatableTags.length === 0
+    if ( noTags && noCreatableTags ) {
+      return null
+    }
+
     return (
       <div className="tags-container item-sub-header">
-        <div className="bold-attribute tags-header">
-          Current Tags
-        </div>
-        <div className="tags-inner-container">
-          { tags && tags.map( (t,i) =>
-            <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }
-              key={ i }
-            >
-              { t.symbol + t.handle }
-            </div> )
-          }
-        </div>
+        { !noTags &&
+          <div className="tags-list">
+            <div className="bold-attribute tags-list-header">
+              Current Tags
+            </div>
+            <div className="tags-inner-container">
+              <div className="tags-inner-container-element">
+                { tags.map( (t,i) =>
+                  <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }
+                    key={ i }
+                  >
+                    { t.symbol + t.handle }
+                  </div> )
+                }
+              </div>
+            </div>
+          </div>
+        }
+        { !noCreatableTags &&
+          <div className="tags-list">
+            <div className="bold-attribute tags-list-header">
+              Created Tags
+            </div>
+            <div className="tags-inner-container">
+              <div className="tags-inner-container-element">
+                { creatableTags.map( (t,i) =>
+                  <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }
+                    key={ i }
+                  >
+                    { t.symbol + t.handle }
+                  </div> )
+                }
+              </div>
+            </div>
+          </div>
+        }
       </div>
     )
   }
@@ -297,7 +329,7 @@ class SocialEntryInput extends Component {
     const entities = tags.filter( t => t.taggableType === 'Entity' )
     const { symbol, handle } = foodRatingTypeTags[0]
     const ratingTypeName = symbol + handle
-    const foodName = foods && foods[0].name
+    const foodName = foods && foods[0] && foods[0].name
     const entityName = entities && entities[0] && entities[0].name
 
     return (
@@ -331,8 +363,8 @@ class SocialEntryInput extends Component {
 
   render() {
     const { text, draftSocialEntry, searchStatus, selectedTagIndex, tagSuggestions  } = this.state
-    const { user, visible } = this.props
-    const { tags } = draftSocialEntry
+    const { visible } = this.props
+    const { tags, creatableTags } = draftSocialEntry
 
     if ( !visible ) {
       return null
@@ -357,7 +389,7 @@ class SocialEntryInput extends Component {
               tabIndex={ 1 }
               />
 
-            { tags && this.renderCurrentTags(tags) }
+            { this.renderCurrentTags(tags, creatableTags) }
 
             { searchStatus && searchStatus }
             <TagSuggestions

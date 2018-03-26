@@ -57,12 +57,28 @@ class TagSuggestions extends Component {
                 <div>
                   { t.name }
                 </div>
-                <div className={ 'form__suggestions__item--description' }>
-                  { t.embeddedTaggable && t.embeddedTaggable.description && `${ t.embeddedTaggable.description }` }
-                </div>
-                <div className={ 'form__suggestions__item--description' }>
-                  { t.embeddedTaggable && t.embeddedTaggable.synonyms.length > 0 && `Synonyms: ${ t.embeddedTaggable.synonyms }` }
-                </div>
+                { ['FoodRatingMetric','FoodRatingType'].includes(t.taggableType) && t.embeddedTaggable &&
+                  <div className={ 'form__suggestions__item--main-description' }>
+                    { t.embeddedTaggable.description }<br />
+                    { t.embeddedTaggable.synonyms.length > 0 && `Synonyms: ${ t.embeddedTaggable.synonyms.join(', ') }` }
+                  </div>
+                }
+                { t.taggableType === 'Entity' && t.embeddedTaggable &&
+                  <div className={ 'form__suggestions__item--main-description' }>
+                    { t.embeddedTaggable.id }<br />
+                    { t.embeddedTaggable.location.displayAddress.join(', ') }<br />
+                    { t.embeddedTaggable.categories.map( c => c.title ).join(', ') }<br />
+                    { t.embeddedTaggable.rating }
+                  </div>
+                }
+                { t.taggableType === 'Entity' && t.yelpBusiness &&
+                  <div className={ 'form__suggestions__item--main-description' }>
+                    { t.yelpBusiness.id }<br />
+                    { t.yelpBusiness.location.displayAddress.join(', ') }<br />
+                    { t.yelpBusiness.categories.map( c => c.title ).join(', ') }<br />
+                    { t.yelpBusiness.rating }
+                  </div>
+                }
               </div>
             </div>
           ) }

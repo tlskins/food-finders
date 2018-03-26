@@ -3,6 +3,7 @@ import * as yelpApiPresenters from './yelp'
 import * as newsfeedApiPresenters from './newsfeed'
 import * as taggableApiPresenters from './taggable'
 import * as hierarchiesApiPresenters from './hierarchies'
+import * as socialEntryApiPresenters from './socialEntry'
 
 
 export default {
@@ -11,4 +12,5 @@ export default {
   ...yelpApiPresenters,
   ...taggableApiPresenters,
   ...hierarchiesApiPresenters,
+  ...socialEntryApiPresenters,
 }

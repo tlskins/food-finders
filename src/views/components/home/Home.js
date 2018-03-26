@@ -192,6 +192,7 @@ class Home extends Component {
     const {
       currentUser,
       friendsManagerVisible,
+      socialEntryVisible,
     } = this.props
     if ( !currentUser ) {
       return null
@@ -221,7 +222,7 @@ class Home extends Component {
                   </Sticky>
                   <div style={{ height: '100%' }}></div>
                 </div>
-                <SocialEntryInput />
+                { socialEntryVisible && <SocialEntryInput /> }
               </div>
           </div>
         </StickyContainer>

@@ -7,9 +7,9 @@ export const loadDraftSocialEntry = ({ RestService, SessionService, pResponseUse
 }
 
 
-export const updateDraftSocialEntry = ({ RestService, SessionService, pResponseUser }) => async (text, creatableTags, requestedAt) => {
+export const updateDraftSocialEntry = ({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry }) => async (text, creatableTags, requestedAt) => {
   const userId = SessionService.currentUserId()
-  const payload = { user: { draft_social_entry: { text: text, creatable_tags: creatableTags} } }
+  const payload = pRequestUpdateSocialEntry({ text, creatableTags })
 
   let user = await RestService.put('/users/' + userId, payload )
   user = pResponseUser(user)
@@ -17,9 +17,9 @@ export const updateDraftSocialEntry = ({ RestService, SessionService, pResponseU
 }
 
 
-export const postSocialEntry = ({ RestService, SessionService, pResponseUser }) => async (text, creatableTags) => {
+export const postSocialEntry = ({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry }) => async (text, creatableTags) => {
   const userId = SessionService.currentUserId()
-  const payload = { text, creatable_tags: creatableTags }
+  const payload = pRequestUpdateSocialEntry({ text, creatableTags })
 
   let user = await RestService.post('/users/' + userId + '/publish_draft_social_entry', payload )
   user = pResponseUser(user)
