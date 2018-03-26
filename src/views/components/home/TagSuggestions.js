@@ -57,6 +57,8 @@ class TagSuggestions extends Component {
                 <div>
                   { t.name }
                 </div>
+                { /** TODO - put these div renders in a presenter **/
+                }
                 { ['FoodRatingMetric','FoodRatingType'].includes(t.taggableType) && t.embeddedTaggable &&
                   <div className={ 'form__suggestions__item--main-description' }>
                     { t.embeddedTaggable.description }<br />

@@ -394,7 +394,8 @@ class SocialEntryInput extends Component {
               onKeyDown={ this.onKeyDown }
               autoFocus
               tabIndex={ 1 }
-              />
+              rows={ 10 }
+            />
 
             { this.renderCurrentTags(tags, creatableTags) }
 

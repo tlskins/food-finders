@@ -1,114 +1,13 @@
-import React, { Component, PureComponent } from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Sticky, StickyContainer } from 'react-sticky'
 
-import GoogleMap from '@components/common/GoogleMapContainer'
 import Newsfeed from '@containers/home/Newsfeed'
 import SocialEntryInput from '@containers/home/SocialEntryInput'
 import FriendsManager from '@containers/home/FriendsManager'
 import NavBar from '@containers/common/Navbar'
-import DropdownArrow from '@res/images/icons8-expand-arrow-48.png'
-
-
-class Header extends PureComponent {
-  render() {
-    const {
-      toggleFriendsManagerVisibility,
-      toggleSocialEntryVisibility,
-    } = this.props
-
-    return (
-      <div className="sticky-header" style={{ ...this.props.style }}>
-        <div className="sticky-sidebar-toggle"
-          onClick={ toggleFriendsManagerVisibility }
-        >
-          Buddies
-        </div>
-        <div className="sticky-header-title">Newsfeed</div>
-        <button className="sticky-header-dropdown">
-          <span className="sticky-header-dropdown-title">Sort by - </span>
-          <span className="sticky-header-dropdown-value">Topic</span>
-          <img className="dropdown-expand-icon" src={ DropdownArrow } alt="dropdown-arrow"/>
-        </button>
-        <button
-          className="header-button"
-          onClick={ toggleSocialEntryVisibility }
-        >
-          New Social Entry
-        </button>
-      </div> )
-  }
-}
-
-
-class Map extends PureComponent {
-  state = { marker: undefined }
-
-  componentWillReceiveProps(nextProps) {
-    const { selectedEntity } = nextProps
-    if ( selectedEntity !== this.props.selectedEntity) {
-      let marker = undefined
-      let mapCenter = {}
-      if ( selectedEntity && selectedEntity.yelpBusiness && selectedEntity.yelpBusiness ) {
-        const yelp = selectedEntity.yelpBusiness && selectedEntity.yelpBusiness
-        const { name, coordinates } = yelp
-        const position = { lat: coordinates['latitude'], lng: coordinates['longitude'] }
-        mapCenter = { ...position }
-        const title = yelp.categories.map( c => c.title ).join(', ')
-        marker = { position, name, title }
-      }
-      this.setState({ mapCenter, marker })
-    }
-  }
-
-  renderEntityPanel = yelpBusiness => {
-    const { price, rating, reviewCount, url, name, categories } = yelpBusiness
-    const categoriesString = categories.map( c => c.title ).join(', ')
-
-    return (
-      <div className="entity-panel">
-        <div className="entity-panel-header item-header">
-          <a classNAme="entity_url" href={ url } target="_blank"> { name } </a>
-        </div>
-        <div className="item-sub-header">
-          { categoriesString }
-        </div>
-        <div className="item-sub-header">
-          <span className="bold-attribute">
-            Price
-          </span>
-          <span className="bold-value">
-            { ` ${ price }` } •
-          </span>
-          <span className="bold-attribute">
-            Rating
-          </span>
-          <span className="bold-value">
-            { ` ${ rating }` } •
-          </span>
-          <span className="bold-attribute">
-            Review Count
-          </span>
-          <span className="bold-value">
-            { ` ${ reviewCount }` }
-          </span>
-        </div>
-      </div>
-    )
-  }
-
-  render() {
-    const { selectedEntity, style } = this.props
-    const { mapCenter, marker } = this.state
-
-    return (
-      <div className="map" style={{ ...style }}>
-        { selectedEntity && this.renderEntityPanel(selectedEntity.yelpBusiness) }
-        <GoogleMap center={ mapCenter } marker={ marker }/>
-      </div>
-    )
-  }
-}
+import EntityPanel from '@components/common/EntityPanel'
+import Header from '@components/home/Header'
 
 
 class Home extends Component {
@@ -171,20 +70,16 @@ class Home extends Component {
     )
   }
 
-  renderStickyMap = ({ isSticky, style, }) => {
-    const { friendsManagerVisible } = this.props
+  renderStickyEntityPanel = ({ isSticky, style, }) => {
     const { selectedEntity } = this.state
     if ( isSticky ) {
       style = { ...style, width: '100%', top: '155px' }
     }
     return (
-      <div>
-        <Map
-          style={ style }
-          sidebarVisible={ friendsManagerVisible }
-          selectedEntity={ selectedEntity }
-        />
-      </div>
+      <EntityPanel
+        style={ style }
+        selectedEntity={ selectedEntity }
+      />
     )
   }
 
@@ -218,7 +113,7 @@ class Home extends Component {
                 <Newsfeed />
                 <div className="home-page-entity-container">
                   <Sticky topOffset={-70}>
-                    { this.renderStickyMap }
+                    { this.renderStickyEntityPanel }
                   </Sticky>
                   <div style={{ height: '100%' }}></div>
                 </div>
