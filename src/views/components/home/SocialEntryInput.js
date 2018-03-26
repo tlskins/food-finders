@@ -41,7 +41,11 @@ class SocialEntryInput extends Component {
       const { searchText, tagSymbol, lastEditAt } = this.state
       const { draftSocialEntry, requestedAt, tags, tagSearches } = nextProps
 
-      if ( lastEditAt >= requestedAt ) {
+      // if ( !requestedAt || lastEditAt >= requestedAt ) {
+      //   this.setState({ draftSocialEntry })
+      // }
+
+      if ( draftSocialEntry !== this.props.draftSocialEntry ) {
         this.setState({ draftSocialEntry })
       }
 
@@ -182,7 +186,10 @@ class SocialEntryInput extends Component {
 
     const cursorTextData = this.calculateCursorTextData(newText, selectionStart)
     this.setState({ text: newText, lastEditAt: currentEditAt, ...cursorTextData }, () => this.calculateTags(newText) )
-    this.updateSocialEntry(newText, creatableTags, currentEditAt)
+    // Only write to DB when a tag is edited
+    if ( cursorTextData.tagSymbol ) {
+      this.updateSocialEntry(newText, creatableTags, currentEditAt)
+    }
   }
 
   calculateCursorTextData = (text, selectionStart) => {

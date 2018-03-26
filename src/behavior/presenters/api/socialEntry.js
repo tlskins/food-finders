@@ -7,5 +7,4 @@ export const pRequestUpdateSocialEntry = ({ text, creatableTags }) => {
   draftSocialEntry.creatable_tags = snakeCaseify(creatableTags)
   const user = { draft_social_entry: draftSocialEntry }
   return { user }
-  // { user: { draft_social_entry: { text: text, creatable_tags: pRequestCreatableTags(creatableTags)} } }
 }
