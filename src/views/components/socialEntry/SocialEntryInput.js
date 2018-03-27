@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import TagSuggestions from '@components/socialEntry/TagSuggestions'
 import CurrentTags from '@components/socialEntry/CurrentTags'
 import SocialEntryRating from '@components/socialEntry/SocialEntryRating'
+import EntityPanel from '@components/common/EntityPanel'
 import close from '@res/images/x-icon-gray.png'
 
 import {
@@ -279,10 +280,24 @@ class SocialEntryInput extends Component {
     this.props.toggleVisibility(false)
   }
 
+  // TODO - move to presenter
+  getActiveYelpBusiness = activeTag => {
+    if ( activeTag ) {
+      if ( activeTag.yelpBusiness ) {
+        return activeTag.yelpBusiness
+      }
+      else if ( activeTag.taggableType === 'Entity' ) {
+        return activeTag.embeddedTaggable
+      }
+    }
+    return undefined
+  }
+
   render() {
     const { text, draftSocialEntry, searchStatus, selectedTagIndex, tagSuggestions  } = this.state
     const { visible } = this.props
     const { tags, creatableTags } = draftSocialEntry
+    const yelpBusiness = this.getActiveYelpBusiness(tagSuggestions[selectedTagIndex])
 
     if ( !visible ) {
       return null
@@ -297,40 +312,49 @@ class SocialEntryInput extends Component {
             <div className='social-entry-form-header item-header'> New Social Entry </div>
             <SocialEntryRating tags={ tags } />
           </div>
-          <div className="social-entry-form">
-            <textarea type="text"
-              className="social-entry-form-textarea"
-              value={ text }
-              onChange={ this.updateText }
-              onKeyDown={ this.onKeyDown }
-              autoFocus
-              tabIndex={ 1 }
-              rows={ 7 }
-            />
 
-            <CurrentTags
-              tags={ tags }
-              creatableTags={ creatableTags }
-            />
+          <div className="modal-column-section">
+            <div className="social-entry-form">
+              <textarea type="text"
+                className="social-entry-form-textarea"
+                value={ text }
+                onChange={ this.updateText }
+                onKeyDown={ this.onKeyDown }
+                autoFocus
+                tabIndex={ 1 }
+                rows={ 7 }
+              />
+              <CurrentTags
+                tags={ tags }
+                creatableTags={ creatableTags }
+              />
+              <TagSuggestions
+                tagSuggestions={ tagSuggestions }
+                searchStatus={ searchStatus }
+                selectedTagIndex={ selectedTagIndex }
+                onClickTag={ this.addTag }
+                onMouseOverTag={ (selectedTagIndex) => this.setState({ selectedTagIndex }) }
+              />
+              <div className="modal-section">
+                <button
+                  className="header-button"
+                  tabIndex={ 2 }
+                  onClick={ this.onPost }
+                >
+                  Post
+                </button>
+              </div>
+            </div>
 
-            <TagSuggestions
-              tagSuggestions={ tagSuggestions }
-              searchStatus={ searchStatus }
-              selectedTagIndex={ selectedTagIndex }
-              onClickTag={ this.addTag }
-              onMouseOverTag={ (selectedTagIndex) => this.setState({ selectedTagIndex }) }
-            />
-
-            <div className="modal-section">
-              <button
-                className="header-button"
-                tabIndex={ 2 }
-                onClick={ this.onPost }
-              >
-                Post
-              </button>
+            <div className="social-entry-detail-panel">
+              <EntityPanel
+                yelpBusiness={ yelpBusiness }
+                panelStyle={{ width: '500px', height: '120px' }}
+                mapStyle={{ width: '500px', height: '550px' }}
+              />
             </div>
           </div>
+
         </div>
       </div>
     )

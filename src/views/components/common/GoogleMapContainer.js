@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react'
+import PropTypes from 'prop-types'
+import { Map, InfoWindow, Marker, GoogleApiWrapper } from 'google-maps-react'
 
 
 const G_API_KEY = "AIzaSyDOctR1nzFfr2Fdn4pLOplJWWZnoV8nos4"
@@ -50,9 +51,9 @@ export class MapContainer extends Component {
   }
 
   render() {
-    const { center, google, marker } = this.props
+    const { center, google, marker, style } = this.props
     const { activeMarker, showingInfoWindow } = this.state
-    const style = { width: '600px', height: '700px' }
+    const mapStyle = style || { width: '600px', height: '550px' }
 
     const markerName = marker && marker.name
     const markerTitle = marker && marker.title
@@ -62,7 +63,7 @@ export class MapContainer extends Component {
         center={ center }
         google={ google }
         onClick={ this.onMapClicked }
-        style={ style }
+        style={ mapStyle }
         zoom={16}
       >
         { marker && this.renderMarker(marker) }
@@ -75,6 +76,15 @@ export class MapContainer extends Component {
       </Map> )
   }
 }
+
+
+MapContainer.propTypes = {
+  center: PropTypes.object,
+  google: PropTypes.object,
+  marker: PropTypes.object,
+  style: PropTypes.object,
+}
+
 
 export default GoogleApiWrapper({
   apiKey: (G_API_KEY)

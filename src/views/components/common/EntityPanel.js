@@ -1,37 +1,67 @@
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import GoogleMap from '@components/common/GoogleMapContainer'
 
 
-class EntityPanel extends PureComponent {
-  state = { marker: undefined }
+class EntityPanel extends Component {
+  constructor(props) {
+    super(props)
+    const { mapStyle, panelStyle, style } = props
 
-  componentWillReceiveProps(nextProps) {
-    const { selectedEntity } = nextProps
-    if ( selectedEntity !== this.props.selectedEntity) {
-      let marker = undefined
-      let mapCenter = {}
-      if ( selectedEntity && selectedEntity.yelpBusiness && selectedEntity.yelpBusiness ) {
-        const yelp = selectedEntity.yelpBusiness && selectedEntity.yelpBusiness
-        const { name, coordinates } = yelp
-        const position = { lat: coordinates['latitude'], lng: coordinates['longitude'] }
-        mapCenter = { ...position }
-        const title = yelp.categories.map( c => c.title ).join(', ')
-        marker = { position, name, title }
-      }
-      this.setState({ mapCenter, marker })
+    this.state = {
+      mapStyle,
+      panelStyle,
+      style,
+      marker: undefined,
     }
   }
 
-  renderEntityPanel = yelpBusiness => {
-    const { price, rating, reviewCount, url, name, categories } = yelpBusiness
+  componentWillReceiveProps(nextProps) {
+    const { yelpBusiness, style } = nextProps
+    let newState = undefined
+    if ( yelpBusiness !== this.props.yelpBusiness) {
+      let marker = undefined
+      let mapCenter = {}
+      if ( yelpBusiness  ) {
+        const { categories, name, coordinates } = yelpBusiness
+        const position = { lat: coordinates['latitude'], lng: coordinates['longitude'] }
+        mapCenter = { ...position }
+        const title = categories.map( c => c.title ).join(', ')
+        marker = { position, name, title }
+      }
+      newState = { mapCenter, marker, yelpBusiness }
+      // this.setState({ mapCenter, marker, yelpBusiness })
+    }
+    if ( style !== this.props.style ) {
+      newState = { ...newState, style }
+    }
+
+    if ( newState ) {
+      this.setState( newState )
+    }
+  }
+
+  renderEntityPanel = (yelpBusiness, panelStyle) => {
+    const {
+      location,
+      price,
+      rating,
+      reviewCount,
+      url,
+      name,
+      categories
+    } = yelpBusiness
     const categoriesString = categories.map( c => c.title ).join(', ')
+    const locationString = location.displayAddress.join(', ')
 
     return (
-      <div className="entity-panel">
+      <div className="entity-panel" style={ panelStyle }>
         <div className="entity-panel-header item-header">
-          <a classNAme="entity_url" href={ url } target="_blank"> { name } </a>
+          <a className="entity_url" href={ url } target="_blank"> { name } </a>
+        </div>
+        <div className="item-sub-header">
+          { locationString }
         </div>
         <div className="item-sub-header">
           { categoriesString }
@@ -61,13 +91,12 @@ class EntityPanel extends PureComponent {
   }
 
   render() {
-    const { selectedEntity, style } = this.props
-    const { mapCenter, marker } = this.state
+    const { mapCenter, marker, yelpBusiness, mapStyle, panelStyle, style } = this.state
 
     return (
       <div className="map" style={{ ...style }}>
-        { selectedEntity && this.renderEntityPanel(selectedEntity.yelpBusiness) }
-        <GoogleMap center={ mapCenter } marker={ marker }/>
+        { yelpBusiness && this.renderEntityPanel(yelpBusiness, panelStyle) }
+        <GoogleMap center={ mapCenter } marker={ marker } style={ mapStyle }/>
       </div>
     )
   }
@@ -75,8 +104,10 @@ class EntityPanel extends PureComponent {
 
 
 EntityPanel.propTypes = {
-  selectedEntity: PropTypes.object,
+  yelpBusiness: PropTypes.object,
   style: PropTypes.object,
+  mapStyle: PropTypes.object,
+  panelStyle: PropTypes.object,
 }
 
 

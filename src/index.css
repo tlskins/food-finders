@@ -410,6 +410,11 @@ body {
   width: 100%;
 }
 
+.modal-column-section {
+  display: flex;
+  flex-direction: row;
+}
+
 .modal-inner-container .close {
   width: 20px;
   position: absolute;
@@ -597,7 +602,7 @@ body {
 
 .entity-panel {
   width: 600px;
-  height: 100px;
+  height: 120px;
   background: #fcfcfc;
   border: 1px solid #101820;
   border-radius: 3px;
@@ -694,6 +699,7 @@ body {
 
 .map {
   transition: margin-left .3s;
+  /* padding: 10px; */
 }
 
 .show-sidebar {
@@ -727,7 +733,7 @@ body {
 .social-entry-form {
   display: flex;
   flex-direction: column;
-  padding: 0 50px 15px 15px;
+  padding: 10px 10px 10px 10px;
 }
 
 .social-entry-form-header {
@@ -741,34 +747,20 @@ body {
 }
 
 .social-entry-form-textarea {
-  width: 100%;
+  /* width: 100%; */
+  width: 950px;
   max-width: 100%;
   border: 1px solid #3d4853;
   border-radius: 4px;
   font-size: 16px;
   padding: 7px 10px;
-  margin: 5px 10px 0 0;
+  /* margin: 5px 10px 0 0; */
 }
 
-/* .social-entry-form__submit--container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-} */
-
-/* .social-entry-form__submit--button {
-  width: 60px;
-  margin: 15px;
-  padding: 5px;
-  border-width: 3px;
-  border-style: solid;
-  border-color: blue;
-  border-radius: 10px;
+.social-entry-detail-panel {
+  /* padding: 0 50px 15px 15px; */
+  padding: 10px 10px 10px 10px;
 }
-
-.social-entry-form__submit--button:hover {
-  border-color: rgb(75, 173, 2);
-} */
 
 /** Newsfeed **/
 
@@ -918,7 +910,8 @@ body {
 .tags-container {
   background: #fcfcfc;
   border: 2px solid #101820;
-  width: 100%;
+  /* width: 100%; */
+  width: 950px;
   display: flex;
   flex-direction: row;
   margin: 10px 0 10px 0;
@@ -948,9 +941,9 @@ body {
 }
 
 [class^="social-entry-tag"] {
+  display: inline-block;
   font-family: 'Calibre-Medium';
   height: 20px;
-  display: inline;
   border: 1px solid #101820;
   border-radius: 3px;
   color: black;

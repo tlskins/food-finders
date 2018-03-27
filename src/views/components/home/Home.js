@@ -75,10 +75,12 @@ class Home extends Component {
     if ( isSticky ) {
       style = { ...style, width: '100%', top: '155px' }
     }
+    // TODO - move to presenter
+    const yelpBusiness = selectedEntity && selectedEntity.yelpBusiness
     return (
       <EntityPanel
         style={ style }
-        selectedEntity={ selectedEntity }
+        yelpBusiness={ yelpBusiness }
       />
     )
   }

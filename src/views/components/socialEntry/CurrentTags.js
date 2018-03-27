@@ -21,11 +21,11 @@ class CurrentTags extends PureComponent {
             <div className="tags-inner-container">
               <div className="tags-inner-container-element">
                 { tags.map( (t,i) =>
-                  <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }
+                  <span className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }
                     key={ i }
                   >
                     { t.symbol + t.handle }
-                  </div> )
+                  </span> )
                 }
               </div>
             </div>
@@ -39,11 +39,11 @@ class CurrentTags extends PureComponent {
             <div className="tags-inner-container">
               <div className="tags-inner-container-element">
                 { creatableTags.map( (t,i) =>
-                  <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }
+                  <span className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }
                     key={ i }
                   >
                     { t.symbol + t.handle }
-                  </div> )
+                  </span> )
                 }
               </div>
             </div>
