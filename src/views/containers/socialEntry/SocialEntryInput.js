@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 
-import SocialEntryInput from '@components/home/SocialEntryInput'
+import SocialEntryInput from '@components/socialEntry/SocialEntryInput'
 
 import services from '@services'
 import coordinators from '@coordinators'

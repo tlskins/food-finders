@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Sticky, StickyContainer } from 'react-sticky'
 
 import Newsfeed from '@containers/home/Newsfeed'
-import SocialEntryInput from '@containers/home/SocialEntryInput'
+import SocialEntryInput from '@containers/socialEntry/SocialEntryInput'
 import FriendsManager from '@containers/home/FriendsManager'
 import NavBar from '@containers/common/Navbar'
 import EntityPanel from '@components/common/EntityPanel'
