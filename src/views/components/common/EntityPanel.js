@@ -31,7 +31,6 @@ class EntityPanel extends Component {
         marker = { position, name, title }
       }
       newState = { mapCenter, marker, yelpBusiness }
-      // this.setState({ mapCenter, marker, yelpBusiness })
     }
     if ( style !== this.props.style ) {
       newState = { ...newState, style }
@@ -91,12 +90,22 @@ class EntityPanel extends Component {
   }
 
   render() {
-    const { mapCenter, marker, yelpBusiness, mapStyle, panelStyle, style } = this.state
+    const {
+      showMap,
+    } = this.props
+    const {
+      mapCenter,
+      marker,
+      yelpBusiness,
+      mapStyle,
+      panelStyle,
+      style
+    } = this.state
 
     return (
       <div className="map" style={{ ...style }}>
         { yelpBusiness && this.renderEntityPanel(yelpBusiness, panelStyle) }
-        <GoogleMap center={ mapCenter } marker={ marker } style={ mapStyle }/>
+        { showMap && <GoogleMap center={ mapCenter } marker={ marker } style={ mapStyle }/> }
       </div>
     )
   }
@@ -105,6 +114,7 @@ class EntityPanel extends Component {
 
 EntityPanel.propTypes = {
   yelpBusiness: PropTypes.object,
+  showMap: PropTypes.bool,
   style: PropTypes.object,
   mapStyle: PropTypes.object,
   panelStyle: PropTypes.object,

@@ -79,6 +79,7 @@ class Home extends Component {
     const yelpBusiness = selectedEntity && selectedEntity.yelpBusiness
     return (
       <EntityPanel
+        showMap={ true }
         style={ style }
         yelpBusiness={ yelpBusiness }
       />

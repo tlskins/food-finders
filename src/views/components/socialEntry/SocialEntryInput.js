@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import TagSuggestions from '@components/socialEntry/TagSuggestions'
 import CurrentTags from '@components/socialEntry/CurrentTags'
 import SocialEntryRating from '@components/socialEntry/SocialEntryRating'
-import EntityPanel from '@components/common/EntityPanel'
+import SocialEntryDetailPanel from '@containers/socialEntry/SocialEntryDetailPanel'
 import close from '@res/images/x-icon-gray.png'
 
 import {
@@ -347,8 +347,7 @@ class SocialEntryInput extends Component {
             </div>
 
             <div className="social-entry-detail-panel">
-              <EntityPanel
-                yelpBusiness={ yelpBusiness }
+              <SocialEntryDetailPanel
                 panelStyle={{ width: '500px', height: '120px' }}
                 mapStyle={{ width: '500px', height: '550px' }}
               />

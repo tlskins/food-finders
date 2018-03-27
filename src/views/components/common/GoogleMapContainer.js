@@ -14,7 +14,6 @@ export class MapContainer extends Component {
   }
 
   onMapClicked = (mapProps, map, clickEvent) => {
-    // console.log('mapclicked, mapProps=',mapProps,' map=',map,' clickEvent=',clickEvent)
     const { showingInfoWindow } = this.state
     if ( showingInfoWindow ) {
       this.setState({
@@ -23,13 +22,6 @@ export class MapContainer extends Component {
       })
     }
   }
-
-  // componentWillReceiveProps(nextProps) {
-  //   const { center, activeMarker } = nextProps
-  //   if ( center !== this.props.center || activeMarker !== this.props.activeMarker ) {
-  //     this.setState({ center, activeMarker })
-  //   }
-  // }
 
   onMarkerClick = (props, marker, e) => {
     this.setState({
