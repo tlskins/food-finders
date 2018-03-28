@@ -758,8 +758,38 @@ body {
 }
 
 .social-entry-detail-panel {
-  /* padding: 0 50px 15px 15px; */
-  padding: 5px;
+  padding: 10px;
+  width: 520px;
+}
+
+.social-entry-dtl-hdr-btn {
+  color: black;
+  background-color: white;
+  border: 1px solid #101820;
+  border-radius: 0;
+  font-size: 13px;
+  height: 32px;
+  letter-spacing: .061em;
+  margin-bottom: 10px;
+  text-align: center;
+  text-transform: uppercase;
+  vertical-align: middle;
+  width: 100%;
+  -webkit-transition: background-color .3s;
+  -o-transition: background-color .3s;
+  transition: background-color .3s;
+}
+
+.social-entry-dtl-hdr-btn:hover {
+  background: #eee;
+  color: white;
+  background-color: black;
+}
+
+.active-header-button {
+  background: #eee;
+  color: white;
+  background-color: black;
 }
 
 /** Newsfeed **/

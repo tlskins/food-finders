@@ -10,7 +10,7 @@ class SocialEntryDetailPanel extends Component {
     super(props)
     const { style } = props
 
-    this.state = { style }
+    this.state = { style, mode: 'DISPLAY ENTITY' }
   }
 
   // TODO - move to presenter
@@ -28,20 +28,36 @@ class SocialEntryDetailPanel extends Component {
 
   renderEntityPanel = ({ yelpBusiness, mapStyle, panelStyle }) => {
     return (
-      <EntityPanel
-        yelpBusiness={ yelpBusiness }
-        panelStyle={ panelStyle }
-        mapStyle={ mapStyle }
-        showMap={ true }
-      />
+      <div>
+        <button
+          onClick={ () => this.setState({ mode: 'SEARCH ENTITY' }) }
+          className="social-entry-dtl-hdr-btn"
+        >
+          Search
+        </button>
+        <EntityPanel
+          yelpBusiness={ yelpBusiness }
+          panelStyle={ panelStyle }
+          mapStyle={ mapStyle }
+          showMap={ true }
+        />
+      </div>
     )
   }
 
-  renderSearchPanel = ({ yelpBusiness, mapStyle, panelStyle }) => {
+  renderSearchEntityPanel = ({ yelpBusiness, mapStyle, panelStyle }) => {
     return (
-      <EntitySearchPanel
-        panelStyle={ panelStyle }
-      />
+      <div>
+        <button
+          onClick={ () => this.setState({ mode: 'DISPLAY ENTITY' }) }
+          className="social-entry-dtl-hdr-btn active-header-button"
+        >
+          Details
+        </button>
+        <EntitySearchPanel
+          panelStyle={ panelStyle }
+        />
+      </div>
     )
   }
 
@@ -51,11 +67,17 @@ class SocialEntryDetailPanel extends Component {
       mapStyle,
       panelStyle,
     } = this.props
+    const { mode } = this.state
     const yelpBusiness = this.getActiveYelpBusiness( activeTag )
 
     return (
       <div className="social-entry-detail-panel">
-        { this.renderEntityPanel({ yelpBusiness, mapStyle, panelStyle }) }
+        { mode === 'DISPLAY ENTITY' &&
+          this.renderEntityPanel({ yelpBusiness, mapStyle, panelStyle })
+        }
+        { mode === 'SEARCH ENTITY' &&
+          this.renderSearchEntityPanel({ yelpBusiness, mapStyle, panelStyle })
+        }
       </div>
     )
   }

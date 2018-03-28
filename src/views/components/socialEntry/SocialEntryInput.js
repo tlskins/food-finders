@@ -337,15 +337,13 @@ class SocialEntryInput extends Component {
               </div>
             </div>
 
-            <div className="social-entry-detail-panel">
-              <SocialEntryDetailPanel
-                tagSymbol={ tagSymbol }
-                searchText={ searchText }
-                activeTag={ activeTag }
-                panelStyle={{ width: '500px', height: '120px' }}
-                mapStyle={{ width: '500px', height: '550px' }}
-              />
-            </div>
+            <SocialEntryDetailPanel
+              tagSymbol={ tagSymbol }
+              searchText={ searchText }
+              activeTag={ activeTag }
+              panelStyle={{ width: '500px', height: '120px' }}
+              mapStyle={{ width: '500px', height: '500px' }}
+            />
           </div>
 
         </div>

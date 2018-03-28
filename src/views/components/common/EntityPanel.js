@@ -7,9 +7,10 @@ import GoogleMap from '@components/common/GoogleMapContainer'
 class EntityPanel extends Component {
   constructor(props) {
     super(props)
-    const { mapStyle, panelStyle, style } = props
+    const { mapStyle, panelStyle, style, yelpBusiness } = props
 
     this.state = {
+      ...this.getMapDetails(yelpBusiness),
       mapStyle,
       panelStyle,
       style,
@@ -21,16 +22,17 @@ class EntityPanel extends Component {
     const { yelpBusiness, style } = nextProps
     let newState = undefined
     if ( yelpBusiness !== this.props.yelpBusiness) {
-      let marker = undefined
-      let mapCenter = {}
-      if ( yelpBusiness  ) {
-        const { categories, name, coordinates } = yelpBusiness
-        const position = { lat: coordinates['latitude'], lng: coordinates['longitude'] }
-        mapCenter = { ...position }
-        const title = categories.map( c => c.title ).join(', ')
-        marker = { position, name, title }
-      }
-      newState = { mapCenter, marker, yelpBusiness }
+      // let marker = undefined
+      // let mapCenter = {}
+      // if ( yelpBusiness  ) {
+      //   const { categories, name, coordinates } = yelpBusiness
+      //   const position = { lat: coordinates['latitude'], lng: coordinates['longitude'] }
+      //   mapCenter = { ...position }
+      //   const title = categories.map( c => c.title ).join(', ')
+      //   marker = { position, name, title }
+      // }
+      // newState = { mapCenter, marker, yelpBusiness }
+      newState = this.getMapDetails( yelpBusiness )
     }
     if ( style !== this.props.style ) {
       newState = { ...newState, style }
@@ -39,6 +41,19 @@ class EntityPanel extends Component {
     if ( newState ) {
       this.setState( newState )
     }
+  }
+
+  getMapDetails = yelpBusiness => {
+    let marker = undefined
+    let mapCenter = {}
+    if ( yelpBusiness  ) {
+      const { categories, name, coordinates } = yelpBusiness
+      const position = { lat: coordinates['latitude'], lng: coordinates['longitude'] }
+      mapCenter = { ...position }
+      const title = categories.map( c => c.title ).join(', ')
+      marker = { position, name, title }
+    }
+    return { mapCenter, marker, yelpBusiness }
   }
 
   renderEntityPanel = (yelpBusiness, panelStyle) => {
