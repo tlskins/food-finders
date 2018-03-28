@@ -8,20 +8,16 @@ import presenters from '@presenters'
 
 
 const mapStateToProps = state => {
-  // const { session, socialEntry, tags, tagSearches } = state
-  // const { requestedAt, user } = session
+  const { socialEntry } = state
+  const { tagSymbol, searchText } = socialEntry
   // const { visible } = socialEntry
   //
   // const draftSocialEntry = user ? user.draftSocialEntry : ''
   //
-  // return {
-  //   draftSocialEntry,
-  //   tags,
-  //   tagSearches,
-  //   user,
-  //   requestedAt,
-  //   visible,
-  // }
+  return {
+    tagSymbol,
+    searchText,
+  }
 }
 
 const mapDispatchToProps = () => {

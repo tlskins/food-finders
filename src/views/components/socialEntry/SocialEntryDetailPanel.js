@@ -13,6 +13,19 @@ class SocialEntryDetailPanel extends Component {
     this.state = { style }
   }
 
+  // TODO - move to presenter
+  getActiveYelpBusiness = activeTag => {
+    if ( activeTag ) {
+      if ( activeTag.yelpBusiness ) {
+        return activeTag.yelpBusiness
+      }
+      else if ( activeTag.taggableType === 'Entity' ) {
+        return activeTag.embeddedTaggable
+      }
+    }
+    return undefined
+  }
+
   renderEntityPanel = ({ yelpBusiness, mapStyle, panelStyle }) => {
     return (
       <EntityPanel
@@ -34,16 +47,15 @@ class SocialEntryDetailPanel extends Component {
 
   render() {
     const {
+      activeTag,
       mapStyle,
       panelStyle,
     } = this.props
-    const {
-      selected,
-    } = this.state
+    const yelpBusiness = this.getActiveYelpBusiness( activeTag )
 
     return (
       <div className="social-entry-detail-panel">
-        { this.renderEntityPanel({ selected, mapStyle, panelStyle }) }
+        { this.renderEntityPanel({ yelpBusiness, mapStyle, panelStyle }) }
       </div>
     )
   }
@@ -51,6 +63,9 @@ class SocialEntryDetailPanel extends Component {
 
 
 SocialEntryDetailPanel.propTypes = {
+  activeTag: PropTypes.object,
+  tagSymbol: PropTypes.string,
+  searchText: PropTypes.string,
   style: PropTypes.object,
   panelStyle: PropTypes.object,
   mapStyle: PropTypes.object,

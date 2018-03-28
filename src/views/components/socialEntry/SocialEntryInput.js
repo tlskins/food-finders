@@ -67,6 +67,20 @@ class SocialEntryInput extends Component {
       }
   }
 
+  updateText = e => {
+    const { creatableTags } = this.state
+    const newText = e.target.value
+    const selectionStart = e.target.selectionStart
+    const currentEditAt = new Date()
+
+    const cursorTextData = this.calculateCursorTextData(newText, selectionStart)
+    this.setState({ text: newText, lastEditAt: currentEditAt, ...cursorTextData }, () => this.calculateTags(newText) )
+    // Only write to DB when a tag is edited
+    if ( cursorTextData.tagSymbol ) {
+      this.updateSocialEntry(newText, creatableTags, currentEditAt)
+    }
+  }
+
   populateTagSuggestions = (tags, tagsCount = 5) => {
     const { searchText, searchHandles, tagSymbol } = this.state
     const tagsBySymbol = { ...tags[tagSymbol] }
@@ -181,32 +195,22 @@ class SocialEntryInput extends Component {
     }
   }
 
-  updateText = e => {
-    const { creatableTags } = this.state
-    const newText = e.target.value
-    const selectionStart = e.target.selectionStart
-    const currentEditAt = new Date()
-
-    const cursorTextData = this.calculateCursorTextData(newText, selectionStart)
-    this.setState({ text: newText, lastEditAt: currentEditAt, ...cursorTextData }, () => this.calculateTags(newText) )
-    // Only write to DB when a tag is edited
-    if ( cursorTextData.tagSymbol ) {
-      this.updateSocialEntry(newText, creatableTags, currentEditAt)
-    }
-  }
-
   calculateCursorTextData = (text, selectionStart) => {
     const { currentWord, cursorBeginIndex, cursorEndIndex } = findWordAtCursor(text, selectionStart)
-    const { tags } = this.props
+    const { setCursorTextData, tags } = this.props
+    let cursorTextData = {}
     if ( currentWord && tags[currentWord[0]]) {
       const tagSymbol = currentWord[0]
       const searchText = currentWord.substr(1)
 
-      return { cursorBeginIndex, cursorEndIndex, tagSymbol, searchText }
+      cursorTextData = { cursorBeginIndex, cursorEndIndex, tagSymbol, searchText }
     }
     else {
-      return { cursorBeginIndex, cursorEndIndex, tagSymbol: undefined, searchText: '' }
+      cursorTextData = { cursorBeginIndex, cursorEndIndex, tagSymbol: undefined, searchText: '' }
     }
+    setCursorTextData(cursorTextData)
+
+    return cursorTextData
   }
 
   updateSocialEntry = async (text, creatableTags, requestedAt) => {
@@ -280,24 +284,11 @@ class SocialEntryInput extends Component {
     this.props.toggleVisibility(false)
   }
 
-  // TODO - move to presenter
-  getActiveYelpBusiness = activeTag => {
-    if ( activeTag ) {
-      if ( activeTag.yelpBusiness ) {
-        return activeTag.yelpBusiness
-      }
-      else if ( activeTag.taggableType === 'Entity' ) {
-        return activeTag.embeddedTaggable
-      }
-    }
-    return undefined
-  }
-
   render() {
-    const { text, draftSocialEntry, searchStatus, selectedTagIndex, tagSuggestions  } = this.state
+    const { text, draftSocialEntry, searchStatus, selectedTagIndex, tagSuggestions, tagSymbol, searchText  } = this.state
     const { visible } = this.props
     const { tags, creatableTags } = draftSocialEntry
-    const yelpBusiness = this.getActiveYelpBusiness(tagSuggestions[selectedTagIndex])
+    const activeTag = tagSuggestions[selectedTagIndex]
 
     if ( !visible ) {
       return null
@@ -348,6 +339,9 @@ class SocialEntryInput extends Component {
 
             <div className="social-entry-detail-panel">
               <SocialEntryDetailPanel
+                tagSymbol={ tagSymbol }
+                searchText={ searchText }
+                activeTag={ activeTag }
                 panelStyle={{ width: '500px', height: '120px' }}
                 mapStyle={{ width: '500px', height: '550px' }}
               />
@@ -368,6 +362,7 @@ SocialEntryInput.propTypes = {
   visible: PropTypes.bool,
 
   postSocialEntry: PropTypes.func,
+  setCursorTextData: PropTypes.func,
   suggestTags: PropTypes.func,
   toggleVisibility: PropTypes.func,
   updateDraftSocialEntry: PropTypes.func,

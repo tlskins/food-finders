@@ -7,4 +7,18 @@ export default class SocialEntry extends BaseService {
   toggleVisibility( visible ) {
     this.dispatch( actions.toggleSocialEntryModal( visible ))
   }
+
+  setCursorTextData({
+    cursorBeginIndex,
+    cursorEndIndex,
+    tagSymbol,
+    searchText,
+  }) {
+    this.dispatch( actions.setCursorTextData({
+      cursorBeginIndex,
+      cursorEndIndex,
+      tagSymbol,
+      searchText,
+    }) )
+  }
 }

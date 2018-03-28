@@ -70,7 +70,7 @@ class EntityPanel extends Component {
             Price
           </span>
           <span className="bold-value">
-            { ` ${ price }` } •
+            { ` ${ price || '?' }` } •
           </span>
           <span className="bold-attribute">
             Rating

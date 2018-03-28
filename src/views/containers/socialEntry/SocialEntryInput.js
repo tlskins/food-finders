@@ -34,9 +34,16 @@ const mapDispatchToProps = () => {
   const updateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry })
   const postSocialEntry = coordinators.postSocialEntry({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry })
   const suggestTags = coordinators.suggestTags({ RestService, TagService, pResponseTags, pResponseYelpBusinesses })
+  const setCursorTextData = ({
+    cursorBeginIndex,
+    cursorEndIndex,
+    tagSymbol,
+    searchText
+  }) => UIService.SocialEntry.setCursorTextData({ cursorBeginIndex, cursorEndIndex, tagSymbol, searchText })
 
   return {
     postSocialEntry,
+    setCursorTextData,
     suggestTags,
     toggleVisibility,
     updateDraftSocialEntry,
