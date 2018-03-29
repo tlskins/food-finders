@@ -61,7 +61,8 @@ const getTagSuggestions = ({ tagDictionary, tagSymbol, tagsCount, searchText, se
   else if ( searchHandles ) {
     const searchKeys = searchHandles.map( h => h.slice(1) )
     if ( searchKeys.length > 0 ) {
-      const tagSuggestions = searchDictionaryByKeys(tagsBySymbol, searchKeys)
+      let tagSuggestions = []
+      searchDictionaryByKeys(tagsBySymbol, searchKeys, tagSuggestions)
 
       return { tagSuggestions, selectedTagIndex }
     }

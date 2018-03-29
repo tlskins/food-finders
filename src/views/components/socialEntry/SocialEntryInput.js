@@ -24,13 +24,13 @@ class SocialEntryInput extends Component {
     this.state = {
       lastEditAt: undefined,
       text: (draftSocialEntry && draftSocialEntry.text) || '',
-      searchText: '',
+      searchText: undefined,
       searchHandles: undefined,
       searchStatus: undefined,
       draftSocialEntry: draftSocialEntry || initialDraftSocialEntry,
       tagSuggestions: [],
       tagSymbol: undefined,
-      selectedTagIndex: undefined,
+      selectedTagIndex: 0,
       creatableTags: (draftSocialEntry && draftSocialEntry.creatableTags) || [],
       cursorBeginIndex: 0,
       cursorEndIndex: 0,
@@ -107,7 +107,7 @@ class SocialEntryInput extends Component {
 
           this.setState({ searchStatus: `Loading ${ selectedTag.name }...` })
           updateSearchHandles({ tagSymbol, searchHandles: childTagHandles, selectedTagIndex, text })
-          this.loadNewTags({ searchHandles, tagSymbol })
+          this.loadNewTags({ searchHandles: childTagHandles, tagSymbol })
         }
       }
       // left arrow key
@@ -119,15 +119,16 @@ class SocialEntryInput extends Component {
           const parentTaggable = selectedTag.embeddedTaggable.parent
           const parentHandle = parentTaggable.tagSymbol + parentTaggable.tagHandle
           const parentSiblingHandles = (parentTaggable && parentTaggable.siblings) || []
+          const newSearchHandles = [parentHandle, ...parentSiblingHandles]
 
           this.setState({ searchStatus: `Loading ${ selectedTag.name }...` })
-          updateSearchHandles({ tagSymbol, searchHandles: [parentHandle, ...parentSiblingHandles], selectedTagIndex: 0, text })
-          this.loadNewTags({ searchHandles, tagSymbol })
+          updateSearchHandles({ tagSymbol, searchHandles: newSearchHandles, selectedTagIndex: 0, text })
+          this.loadNewTags({ searchHandles: newSearchHandles, tagSymbol })
         }
-        else {
-          updateSearchHandles({ tagSymbol, searchHandles: [], selectedTagIndex: 0, text })
-          this.loadNewTags({ searchHandles, tagSymbol })
-        }
+        // else {
+        //   updateSearchHandles({ tagSymbol, searchHandles: [], selectedTagIndex: 0, text })
+        //   this.loadNewTags({ searchHandles, tagSymbol })
+        // }
       }
       // down arrow key
       else if ( e.keyCode === 40 ) {

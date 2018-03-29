@@ -21,7 +21,8 @@ const _getPriorSearchStatus = ({ source, TagService, searchIndex }) => {
 
 const _getMissingTags = ({ symbol, TagService, handles }) => {
   const { tags } = TagService.getState()
-  const tagsBySymbol = tags[symbol]
+  const { tagDictionary } = tags
+  const tagsBySymbol = tagDictionary[symbol]
   return handles.filter( h => !tagsBySymbol[h.slice(1)])
 }
 

@@ -42,14 +42,17 @@ export function searchDictionaryByArray(dictionary, attribute, text, currentSugg
 }
 
 
-export function searchDictionaryByKeys(dictionary, keys, numResults = 5) {
-  let allMatches = []
+export function searchDictionaryByKeys(dictionary, keys, currentSuggestions) {
   Object.entries(dictionary).forEach( k => {
+    console.log('loop k=',k)
+    console.log('keys=',keys)
+    console.log('k[0]=',k[0])
     if ( keys.includes(k[0]) ) {
-      allMatches.push(k[1])
+      console.log('pushing k[1]=',k[1])
+      currentSuggestions.push(k[1])
     }
   })
-  return allMatches
+  console.log('currentSuggestions=',currentSuggestions)
 }
 
 
