@@ -195,6 +195,22 @@ export function stringDifference(a, b) {
 }
 
 
+export function addNestedAttribute(target, targetAttr, value) {
+  const attrParts = targetAttr.split( '.' )
+  let currentAttribute = target
+  for ( let i = 0; i < attrParts.length; i++ ) {
+    const a = attrParts[i]
+    if ( i === attrParts.length - 1 ) {
+      currentAttribute[a] = value
+    }
+    else if ( !currentAttribute[a] ) {
+      currentAttribute[a] = {}
+    }
+    currentAttribute = currentAttribute[a]
+  }
+}
+
+
 export function formAdd( data, target, attr, targetAttr, transformOrValue ) {
   const isFormData = target.constructor.name === 'FormData'
   let hasVal = true
