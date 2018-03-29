@@ -10,6 +10,10 @@ export const INCOMPLETE_TAG_SEARCH = 'INCOMPLETE_TAG_SEARCH'
 
 export const COMPLETE_TAG_SEARCH = 'COMPLETE_TAG_SEARCH'
 
+export const UPDATE_SEARCH_CRITERIA = 'UPDATE_SEARCH_CRITERIA'
+
+export const RESET_SEARCH_CRITERIA = 'RESET_SEARCH_CRITERIA'
+
 
 export const addTags = (symbol, tags) => ({ type: ADD_TAGS, symbol, tags })
 
@@ -58,3 +62,13 @@ export const completeTagSearch = ({
     page,
     resultsPerPage,
     source })
+
+export const updateSearchCriteria = ({ tagSymbol, searchText, searchHandles, selectedTagIndex }) => ({
+  type: UPDATE_SEARCH_CRITERIA,
+  tagSymbol,
+  searchText,
+  searchHandles,
+  selectedTagIndex,
+})
+
+export const resetSearchCriteria = () => ({ type: RESET_SEARCH_CRITERIA })

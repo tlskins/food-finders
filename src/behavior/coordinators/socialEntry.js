@@ -7,7 +7,7 @@ export const loadDraftSocialEntry = ({ RestService, SessionService, pResponseUse
 }
 
 
-export const updateDraftSocialEntry = ({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry }) => async (text, creatableTags, requestedAt) => {
+export const updateDraftSocialEntry = ({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry }) => async (text, creatableTags, requestedAt = new Date()) => {
   const userId = SessionService.currentUserId()
   const payload = pRequestUpdateSocialEntry({ text, creatableTags })
 

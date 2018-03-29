@@ -9,17 +9,30 @@ import presenters from '@presenters'
 
 const mapStateToProps = state => {
   const { session, socialEntry, tags, tagSearches } = state
-  const { requestedAt, user } = session
+  const { user } = session
   const { visible } = socialEntry
+  const {
+    searchText,
+    searchHandles,
+    tagSuggestions,
+    tagSymbol,
+    cursorBeginIndex,
+    cursorEndIndex,
+    selectedTagIndex,
+   } = tags
 
   const draftSocialEntry = user ? user.draftSocialEntry : ''
 
   return {
+    cursorBeginIndex,
+    cursorEndIndex,
     draftSocialEntry,
-    tags,
+    tagSuggestions,
+    tagSymbol,
+    searchText,
+    searchHandles,
+    selectedTagIndex,
     tagSearches,
-    user,
-    requestedAt,
     visible,
   }
 }
@@ -34,18 +47,38 @@ const mapDispatchToProps = () => {
   const updateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry })
   const postSocialEntry = coordinators.postSocialEntry({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry })
   const suggestTags = coordinators.suggestTags({ RestService, TagService, pResponseTags, pResponseYelpBusinesses })
-  const setCursorTextData = ({
+  const updateSearchText = ({
+    tagSymbol,
+    searchText,
     cursorBeginIndex,
     cursorEndIndex,
+    selectedTagIndex,
+  }) => TagService.updateSearchText({
     tagSymbol,
-    searchText
-  }) => UIService.SocialEntry.setCursorTextData({ cursorBeginIndex, cursorEndIndex, tagSymbol, searchText })
+    searchText,
+    cursorBeginIndex,
+    cursorEndIndex,
+    selectedTagIndex,
+  })
+  const updateSearchHandles = ({
+    tagSymbol,
+    searchHandles,
+    selectedTagIndex,
+  }) => TagService.updateSearchText({
+    tagSymbol,
+    searchHandles,
+    selectedTagIndex,
+  })
+  const resetSearchCriteria = () => TagService.resetSearchCriteria()
+
 
   return {
     postSocialEntry,
-    setCursorTextData,
+    resetSearchCriteria,
     suggestTags,
     toggleVisibility,
+    updateSearchHandles,
+    updateSearchText,
     updateDraftSocialEntry,
   }
 }

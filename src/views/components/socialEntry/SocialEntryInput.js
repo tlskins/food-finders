@@ -10,9 +10,6 @@ import close from '@res/images/x-icon-gray.png'
 import {
   findWordAtCursor,
   getAllNestedValues,
-  searchDictionaryBy,
-  searchDictionaryByArray,
-  searchDictionaryByKeys,
 } from '~/utils'
 
 
@@ -37,39 +34,46 @@ class SocialEntryInput extends Component {
       creatableTags: (draftSocialEntry && draftSocialEntry.creatableTags) || [],
       cursorBeginIndex: 0,
       cursorEndIndex: 0,
+      visible: false,
     }
   }
 
   componentWillReceiveProps(nextProps) {
-      const { searchText, tagSymbol, lastEditAt } = this.state
-      const { draftSocialEntry, requestedAt, tags, tagSearches } = nextProps
+    const { tagSearches, tagSymbol, searchText } = nextProps
+    if ( this.props !== nextProps ) {
+      this.setState({ ...nextProps })
 
-      // if ( !requestedAt || lastEditAt >= requestedAt ) {
-      //   this.setState({ draftSocialEntry })
-      // }
-
-      if ( draftSocialEntry !== this.props.draftSocialEntry ) {
-        this.setState({ draftSocialEntry })
-      }
-
-      if ( tagSymbol ) {
-        const searchTextSearchStatuses = tagSearches[tagSymbol][searchText]
-        this.populateTagSuggestions(tags)
-        this.updateSearchStatus(searchTextSearchStatuses, searchText)
-      }
+      const searchTextSearchStatuses = tagSearches[tagSymbol] && tagSearches[tagSymbol][searchText]
+      this.updateSearchStatus(searchTextSearchStatuses, searchText)
+    }
   }
 
   updateText = e => {
-    const { creatableTags } = this.state
+    const { creatableTags, selectedTagIndex } = this.state
+    const { updateSearchText } = this.props
     const newText = e.target.value
     const selectionStart = e.target.selectionStart
-    const currentEditAt = new Date()
 
     const cursorTextData = this.calculateCursorTextData(newText, selectionStart)
-    this.setState({ text: newText, lastEditAt: currentEditAt, ...cursorTextData }, () => this.calculateTags(newText) )
-    // Only write to DB when a tag is edited
+    this.setState({ text: newText })
+    updateSearchText({ ...cursorTextData, selectedTagIndex })
     if ( cursorTextData.tagSymbol ) {
-      this.updateSocialEntry(newText, creatableTags, currentEditAt)
+      this.updateSocialEntry(newText, creatableTags)
+      this.loadNewTags({ searchText: cursorTextData.searchText, tagSymbol: cursorTextData.tagSymbol })
+    }
+  }
+
+  calculateCursorTextData = (text, selectionStart) => {
+    const { currentWord, cursorBeginIndex, cursorEndIndex } = findWordAtCursor(text, selectionStart)
+    const firstChar = currentWord && currentWord[0]
+    if ( firstChar && ['@','#','^','&'].includes(firstChar) ) {
+      const tagSymbol = firstChar
+      const searchText = currentWord.substr(1)
+
+      return { cursorBeginIndex, cursorEndIndex, tagSymbol, searchText }
+    }
+    else {
+      return { cursorBeginIndex, cursorEndIndex, tagSymbol: undefined, searchText: '' }
     }
   }
 
@@ -85,48 +89,10 @@ class SocialEntryInput extends Component {
     }
   }
 
-  populateTagSuggestions = (tags, tagsCount = 5) => {
-    const { searchText, searchHandles, tagSymbol } = this.state
-    const tagsBySymbol = { ...tags[tagSymbol] }
-    delete tagsBySymbol.roots
-    const roots = tags[tagSymbol].roots || []
-
-    if ( Object.values(tagsBySymbol).length < 1 ) {
-      return
-    }
-
-    if ( typeof searchText !== 'undefined' ) {
-      if ( searchText.length > 0 ) {
-        let tagSuggestions = searchDictionaryBy(tagsBySymbol, 'name', searchText)
-        if ( tagSuggestions.length < tagsCount ) {
-          const remainingCount = tagsCount - tagSuggestions.length
-          tagSuggestions = [ ...tagSuggestions, ...searchDictionaryBy(tagsBySymbol, 'embeddedTaggable.description', searchText, remainingCount) ]
-        }
-        if ( tagSuggestions.length < tagsCount ) {
-          const remainingCount = tagsCount - tagSuggestions.length
-          tagSuggestions = [ ...tagSuggestions, ...searchDictionaryByArray(tagsBySymbol, 'embeddedTaggable.synonyms', searchText, remainingCount) ]
-        }
-        this.setState({ tagSuggestions, selectedTagIndex: 0 })
-      }
-      else {
-        this.setState({ tagSuggestions: roots, selectedTagIndex: 0 })
-      }
-    }
-    else if ( searchHandles ) {
-      const searchKeys = searchHandles.map( h => h.slice(1) )
-      if ( searchKeys.length > 0 ) {
-        const tagSuggestions = searchDictionaryByKeys(tagsBySymbol, searchKeys)
-        this.setState({ tagSuggestions })
-      }
-      else {
-        this.setState({ tagSuggestions: roots, selectedTagIndex: 0 })
-      }
-    }
-  }
-
   onKeyDown = e => {
+    const { updateSearchHandles, searchHandles } = this.props
     let { selectedTagIndex } = this.state
-    const { tagSuggestions } = this.state
+    const { tagSymbol, tagSuggestions } = this.state
     if ( tagSuggestions.length > 0 ) {
       // right arrow key
       if ( e.keyCode === 39 ) {
@@ -138,12 +104,10 @@ class SocialEntryInput extends Component {
           const childTagHandles = selectedTaggable.children.filter( c => {
             return c.tagSymbol && c.tagHandle
           }).map( c => c.tagSymbol + c.tagHandle )
-          this.setState({
-            searchHandles: childTagHandles,
-            searchText: undefined,
-            selectedTagIndex: 0,
-            searchStatus: `Loading ${ selectedTag.name }...`,
-          }, () => this.calculateTags() )
+
+          this.setState({ searchStatus: `Loading ${ selectedTag.name }...` })
+          updateSearchHandles({ tagSymbol, searchHandles: childTagHandles, selectedTagIndex })
+          this.loadNewTags({ searchHandles, tagSymbol })
         }
       }
       // left arrow key
@@ -155,19 +119,14 @@ class SocialEntryInput extends Component {
           const parentTaggable = selectedTag.embeddedTaggable.parent
           const parentHandle = parentTaggable.tagSymbol + parentTaggable.tagHandle
           const parentSiblingHandles = (parentTaggable && parentTaggable.siblings) || []
-          this.setState({
-            searchHandles: [parentHandle, ...parentSiblingHandles],
-            searchText: undefined,
-            selectedTagIndex: 0,
-            searchStatus: `Loading ${ selectedTag.name }...`,
-          }, () => this.calculateTags() )
+
+          this.setState({ searchStatus: `Loading ${ selectedTag.name }...` })
+          updateSearchHandles({ tagSymbol, searchHandles: [parentHandle, ...parentSiblingHandles], selectedTagIndex: 0 })
+          this.loadNewTags({ searchHandles, tagSymbol })
         }
         else {
-          this.setState({
-            searchHandles: [],
-            searchText: undefined,
-            selectedTagIndex: 0,
-          }, () => this.calculateTags() )
+          updateSearchHandles({ tagSymbol, searchHandles: [], selectedTagIndex: 0 })
+          this.loadNewTags({ searchHandles, tagSymbol })
         }
       }
       // down arrow key
@@ -178,7 +137,7 @@ class SocialEntryInput extends Component {
         if ( selectedTagIndex >= tagSuggestions.length ) {
           selectedTagIndex = 0
         }
-        this.setState({ selectedTagIndex })
+        updateSearchHandles({ tagSymbol, searchHandles, selectedTagIndex })
       }
       // up arrow key
       else if ( e.keyCode === 38 ) {
@@ -188,41 +147,23 @@ class SocialEntryInput extends Component {
         if ( selectedTagIndex < 0 ) {
           selectedTagIndex = tagSuggestions.length - 1
         }
-        this.setState({ selectedTagIndex })
+        updateSearchHandles({ tagSymbol, searchHandles, selectedTagIndex })
       }
       // enter arrow key
       else if ( e.keyCode === 13 ) {
         e.stopPropagation()
         e.preventDefault()
-        this.addTag( tagSuggestions[selectedTagIndex], new Date() )()
+        this.addTag( tagSuggestions[selectedTagIndex] )()
       }
     }
   }
 
-  calculateCursorTextData = (text, selectionStart) => {
-    const { currentWord, cursorBeginIndex, cursorEndIndex } = findWordAtCursor(text, selectionStart)
-    const { setCursorTextData, tags } = this.props
-    let cursorTextData = {}
-    if ( currentWord && tags[currentWord[0]]) {
-      const tagSymbol = currentWord[0]
-      const searchText = currentWord.substr(1)
-
-      cursorTextData = { cursorBeginIndex, cursorEndIndex, tagSymbol, searchText }
-    }
-    else {
-      cursorTextData = { cursorBeginIndex, cursorEndIndex, tagSymbol: undefined, searchText: '' }
-    }
-    setCursorTextData(cursorTextData)
-
-    return cursorTextData
-  }
-
-  updateSocialEntry = async (text, creatableTags, requestedAt) => {
+  updateSocialEntry = async (text, creatableTags) => {
     const { updateDraftSocialEntry } = this.props
-    await updateDraftSocialEntry( text, creatableTags, requestedAt )
+    await updateDraftSocialEntry( text, creatableTags )
   }
 
-  addTag = (tag, currentEditAt, editData = null) => () => {
+  addTag = (tag, editData = null) => () => {
     const { symbol, handle } = tag
     let { text, cursorBeginIndex, cursorEndIndex } = this.state
     if ( editData ) {
@@ -234,7 +175,7 @@ class SocialEntryInput extends Component {
 
     this.setState({ text: newText, creatableTags })
     this.clearTagSearch()
-    this.updateSocialEntry(newText, creatableTags, currentEditAt)
+    this.updateSocialEntry(newText, creatableTags)
   }
 
   addCreatableEntityTag = tag => {
@@ -246,20 +187,16 @@ class SocialEntryInput extends Component {
     return creatableTags
   }
 
-  calculateTags = async (text = null) => {
-    const { suggestTags, tags } = this.props
-    const { searchHandles, searchText, tagSymbol } = this.state
-
+  loadNewTags = ({ searchHandles, searchText, tagSymbol }) => {
+    const { suggestTags } = this.props
     if ( tagSymbol ) {
       if ( typeof searchText !== 'undefined' ) {
-        this.populateTagSuggestions(tags)
         if ( searchText.length > 0 ) {
-          await suggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
+          suggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
         }
       }
       else if ( searchHandles ) {
-        this.populateTagSuggestions(tags)
-        await suggestTags({ symbol: tagSymbol, handles: searchHandles, resultsPerPage: 5, page: 1 })
+        suggestTags({ symbol: tagSymbol, handles: searchHandles, resultsPerPage: 5, page: 1 })
       }
     }
     else {
@@ -279,7 +216,9 @@ class SocialEntryInput extends Component {
   }
 
   clearTagSearch = () => {
-    this.setState({ tagSuggestions: [], searchStatus: undefined, tagSymbol: undefined, selectedTagIndex: undefined })
+    const { resetSearchCriteria } = this.props
+    resetSearchCriteria()
+    this.setState({ searchStatus: undefined })
   }
 
   close = e => {
@@ -357,17 +296,25 @@ class SocialEntryInput extends Component {
 }
 
 SocialEntryInput.propTypes = {
+  cursorBeginIndex: PropTypes.number,
+  cursorEndIndex: PropTypes.number,
   draftSocialEntry: PropTypes.object,
-  tags: PropTypes.object,
-  user: PropTypes.object,
-  requestedAt: PropTypes.object,
+  tagSuggestions: PropTypes.arrayOf(PropTypes.object),
+  tagSymbol: PropTypes.string,
+  searchText: PropTypes.string,
+  searchHandles: PropTypes.arrayOf(PropTypes.string),
+  selectedTagIndex: PropTypes.numbrer,
+  tagSearches: PropTypes.object,
   visible: PropTypes.bool,
 
   postSocialEntry: PropTypes.func,
-  setCursorTextData: PropTypes.func,
+  resetSearchCriteria: PropTypes.func,
   suggestTags: PropTypes.func,
   toggleVisibility: PropTypes.func,
+  updateSearchHandles: PropTypes.func,
+  updateSearchText: PropTypes.func,
   updateDraftSocialEntry: PropTypes.func,
+
 }
 
 export default SocialEntryInput

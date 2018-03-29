@@ -1,32 +1,44 @@
 // Mutates dictionary by splicing out found entry
-export function searchDictionaryBy(dictionary, attribute, text, numResults = 5) {
+export function searchDictionaryBy(dictionary, attribute, text, currentSuggestions, numResults = 5) {
   const pattern = new RegExp(text,'i')
-  const allMatches = Object.values(dictionary).filter( e => {
-    const entry = getNestedAttribute(e, attribute)
-    return entry && pattern.test(entry)
-  })
-  sortByAttribute(allMatches, attribute, false)
-  allMatches.splice(numResults)
-  allMatches.forEach( m => delete dictionary[m.handle] )
-  return allMatches
+  const dictionaryArray = Object.values(dictionary)
+  for (let i = 0; i < dictionaryArray.length; i++) {
+    if ( currentSuggestions.length >= numResults ) {
+      break
+    }
+    const entry = dictionaryArray[i]
+    const entryValue = getNestedValue(entry, attribute)
+    // Return if not a match or a duplicate
+    if ( !(entryValue && pattern.test(entryValue)) || currentSuggestions.includes(entry) ) {
+      continue
+    }
+    currentSuggestions.push(entry)
+  }
+  sortByAttribute(currentSuggestions, attribute, false)
 }
 
 
 // Mutates dictionary by splicing out found entry
-export function searchDictionaryByArray(dictionary, attribute, text, numResults = 5) {
+export function searchDictionaryByArray(dictionary, attribute, text, currentSuggestions, numResults = 5) {
   const pattern = new RegExp(text,'i')
-  const allMatches = Object.values(dictionary).filter( e => {
-    const entry = getNestedAttribute(e, attribute)
-    if ( entry && typeof entry === 'object' && entry.constructor === Array ) {
-      return entry.includes( e => pattern.test(entry) )
+  const dictionaryArray = Object.values(dictionary)
+  for (let i = 0; i < dictionaryArray.length; i++) {
+    if ( currentSuggestions.length >= numResults ) {
+      break
     }
-    else {
-      return false
+    const entry = dictionaryArray[i]
+    const entryValue = getNestedValue(entry, attribute)
+    let match = false
+    if ( entryValue && typeof entryValue === 'object' && entryValue.constructor === Array ) {
+      if ( entryValue.some( e => pattern.test(e) ) ) {
+        match = true
+      }
     }
-  })
-  allMatches.splice(numResults)
-  allMatches.forEach( m => delete dictionary[m.handle] )
-  return allMatches
+    if ( match && !currentSuggestions.includes(entry) ) {
+      currentSuggestions.push(entry)
+    }
+
+  }
 }
 
 
@@ -41,7 +53,7 @@ export function searchDictionaryByKeys(dictionary, keys, numResults = 5) {
 }
 
 
-export function getNestedAttribute(target, attribute) {
+export function getNestedValue(target, attribute) {
   const attributes = attribute.split('.')
   let entry = null
   attributes.forEach( a => {

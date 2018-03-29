@@ -12,6 +12,25 @@ export class TagService extends BaseService {
   loadRootTags = (rootTags) => {
     this.dispatch( actions.loadRootTags(rootTags) )
   }
+  updateSearchText = ({ tagSymbol, searchText, cursorBeginIndex, cursorEndIndex, selectedTagIndex }) => {
+    this.dispatch( actions.updateSearchCriteria({
+      tagSymbol,
+      searchText,
+      cursorBeginIndex,
+      cursorEndIndex,
+      searchHandles: undefined,
+      selectedTagIndex
+    }) )
+  }
+  updateSearchHandles = ({ tagSymbol, searchHandles, selectedTagIndex }) => {
+    this.dispatch( actions.updateSearchCriteria({
+      tagSymbol,
+      searchText: undefined,
+      searchHandles,
+      selectedTagIndex
+    }) )
+  }
+  resetSearchCriteria = () => this.dispatch( actions.resetSearchCriteria() )
 
   // Tag Searches
   startTagSearch = ({ symbol, text, page, resultsPerPage, source }) => {

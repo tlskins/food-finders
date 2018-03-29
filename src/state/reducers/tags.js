@@ -5,21 +5,154 @@ import {
   START_TAG_SEARCH,
   INCOMPLETE_TAG_SEARCH,
   COMPLETE_TAG_SEARCH,
+  UPDATE_SEARCH_CRITERIA,
+  RESET_SEARCH_CRITERIA,
 } from '@actions/tags'
 
+import {
+  // findWordAtCursor,
+  // getAllNestedValues,
+  searchDictionaryBy,
+  searchDictionaryByArray,
+  searchDictionaryByKeys,
+} from '~/utils'
 
-const initialTagsState = { '@': {}, '#': {}, '^': {}, '&': {}}
+
+const initialTagSearchCriteriaState = {
+  searchText: undefined,
+  searchHandles: undefined,
+  tagSuggestions: [],
+  tagSymbol: undefined,
+  cursorBeginIndex: 0,
+  cursorEndIndex: 0,
+  selectedTagIndex: 0,
+}
+
+const initialTagsState = {
+  tagDictionary: {
+    '@': {},
+    '#': {},
+    '^': {},
+    '&': {},
+  }, ...initialTagSearchCriteriaState }
+
 const initialTagSearchesState = { '@': {}, '#': {}, '^': {}, '&': {}}
 
-export const tags = (state = {...initialTagsState}, action) => {
+const getTagSuggestions = ({ tagDictionary, tagSymbol, tagsCount, searchText, searchHandles, selectedTagIndex }) => {
+  const tagsBySymbol = tagDictionary[tagSymbol]
+  const emptyTagsBySymbol = tagsBySymbol && Object.values(tagsBySymbol).length < 1
+  if ( !tagsBySymbol || emptyTagsBySymbol ) {
+    return { tagSuggestions: [], selectedTagIndex: 0 }
+  }
+
+  const roots = tagsBySymbol.roots || []
+
+  if ( typeof searchText !== 'undefined' ) {
+    if ( searchText.length > 0 ) {
+      let tagSuggestions = []
+      searchDictionaryBy(tagsBySymbol, 'name', searchText, tagSuggestions)
+      searchDictionaryBy(tagsBySymbol, 'embeddedTaggable.description', searchText, tagSuggestions)
+      searchDictionaryByArray(tagsBySymbol, 'embeddedTaggable.synonyms', searchText, tagSuggestions)
+
+      return { tagSuggestions, selectedTagIndex: 0 }
+    }
+  }
+  else if ( searchHandles ) {
+    const searchKeys = searchHandles.map( h => h.slice(1) )
+    if ( searchKeys.length > 0 ) {
+      const tagSuggestions = searchDictionaryByKeys(tagsBySymbol, searchKeys)
+      
+      return { tagSuggestions, selectedTagIndex }
+    }
+  }
+  return { tagSuggestions: roots, selectedTagIndex: 0 }
+}
+
+
+
+
+export const tags = (state = initialTagsState, action) => {
   switch (action.type) {
     case ADD_TAGS: {
-      action.tags.forEach( e => state[e.symbol][e.handle] = e )
+      let { tagDictionary } = state
+      const { searchHandles, tagSymbol, searchText, selectedTagIndex } = state
+      action.tags.forEach( e => {
+        console.log('e = ',e)
+        console.log('tagDictionary[e.symbol]=',tagDictionary[e.symbol])
+        console.log('tagDictionary[e.symbol][e.handle]=',tagDictionary[e.symbol][e.handle])
+        tagDictionary[e.symbol][e.handle] = e
+      })
+      const tagSuggestionsHash = getTagSuggestions({
+        tagDictionary,
+        tagSymbol,
+        tagsCount: 5,
+        searchText,
+        searchHandles,
+        selectedTagIndex,
+      })
 
-      return { ...state }
+      return {
+        ...state,
+        tagDictionary,
+        ...tagSuggestionsHash
+      }
     }
     case LOAD_ROOT_TAGS: {
-      return { ...action.rootTags }
+      let { tagDictionary } = state
+      const { searchHandles, tagSymbol, searchText, selectedTagIndex } = state
+      tagDictionary = action.rootTags
+      const tagSuggestionsHash = getTagSuggestions({
+        tagDictionary,
+        tagSymbol,
+        tagsCount: 5,
+        searchText,
+        searchHandles,
+        selectedTagIndex,
+      })
+
+      return {
+        ...state,
+        tagDictionary,
+        ...tagSuggestionsHash
+      }
+    }
+    case UPDATE_SEARCH_CRITERIA: {
+      console.log('action=',action)
+      console.log('state=',state)
+      let { tagDictionary } = state
+      // const tagDictionary = state.tagDictionary
+      console.log('tagDictionary=',tagDictionary)
+
+      const {
+        searchText,
+        tagSymbol,
+        searchHandles,
+        selectedTagIndex,
+        cursorBeginIndex,
+        cursorEndIndex
+      } = action
+      const tagSuggestionsHash = getTagSuggestions({
+        tagDictionary,
+        tagSymbol,
+        tagsCount: 5,
+        searchText,
+        searchHandles,
+        selectedTagIndex,
+      })
+
+      return {
+        ...state,
+        searchText,
+        tagSymbol,
+        cursorBeginIndex,
+        cursorEndIndex,
+        searchHandles,
+        selectedTagIndex,
+        ...tagSuggestionsHash,
+      }
+    }
+    case RESET_SEARCH_CRITERIA: {
+      return { ...state, ...initialTagSearchCriteriaState }
     }
 
     default:

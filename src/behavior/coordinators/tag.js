@@ -68,7 +68,7 @@ const _searchCoreTagsByHandles = async ({ TagService, RestService, pResponseTags
 }
 
 
-const searchYelpTags = async ({ TagService, RestService, pResponseYelpBusinesses, searchIndex }) => {
+const _searchYelpTags = async ({ TagService, RestService, pResponseYelpBusinesses, searchIndex }) => {
   const { symbol, text } = searchIndex
   const yelpSearchIndex = { ...searchIndex, source: 'yelp' }
   TagService.startTagSearch(yelpSearchIndex)
@@ -92,7 +92,7 @@ export const suggestTags = ({ RestService, TagService, pResponseTags, pResponseY
     if ( symbol === '@' ) {
       const priorYelpSearchStatus = _getPriorSearchStatus({ source: 'yelp', TagService, searchIndex })
       if ( !priorYelpSearchStatus || priorYelpSearchStatus === 'INCOMPLETE' ) {
-        searchYelpTags({ TagService, RestService, pResponseYelpBusinesses, searchIndex })
+        _searchYelpTags({ TagService, RestService, pResponseYelpBusinesses, searchIndex })
       }
     }
 
