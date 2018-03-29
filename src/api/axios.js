@@ -8,6 +8,7 @@ export default (() => {
   const instance = Axios.create({
     baseURL: config.API_HOST,
     timeout: 10000,
+    port: 8080,
     responseType: 'json',
     xsrfHeaderName: null, // server passes token in a cookie
     xsrfCookieName: null, // but this option doesn't work outside of the browser environment
