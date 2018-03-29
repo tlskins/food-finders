@@ -54,8 +54,8 @@ class SocialEntryInput extends Component {
     const newText = e.target.value
     const selectionStart = e.target.selectionStart
 
-    const cursorTextData = this.calculateCursorTextData(newText, selectionStart)
     this.setState({ text: newText })
+    const cursorTextData = this.calculateCursorTextData(newText, selectionStart)
     updateSearchText({ ...cursorTextData, selectedTagIndex })
     if ( cursorTextData.tagSymbol ) {
       this.updateSocialEntry(newText, creatableTags)
@@ -70,10 +70,10 @@ class SocialEntryInput extends Component {
       const tagSymbol = firstChar
       const searchText = currentWord.substr(1)
 
-      return { cursorBeginIndex, cursorEndIndex, tagSymbol, searchText }
+      return { cursorBeginIndex, cursorEndIndex, tagSymbol, text, searchText }
     }
     else {
-      return { cursorBeginIndex, cursorEndIndex, tagSymbol: undefined, searchText: '' }
+      return { cursorBeginIndex, cursorEndIndex, tagSymbol: undefined, text, searchText: '' }
     }
   }
 
@@ -92,7 +92,7 @@ class SocialEntryInput extends Component {
   onKeyDown = e => {
     const { updateSearchHandles, searchHandles } = this.props
     let { selectedTagIndex } = this.state
-    const { tagSymbol, tagSuggestions } = this.state
+    const { text, tagSymbol, tagSuggestions } = this.state
     if ( tagSuggestions.length > 0 ) {
       // right arrow key
       if ( e.keyCode === 39 ) {
@@ -106,7 +106,7 @@ class SocialEntryInput extends Component {
           }).map( c => c.tagSymbol + c.tagHandle )
 
           this.setState({ searchStatus: `Loading ${ selectedTag.name }...` })
-          updateSearchHandles({ tagSymbol, searchHandles: childTagHandles, selectedTagIndex })
+          updateSearchHandles({ tagSymbol, searchHandles: childTagHandles, selectedTagIndex, text })
           this.loadNewTags({ searchHandles, tagSymbol })
         }
       }
@@ -121,11 +121,11 @@ class SocialEntryInput extends Component {
           const parentSiblingHandles = (parentTaggable && parentTaggable.siblings) || []
 
           this.setState({ searchStatus: `Loading ${ selectedTag.name }...` })
-          updateSearchHandles({ tagSymbol, searchHandles: [parentHandle, ...parentSiblingHandles], selectedTagIndex: 0 })
+          updateSearchHandles({ tagSymbol, searchHandles: [parentHandle, ...parentSiblingHandles], selectedTagIndex: 0, text })
           this.loadNewTags({ searchHandles, tagSymbol })
         }
         else {
-          updateSearchHandles({ tagSymbol, searchHandles: [], selectedTagIndex: 0 })
+          updateSearchHandles({ tagSymbol, searchHandles: [], selectedTagIndex: 0, text })
           this.loadNewTags({ searchHandles, tagSymbol })
         }
       }
@@ -137,7 +137,7 @@ class SocialEntryInput extends Component {
         if ( selectedTagIndex >= tagSuggestions.length ) {
           selectedTagIndex = 0
         }
-        updateSearchHandles({ tagSymbol, searchHandles, selectedTagIndex })
+        updateSearchHandles({ tagSymbol, searchHandles, selectedTagIndex, text })
       }
       // up arrow key
       else if ( e.keyCode === 38 ) {
@@ -147,7 +147,7 @@ class SocialEntryInput extends Component {
         if ( selectedTagIndex < 0 ) {
           selectedTagIndex = tagSuggestions.length - 1
         }
-        updateSearchHandles({ tagSymbol, searchHandles, selectedTagIndex })
+        updateSearchHandles({ tagSymbol, searchHandles, selectedTagIndex, text })
       }
       // enter arrow key
       else if ( e.keyCode === 13 ) {

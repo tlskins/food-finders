@@ -64,10 +64,12 @@ const mapDispatchToProps = () => {
     tagSymbol,
     searchHandles,
     selectedTagIndex,
-  }) => TagService.updateSearchText({
+    text,
+  }) => TagService.updateSearchHandles({
     tagSymbol,
     searchHandles,
     selectedTagIndex,
+    text,
   })
   const resetSearchCriteria = () => TagService.resetSearchCriteria()
 

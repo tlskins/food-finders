@@ -63,12 +63,24 @@ export const completeTagSearch = ({
     resultsPerPage,
     source })
 
-export const updateSearchCriteria = ({ tagSymbol, searchText, searchHandles, selectedTagIndex }) => ({
+export const updateSearchCriteria = ({
+  cursorBeginIndex,
+  cursorEndIndex,
+  tagSymbol,
+  text,
+  searchText,
+  searchHandles,
+  selectedTagIndex
+}) => ({
   type: UPDATE_SEARCH_CRITERIA,
+  cursorBeginIndex,
+  cursorEndIndex,
+  text,
   tagSymbol,
   searchText,
   searchHandles,
   selectedTagIndex,
 })
+
 
 export const resetSearchCriteria = () => ({ type: RESET_SEARCH_CRITERIA })

@@ -23,6 +23,7 @@ const initialTagSearchCriteriaState = {
   searchHandles: undefined,
   tagSuggestions: [],
   tagSymbol: undefined,
+  text: '',
   cursorBeginIndex: 0,
   cursorEndIndex: 0,
   selectedTagIndex: 0,
@@ -65,7 +66,7 @@ const getTagSuggestions = ({ tagDictionary, tagSymbol, tagsCount, searchText, se
       return { tagSuggestions, selectedTagIndex }
     }
   }
-  return { tagSuggestions: roots, selectedTagIndex: 0 }
+  return { tagSuggestions: roots, selectedTagIndex }
 }
 
 // Reducers //
@@ -116,6 +117,7 @@ export const tags = (state = initialTagsState, action) => {
       const {
         searchText,
         tagSymbol,
+        text,
         searchHandles,
         selectedTagIndex,
         cursorBeginIndex,
@@ -134,6 +136,7 @@ export const tags = (state = initialTagsState, action) => {
         ...state,
         searchText,
         tagSymbol,
+        text,
         cursorBeginIndex,
         cursorEndIndex,
         searchHandles,
