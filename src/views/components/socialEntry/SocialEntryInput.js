@@ -53,17 +53,9 @@ class SocialEntryInput extends Component {
       }
 
       if ( tagSymbol ) {
+        const searchTextSearchStatuses = tagSearches[tagSymbol][searchText]
         this.populateTagSuggestions(tags)
-
-        if ( tagSearches[tagSymbol][searchText] ) {
-          const searchStatuses = getAllNestedValues(tagSearches[tagSymbol][searchText])
-          if ( searchStatuses.some( s => ['START_TAG_SEARCH', 'INCOMPLETE_TAG_SEARCH'].includes(s) ) ) {
-            this.setState({ searchStatus: `Loading suggestions for '${ searchText }'...` })
-          }
-          else {
-            this.setState({ searchStatus: `Loaded all suggestions for '${ searchText }'...` })
-          }
-        }
+        this.updateSearchStatus(searchTextSearchStatuses, searchText)
       }
   }
 
@@ -78,6 +70,18 @@ class SocialEntryInput extends Component {
     // Only write to DB when a tag is edited
     if ( cursorTextData.tagSymbol ) {
       this.updateSocialEntry(newText, creatableTags, currentEditAt)
+    }
+  }
+
+  updateSearchStatus = (searchTextSearchStatuses, searchText) => {
+    if ( searchTextSearchStatuses ) {
+      const searchStatuses = getAllNestedValues(searchTextSearchStatuses)
+      if ( searchStatuses.some( s => ['START_TAG_SEARCH', 'INCOMPLETE_TAG_SEARCH'].includes(s) ) ) {
+        this.setState({ searchStatus: `Loading suggestions for '${ searchText }'...` })
+      }
+      else {
+        this.setState({ searchStatus: `Loaded all suggestions for '${ searchText }'...` })
+      }
     }
   }
 
