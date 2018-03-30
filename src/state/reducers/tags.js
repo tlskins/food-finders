@@ -7,6 +7,7 @@ import {
   COMPLETE_TAG_SEARCH,
   UPDATE_SEARCH_CRITERIA,
   RESET_SEARCH_CRITERIA,
+  UPDATE_SELECTED_TAG_INDEX,
 } from '@actions/tags'
 
 import {
@@ -147,6 +148,9 @@ export const tags = (state = initialTagsState, action) => {
     }
     case RESET_SEARCH_CRITERIA: {
       return { ...state, ...initialTagSearchCriteriaState }
+    }
+    case UPDATE_SELECTED_TAG_INDEX: {
+      return { ...state, selectedTagIndex: action.selectedTagIndex }
     }
 
     default:

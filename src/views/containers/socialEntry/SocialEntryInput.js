@@ -72,6 +72,7 @@ const mapDispatchToProps = () => {
     text,
   })
   const resetSearchCriteria = () => TagService.resetSearchCriteria()
+  const updateSelectedTagIndex = selectedTagIndex => TagService.updateSelectedTagIndex(selectedTagIndex)
 
 
   return {
@@ -81,6 +82,7 @@ const mapDispatchToProps = () => {
     toggleVisibility,
     updateSearchHandles,
     updateSearchText,
+    updateSelectedTagIndex,
     updateDraftSocialEntry,
   }
 }

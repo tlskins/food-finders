@@ -33,6 +33,7 @@ export class TagService extends BaseService {
     }) )
   }
   resetSearchCriteria = () => this.dispatch( actions.resetSearchCriteria() )
+  updateSelectedTagIndex = selectedTagIndex => this.dispatch( actions.updateSelectedTagIndex(selectedTagIndex) )
 
   // Tag Searches
   startTagSearch = ({ symbol, text, page, resultsPerPage, source }) => {

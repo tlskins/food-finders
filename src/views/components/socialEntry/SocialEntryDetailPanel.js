@@ -85,9 +85,13 @@ class SocialEntryDetailPanel extends Component {
 
 
 SocialEntryDetailPanel.propTypes = {
+  // props from redux
+  text: PropTypes.string,
+  cursorBeginIndex: PropTypes.number,
+  cursorEndIndex: PropTypes.number,
   activeTag: PropTypes.object,
   tagSymbol: PropTypes.string,
-  searchText: PropTypes.string,
+  // ui props
   style: PropTypes.object,
   panelStyle: PropTypes.object,
   mapStyle: PropTypes.object,

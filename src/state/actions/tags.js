@@ -14,6 +14,8 @@ export const UPDATE_SEARCH_CRITERIA = 'UPDATE_SEARCH_CRITERIA'
 
 export const RESET_SEARCH_CRITERIA = 'RESET_SEARCH_CRITERIA'
 
+export const UPDATE_SELECTED_TAG_INDEX = 'UPDATE_SELECTED_TAG_INDEX'
+
 
 export const addTags = (symbol, tags) => ({ type: ADD_TAGS, symbol, tags })
 
@@ -82,5 +84,6 @@ export const updateSearchCriteria = ({
   selectedTagIndex,
 })
 
-
 export const resetSearchCriteria = () => ({ type: RESET_SEARCH_CRITERIA })
+
+export const updateSelectedTagIndex = selectedTagIndex => ({ type: UPDATE_SELECTED_TAG_INDEX, selectedTagIndex })

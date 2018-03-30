@@ -90,7 +90,7 @@ class SocialEntryInput extends Component {
   }
 
   onKeyDown = e => {
-    const { updateSearchHandles, searchHandles } = this.props
+    const { updateSearchHandles, searchHandles, updateSelectedTagIndex } = this.props
     let { selectedTagIndex } = this.state
     const { text, tagSymbol, tagSuggestions } = this.state
     if ( tagSuggestions.length > 0 ) {
@@ -138,7 +138,7 @@ class SocialEntryInput extends Component {
         if ( selectedTagIndex >= tagSuggestions.length ) {
           selectedTagIndex = 0
         }
-        updateSearchHandles({ tagSymbol, searchHandles, selectedTagIndex, text })
+        updateSelectedTagIndex(selectedTagIndex)
       }
       // up arrow key
       else if ( e.keyCode === 38 ) {
@@ -148,12 +148,13 @@ class SocialEntryInput extends Component {
         if ( selectedTagIndex < 0 ) {
           selectedTagIndex = tagSuggestions.length - 1
         }
-        updateSearchHandles({ tagSymbol, searchHandles, selectedTagIndex, text })
+        updateSelectedTagIndex(selectedTagIndex)
       }
       // enter arrow key
       else if ( e.keyCode === 13 ) {
         e.stopPropagation()
         e.preventDefault()
+        updateSelectedTagIndex(0)
         this.addTag( tagSuggestions[selectedTagIndex] )()
       }
     }
@@ -282,9 +283,6 @@ class SocialEntryInput extends Component {
             </div>
 
             <SocialEntryDetailPanel
-              tagSymbol={ tagSymbol }
-              searchText={ searchText }
-              activeTag={ activeTag }
               panelStyle={{ width: '500px', height: '120px' }}
               mapStyle={{ width: '500px', height: '500px' }}
             />
@@ -315,7 +313,7 @@ SocialEntryInput.propTypes = {
   updateSearchHandles: PropTypes.func,
   updateSearchText: PropTypes.func,
   updateDraftSocialEntry: PropTypes.func,
-
+  updateSelectedTagIndex: PropTypes.func,
 }
 
 export default SocialEntryInput

@@ -8,15 +8,26 @@ import presenters from '@presenters'
 
 
 const mapStateToProps = state => {
-  const { socialEntry } = state
-  const { tagSymbol, searchText } = socialEntry
+  const { tags } = state
+  const {
+    text,
+    tagSymbol,
+    tagSuggestions,
+    cursorBeginIndex,
+    cursorEndIndex,
+    selectedTagIndex,
+   } = tags
+   const activeTag = tagSuggestions && tagSuggestions[selectedTagIndex]
   // const { visible } = socialEntry
   //
   // const draftSocialEntry = user ? user.draftSocialEntry : ''
   //
   return {
+    activeTag,
+    text,
     tagSymbol,
-    searchText,
+    cursorBeginIndex,
+    cursorEndIndex,
   }
 }
 
