@@ -50,7 +50,7 @@ class SocialEntryInput extends Component {
 
   updateText = e => {
     const { creatableTags, selectedTagIndex } = this.state
-    const { updateSearchText } = this.props
+    const { updateSearchText, updateDraftSocialEntry } = this.props
     const newText = e.target.value
     const selectionStart = e.target.selectionStart
 
@@ -58,7 +58,7 @@ class SocialEntryInput extends Component {
     const cursorTextData = this.calculateCursorTextData(newText, selectionStart)
     updateSearchText({ ...cursorTextData, selectedTagIndex })
     if ( cursorTextData.tagSymbol ) {
-      this.updateSocialEntry(newText, creatableTags)
+      updateDraftSocialEntry(newText, creatableTags)
       this.loadNewTags({ searchText: cursorTextData.searchText, tagSymbol: cursorTextData.tagSymbol })
     }
   }
@@ -90,7 +90,7 @@ class SocialEntryInput extends Component {
   }
 
   onKeyDown = e => {
-    const { updateSearchHandles, searchHandles, updateSelectedTagIndex } = this.props
+    const { addTagToText, updateSearchHandles, searchHandles, updateSelectedTagIndex } = this.props
     let { selectedTagIndex } = this.state
     const { text, tagSymbol, tagSuggestions } = this.state
     if ( tagSuggestions.length > 0 ) {
@@ -125,10 +125,6 @@ class SocialEntryInput extends Component {
           updateSearchHandles({ tagSymbol, searchHandles: newSearchHandles, selectedTagIndex: 0, text })
           this.loadNewTags({ searchHandles: newSearchHandles, tagSymbol })
         }
-        // else {
-        //   updateSearchHandles({ tagSymbol, searchHandles: [], selectedTagIndex: 0, text })
-        //   this.loadNewTags({ searchHandles, tagSymbol })
-        // }
       }
       // down arrow key
       else if ( e.keyCode === 40 ) {
@@ -155,39 +151,15 @@ class SocialEntryInput extends Component {
         e.stopPropagation()
         e.preventDefault()
         updateSelectedTagIndex(0)
-        this.addTag( tagSuggestions[selectedTagIndex] )()
+        addTagToText( tagSuggestions[selectedTagIndex] )
       }
     }
   }
 
-  updateSocialEntry = async (text, creatableTags) => {
-    const { updateDraftSocialEntry } = this.props
-    await updateDraftSocialEntry( text, creatableTags )
-  }
-
-  addTag = (tag, editData = null) => () => {
-    const { symbol, handle } = tag
-    let { text, cursorBeginIndex, cursorEndIndex } = this.state
-    if ( editData ) {
-      cursorBeginIndex = editData.cursorBeginIndex
-      cursorEndIndex = editData.cursorEndIndex
-    }
-    const newText = text.slice(0, cursorBeginIndex) + symbol + handle + text.slice(cursorEndIndex)
-    const creatableTags = this.addCreatableEntityTag(tag)
-
-    this.setState({ text: newText, creatableTags })
-    this.clearTagSearch()
-    this.updateSocialEntry(newText, creatableTags)
-  }
-
-  addCreatableEntityTag = tag => {
-    let { creatableTags } = this.state
-    if ( !tag.id && tag.yelpBusiness ) {
-      const { taggableType, symbol, handle } = tag
-      creatableTags = [...creatableTags, { taggableType, symbol, handle }]
-    }
-    return creatableTags
-  }
+  // updateSocialEntry = async (text, creatableTags) => {
+  //   const { updateDraftSocialEntry } = this.props
+  //   await updateDraftSocialEntry( text, creatableTags )
+  // }
 
   loadNewTags = ({ searchHandles, searchText, tagSymbol }) => {
     const { suggestTags } = this.props
@@ -230,10 +202,9 @@ class SocialEntryInput extends Component {
   }
 
   render() {
-    const { text, draftSocialEntry, searchStatus, selectedTagIndex, tagSuggestions, tagSymbol, searchText  } = this.state
-    const { visible } = this.props
+    const { text, draftSocialEntry, searchStatus, selectedTagIndex, tagSuggestions  } = this.state
+    const { addTagToText, visible } = this.props
     const { tags, creatableTags } = draftSocialEntry
-    const activeTag = tagSuggestions[selectedTagIndex]
 
     if ( !visible ) {
       return null
@@ -268,7 +239,7 @@ class SocialEntryInput extends Component {
                 tagSuggestions={ tagSuggestions }
                 searchStatus={ searchStatus }
                 selectedTagIndex={ selectedTagIndex }
-                onClickTag={ this.addTag }
+                onClickTag={ addTagToText }
                 onMouseOverTag={ (selectedTagIndex) => this.setState({ selectedTagIndex }) }
               />
               <div className="modal-section">
@@ -283,7 +254,7 @@ class SocialEntryInput extends Component {
             </div>
 
             <SocialEntryDetailPanel
-              panelStyle={{ width: '500px', height: '120px' }}
+              panelStyle={{ width: '500px' }}
               mapStyle={{ width: '500px', height: '500px' }}
             />
           </div>
@@ -295,6 +266,7 @@ class SocialEntryInput extends Component {
 }
 
 SocialEntryInput.propTypes = {
+  creatableTags: PropTypes.arrayOf(PropTypes.object),
   cursorBeginIndex: PropTypes.number,
   cursorEndIndex: PropTypes.number,
   draftSocialEntry: PropTypes.object,
@@ -306,6 +278,7 @@ SocialEntryInput.propTypes = {
   tagSearches: PropTypes.object,
   visible: PropTypes.bool,
 
+  addTagToText: PropTypes.func,
   postSocialEntry: PropTypes.func,
   resetSearchCriteria: PropTypes.func,
   suggestTags: PropTypes.func,

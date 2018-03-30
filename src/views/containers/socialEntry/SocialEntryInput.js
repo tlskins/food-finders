@@ -16,6 +16,8 @@ const mapStateToProps = state => {
     searchHandles,
     tagSuggestions,
     tagSymbol,
+    text,
+    creatableTags,
     cursorBeginIndex,
     cursorEndIndex,
     selectedTagIndex,
@@ -24,15 +26,17 @@ const mapStateToProps = state => {
   const draftSocialEntry = user ? user.draftSocialEntry : ''
 
   return {
+    creatableTags,
     cursorBeginIndex,
     cursorEndIndex,
     draftSocialEntry,
-    tagSuggestions,
-    tagSymbol,
     searchText,
     searchHandles,
     selectedTagIndex,
     tagSearches,
+    tagSuggestions,
+    tagSymbol,
+    text,
     visible,
   }
 }
@@ -49,12 +53,14 @@ const mapDispatchToProps = () => {
   const suggestTags = coordinators.suggestTags({ RestService, TagService, pResponseTags, pResponseYelpBusinesses })
   const updateSearchText = ({
     tagSymbol,
+    text,
     searchText,
     cursorBeginIndex,
     cursorEndIndex,
     selectedTagIndex,
   }) => TagService.updateSearchText({
     tagSymbol,
+    text,
     searchText,
     cursorBeginIndex,
     cursorEndIndex,
@@ -73,9 +79,11 @@ const mapDispatchToProps = () => {
   })
   const resetSearchCriteria = () => TagService.resetSearchCriteria()
   const updateSelectedTagIndex = selectedTagIndex => TagService.updateSelectedTagIndex(selectedTagIndex)
+  const addTagToText = tag => TagService.addTagToText(tag)
 
 
   return {
+    addTagToText,
     postSocialEntry,
     resetSearchCriteria,
     suggestTags,

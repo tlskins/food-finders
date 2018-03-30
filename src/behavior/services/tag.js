@@ -12,7 +12,8 @@ export class TagService extends BaseService {
   loadRootTags = (rootTags) => {
     this.dispatch( actions.loadRootTags(rootTags) )
   }
-  updateSearchText = ({ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex, selectedTagIndex }) => {
+  updateSearchText = (params) => {
+    const { tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex, selectedTagIndex } = params
     this.dispatch( actions.updateSearchCriteria({
       tagSymbol,
       text,
@@ -34,6 +35,28 @@ export class TagService extends BaseService {
   }
   resetSearchCriteria = () => this.dispatch( actions.resetSearchCriteria() )
   updateSelectedTagIndex = selectedTagIndex => this.dispatch( actions.updateSelectedTagIndex(selectedTagIndex) )
+
+  // TODO - Move all social entry stuff to social entry service /reducer
+  addTagToText = tag => {
+    const { symbol, handle } = tag
+    const { tags } = this.getState()
+
+    let { text, cursorBeginIndex, cursorEndIndex, creatableTags } = tags
+    const newText = text.slice(0, cursorBeginIndex) + symbol + handle + text.slice(cursorEndIndex)
+    const creatableEntityTag = this._getCreatableEntityTag(tag, creatableTags)
+    creatableTags = [ ...creatableTags, creatableEntityTag ]
+    this.dispatch( actions.addTagToText({ text: newText, creatableTags }) )
+    // TODO - Update draft social entry in coordinator too
+  }
+
+  _getCreatableEntityTag = (tag, creatableTags) => {
+    const { id, yelpBusiness, taggableType, symbol, handle } = tag
+    if ( !id ) {
+      if ( taggableType === 'Entity' && yelpBusiness ) {
+        return { taggableType, symbol, handle }
+      }
+    }
+  }
 
   // Tag Searches
   startTagSearch = ({ symbol, text, page, resultsPerPage, source }) => {

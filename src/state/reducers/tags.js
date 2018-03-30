@@ -8,6 +8,7 @@ import {
   UPDATE_SEARCH_CRITERIA,
   RESET_SEARCH_CRITERIA,
   UPDATE_SELECTED_TAG_INDEX,
+  ADD_TAG_TO_TEXT,
 } from '@actions/tags'
 
 import {
@@ -25,6 +26,7 @@ const initialTagSearchCriteriaState = {
   tagSuggestions: [],
   tagSymbol: undefined,
   text: '',
+  creatableTags: [],
   cursorBeginIndex: 0,
   cursorEndIndex: 0,
   selectedTagIndex: 0,
@@ -151,6 +153,15 @@ export const tags = (state = initialTagsState, action) => {
     }
     case UPDATE_SELECTED_TAG_INDEX: {
       return { ...state, selectedTagIndex: action.selectedTagIndex }
+    }
+    case ADD_TAG_TO_TEXT: {
+      return {
+        ...state,
+        text: action.text,
+        creatableTags: action.creatableTags,
+        tagSuggestions: [],
+        selectedTagIndex: 0
+      }
     }
 
     default:

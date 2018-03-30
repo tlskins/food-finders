@@ -32,21 +32,19 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  // const { RestService, TagService, SessionService, UIService } = services
-  // const { pResponseGeneric, pResponseYelpBusinesses, pRequestUpdateSocialEntry } = presenters.Api
-  // const pResponseUser = pResponseGeneric
-  // const pResponseTags = pResponseGeneric
-  //
-  // const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
-  // const updateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry })
-  // const postSocialEntry = coordinators.postSocialEntry({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry })
-  // const suggestTags = coordinators.suggestTags({ RestService, TagService, pResponseTags, pResponseYelpBusinesses })
-  //
+  // const { RestService } = services
+  // const { pResponseYelpBusinesses } = presenters.Api
+  // // const pResponseUser = pResponseGeneric
+  // // const pResponseTags = pResponseGeneric
+  // //
+  // const searchYelpBusinesses = coordinators.SearchYelpBusinesses({ RestService, pResponseYelpBusinesses })
+  // // const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
+  // // const updateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry })
+  // // const postSocialEntry = coordinators.postSocialEntry({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry })
+  // // const suggestTags = coordinators.suggestTags({ RestService, TagService, pResponseTags, pResponseYelpBusinesses })
+  // //
   // return {
-  //   postSocialEntry,
-  //   suggestTags,
-  //   toggleVisibility,
-  //   updateDraftSocialEntry,
+  //   searchYelpBusinesses,
   // }
 }
 

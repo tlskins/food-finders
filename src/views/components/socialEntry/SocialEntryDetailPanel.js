@@ -10,7 +10,12 @@ class SocialEntryDetailPanel extends Component {
     super(props)
     const { style } = props
 
-    this.state = { style, mode: 'DISPLAY ENTITY' }
+    this.state = {
+      style,
+      mode: 'DISPLAY ENTITY',
+      searchText: '',
+      yelpBusinesses: [],
+    }
   }
 
   // TODO - move to presenter

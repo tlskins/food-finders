@@ -85,6 +85,12 @@ const _searchYelpTags = async ({ TagService, RestService, pResponseYelpBusinesse
 }
 
 
+export const SearchYelpBusinesses = ({ RestService, pResponseYelpBusinesses }) => async term => {
+  const response = await RestService.get('/entities/yelp_businesses_search', { term } )
+  return pResponseYelpBusinesses(response)
+}
+
+
 export const suggestTags = ({ RestService, TagService, pResponseTags, pResponseYelpBusinesses }) =>
 ({ symbol, text, handles, resultsPerPage, page }) =>
 {

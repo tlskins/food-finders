@@ -7,25 +7,60 @@ import EntityPanel from '@components/common/EntityPanel'
 class EntitySearchPanel extends Component {
   constructor(props) {
     super(props)
+    let { panelStyle } = props
     const { style } = props
+    panelStyle = panelStyle || { width: '100%' }
 
-    this.state = { style }
+    this.state = {
+      panelStyle,
+      style,
+      searchText: '',
+      yelpBusinesses: [],
+    }
+  }
+
+  onChangeSearchText = e => {
+    ( async () => {
+      const { searchYelpBusinesses } = this.props
+      const searchText = e.target.value
+      this.setState({ searchText })
+      const yelpBusinesses = await searchYelpBusinesses(searchText)
+      this.setState({ yelpBusinesses })
+    })()
+  }
+
+  onEntityClick = tag => {
+    console.log('clicked tag=',tag)
   }
 
   render() {
     const {
-      selectedYelpBusiness,
       panelStyle,
-      style
+      searchText,
+      style,
+      yelpBusinesses,
     } = this.state
+    console.log('yelpBusinesses=',yelpBusinesses)
 
     return (
       <div className="map" style={{ ...style }}>
-        <EntityPanel
-          showMap={false}
-          yelpBusiness={ selectedYelpBusiness }
-          panelStyle={ panelStyle }
+        <input
+          className="entity-search-input"
+          placeholder='Search for a business...'
+          type='text'
+          value={ searchText }
+          onChange={ this.onChangeSearchText }
         />
+        <div className="entity-search-results">
+          { yelpBusinesses.map( tag =>
+            <EntityPanel
+              showMap={false}
+              yelpBusiness={ tag.yelpBusiness }
+              panelStyle={ panelStyle }
+              onClick={ () => this.onEntityClick(tag) }
+            />
+          ) }
+        </div>
       </div>
     )
   }
@@ -35,6 +70,8 @@ class EntitySearchPanel extends Component {
 EntitySearchPanel.propTypes = {
   style: PropTypes.object,
   panelStyle: PropTypes.object,
+
+  searchYelpBusinesses: PropTypes.func,
 }
 
 
