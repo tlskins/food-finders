@@ -5,32 +5,12 @@ import {
   START_TAG_SEARCH,
   INCOMPLETE_TAG_SEARCH,
   COMPLETE_TAG_SEARCH,
-  UPDATE_SEARCH_CRITERIA,
-  RESET_SEARCH_CRITERIA,
-  UPDATE_SELECTED_TAG_INDEX,
-  ADD_TAG_TO_TEXT,
 } from '@actions/tags'
 
 import {
   addNestedAttribute,
-  searchDictionaryBy,
-  searchDictionaryByArray,
-  searchDictionaryByKeys,
 } from '~/utils'
 
-// Helpera and Intial States
-
-const initialTagSearchCriteriaState = {
-  searchText: undefined,
-  searchHandles: undefined,
-  tagSuggestions: [],
-  tagSymbol: undefined,
-  text: '',
-  creatableTags: [],
-  cursorBeginIndex: 0,
-  cursorEndIndex: 0,
-  selectedTagIndex: 0,
-}
 
 const initialTagsState = {
   tagDictionary: {
@@ -38,130 +18,22 @@ const initialTagsState = {
     '#': {},
     '^': {},
     '&': {},
-  }, ...initialTagSearchCriteriaState }
+  }
+}
 
 const initialTagSearchesState = { '@': {}, '#': {}, '^': {}, '&': {}}
 
-const getTagSuggestions = ({ tagDictionary, tagSymbol, tagsCount, searchText, searchHandles, selectedTagIndex }) => {
-  const tagsBySymbol = tagDictionary[tagSymbol]
-  const emptyTagsBySymbol = tagsBySymbol && Object.values(tagsBySymbol).length < 1
-  if ( !tagsBySymbol || emptyTagsBySymbol ) {
-    return { tagSuggestions: [], selectedTagIndex: 0 }
-  }
-
-  const roots = tagsBySymbol.roots || []
-
-  if ( typeof searchText !== 'undefined' ) {
-    if ( searchText.length > 0 ) {
-      let tagSuggestions = []
-      searchDictionaryBy(tagsBySymbol, 'name', searchText, tagSuggestions)
-      searchDictionaryBy(tagsBySymbol, 'embeddedTaggable.description', searchText, tagSuggestions)
-      searchDictionaryByArray(tagsBySymbol, 'embeddedTaggable.synonyms', searchText, tagSuggestions)
-
-      return { tagSuggestions, selectedTagIndex: 0 }
-    }
-  }
-  else if ( searchHandles ) {
-    const searchKeys = searchHandles.map( h => h.slice(1) )
-    if ( searchKeys.length > 0 ) {
-      let tagSuggestions = []
-      searchDictionaryByKeys(tagsBySymbol, searchKeys, tagSuggestions)
-
-      return { tagSuggestions, selectedTagIndex }
-    }
-  }
-  return { tagSuggestions: roots, selectedTagIndex }
-}
-
-// Reducers //
 
 export const tags = (state = initialTagsState, action) => {
   switch (action.type) {
     case ADD_TAGS: {
-      let { tagDictionary } = state
-      const { searchHandles, tagSymbol, searchText, selectedTagIndex } = state
+      const { tagDictionary } = state
       action.tags.forEach( e => tagDictionary[e.symbol][e.handle] = e )
-      const tagSuggestionsHash = getTagSuggestions({
-        tagDictionary,
-        tagSymbol,
-        tagsCount: 5,
-        searchText,
-        searchHandles,
-        selectedTagIndex,
-      })
 
-      return {
-        ...state,
-        tagDictionary,
-        ...tagSuggestionsHash
-      }
+      return { ...state, tagDictionary: { ...tagDictionary } }
     }
     case LOAD_ROOT_TAGS: {
-      let { tagDictionary } = state
-      const { searchHandles, tagSymbol, searchText, selectedTagIndex } = state
-      tagDictionary = action.rootTags
-      const tagSuggestionsHash = getTagSuggestions({
-        tagDictionary,
-        tagSymbol,
-        tagsCount: 5,
-        searchText,
-        searchHandles,
-        selectedTagIndex,
-      })
-
-      return {
-        ...state,
-        tagDictionary,
-        ...tagSuggestionsHash
-      }
-    }
-    case UPDATE_SEARCH_CRITERIA: {
-      let { tagDictionary } = state
-
-      const {
-        searchText,
-        tagSymbol,
-        text,
-        searchHandles,
-        selectedTagIndex,
-        cursorBeginIndex,
-        cursorEndIndex
-      } = action
-      const tagSuggestionsHash = getTagSuggestions({
-        tagDictionary,
-        tagSymbol,
-        tagsCount: 5,
-        searchText,
-        searchHandles,
-        selectedTagIndex,
-      })
-
-      return {
-        ...state,
-        searchText,
-        tagSymbol,
-        text,
-        cursorBeginIndex,
-        cursorEndIndex,
-        searchHandles,
-        selectedTagIndex,
-        ...tagSuggestionsHash,
-      }
-    }
-    case RESET_SEARCH_CRITERIA: {
-      return { ...state, ...initialTagSearchCriteriaState }
-    }
-    case UPDATE_SELECTED_TAG_INDEX: {
-      return { ...state, selectedTagIndex: action.selectedTagIndex }
-    }
-    case ADD_TAG_TO_TEXT: {
-      return {
-        ...state,
-        text: action.text,
-        creatableTags: action.creatableTags,
-        tagSuggestions: [],
-        selectedTagIndex: 0
-      }
+      return { ...state, tagDictionary: { ...action.rootTags } }
     }
 
     default:

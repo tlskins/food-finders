@@ -10,15 +10,6 @@ export const INCOMPLETE_TAG_SEARCH = 'INCOMPLETE_TAG_SEARCH'
 
 export const COMPLETE_TAG_SEARCH = 'COMPLETE_TAG_SEARCH'
 
-export const UPDATE_SEARCH_CRITERIA = 'UPDATE_SEARCH_CRITERIA'
-
-export const RESET_SEARCH_CRITERIA = 'RESET_SEARCH_CRITERIA'
-
-export const UPDATE_SELECTED_TAG_INDEX = 'UPDATE_SELECTED_TAG_INDEX'
-
-export const ADD_TAG_TO_TEXT = 'ADD_TAG_TO_TEXT'
-
-
 
 export const addTags = (symbol, tags) => ({ type: ADD_TAGS, symbol, tags })
 
@@ -67,28 +58,3 @@ export const completeTagSearch = ({
     page,
     resultsPerPage,
     source })
-
-export const updateSearchCriteria = ({
-  cursorBeginIndex,
-  cursorEndIndex,
-  tagSymbol,
-  text,
-  searchText,
-  searchHandles,
-  selectedTagIndex
-}) => ({
-  type: UPDATE_SEARCH_CRITERIA,
-  cursorBeginIndex,
-  cursorEndIndex,
-  text,
-  tagSymbol,
-  searchText,
-  searchHandles,
-  selectedTagIndex,
-})
-
-export const resetSearchCriteria = () => ({ type: RESET_SEARCH_CRITERIA })
-
-export const updateSelectedTagIndex = selectedTagIndex => ({ type: UPDATE_SELECTED_TAG_INDEX, selectedTagIndex })
-
-export const addTagToText = ({ text, creatableTags }) => ({ type: ADD_TAG_TO_TEXT, text, creatableTags })

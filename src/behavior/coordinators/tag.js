@@ -27,13 +27,13 @@ const _getMissingTags = ({ symbol, TagService, handles }) => {
 }
 
 
-const _searchCoreTags = ({ TagService, RestService, pResponseTags, searchIndex }) => {
+const _searchCoreTags = async ({ TagService, RestService, pResponseTags, searchIndex }) => {
   const { text, handles } = searchIndex
   if ( text ) {
-    _searchCoreTagsByText({ TagService, RestService, pResponseTags, searchIndex })
+    await _searchCoreTagsByText({ TagService, RestService, pResponseTags, searchIndex })
   }
   else if ( handles ) {
-    _searchCoreTagsByHandles({ TagService, RestService, pResponseTags, searchIndex })
+    await _searchCoreTagsByHandles({ TagService, RestService, pResponseTags, searchIndex })
   }
 }
 
@@ -91,27 +91,31 @@ export const SearchYelpBusinesses = ({ RestService, pResponseYelpBusinesses }) =
 }
 
 
-export const suggestTags = ({ RestService, TagService, pResponseTags, pResponseYelpBusinesses }) =>
-({ symbol, text, handles, resultsPerPage, page }) =>
+export const SuggestTags = ({ RestService, TagService, pResponseTags, pResponseYelpBusinesses }) =>
+async ({ symbol, text, handles, resultsPerPage, page }) =>
 {
+  if ( !symbol || (!text && !handles)) {
+    return
+  }
+
   if ( text ) {
     const searchIndex = { symbol, text, resultsPerPage, page }
     if ( symbol === '@' ) {
       const priorYelpSearchStatus = _getPriorSearchStatus({ source: 'yelp', TagService, searchIndex })
       if ( !priorYelpSearchStatus || priorYelpSearchStatus === 'INCOMPLETE' ) {
-        _searchYelpTags({ TagService, RestService, pResponseYelpBusinesses, searchIndex })
+        await _searchYelpTags({ TagService, RestService, pResponseYelpBusinesses, searchIndex })
       }
     }
 
     const priorCoreSearchStatus = _getPriorSearchStatus({ source: 'core', TagService, searchIndex })
     if ( !priorCoreSearchStatus || priorCoreSearchStatus === 'INCOMPLETE' ) {
-      _searchCoreTags({ TagService, RestService, pResponseTags, searchIndex })
+      await _searchCoreTags({ TagService, RestService, pResponseTags, searchIndex })
     }
   }
   else if ( handles ) {
     const missingTags = _getMissingTags({ symbol, TagService, handles })
     if ( missingTags.length > 0 ) {
-      _searchCoreTags({ TagService, RestService, pResponseTags, searchIndex: { symbol, handles: missingTags, resultsPerPage, page } })
+      await _searchCoreTags({ TagService, RestService, pResponseTags, searchIndex: { symbol, handles: missingTags, resultsPerPage, page } })
     }
   }
 }

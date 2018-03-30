@@ -1,4 +1,3 @@
-// Mutates dictionary by splicing out found entry
 export function searchDictionaryBy(dictionary, attribute, text, currentSuggestions, numResults = 5) {
   const pattern = new RegExp(text,'i')
   const dictionaryArray = Object.values(dictionary)
@@ -18,7 +17,6 @@ export function searchDictionaryBy(dictionary, attribute, text, currentSuggestio
 }
 
 
-// Mutates dictionary by splicing out found entry
 export function searchDictionaryByArray(dictionary, attribute, text, currentSuggestions, numResults = 5) {
   const pattern = new RegExp(text,'i')
   const dictionaryArray = Object.values(dictionary)
@@ -37,22 +35,21 @@ export function searchDictionaryByArray(dictionary, attribute, text, currentSugg
     if ( match && !currentSuggestions.includes(entry) ) {
       currentSuggestions.push(entry)
     }
-
   }
 }
 
 
-export function searchDictionaryByKeys(dictionary, keys, currentSuggestions) {
-  Object.entries(dictionary).forEach( k => {
-    console.log('loop k=',k)
-    console.log('keys=',keys)
-    console.log('k[0]=',k[0])
-    if ( keys.includes(k[0]) ) {
-      console.log('pushing k[1]=',k[1])
-      currentSuggestions.push(k[1])
+// For some reason cannot get this one to mutate the result array unlike the other dictionary searches...
+export function searchDictionaryByKeys(dictionary, keys) {
+  let currentSuggestions = []
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i]
+    const entry = dictionary[key]
+    if ( entry && !currentSuggestions.includes(entry) ) {
+      currentSuggestions = [...currentSuggestions, entry]
     }
-  })
-  console.log('currentSuggestions=',currentSuggestions)
+  }
+  return currentSuggestions
 }
 
 

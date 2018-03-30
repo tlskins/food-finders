@@ -18,10 +18,7 @@ const mapStateToProps = state => {
     selectedTagIndex,
    } = tags
    const activeTag = tagSuggestions && tagSuggestions[selectedTagIndex]
-  // const { visible } = socialEntry
-  //
-  // const draftSocialEntry = user ? user.draftSocialEntry : ''
-  //
+
   return {
     activeTag,
     text,

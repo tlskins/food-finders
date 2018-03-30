@@ -8,7 +8,7 @@ import presenters from '@presenters'
 
 
 const mapStateToProps = state => {
-  const { session, friendsManager, newsfeed, socialEntry } = state
+  const { session, friendsManager, newsfeed, socialEntryForm } = state
   const currentUser = session ? session.user : undefined
   const { selectedItem } = newsfeed
 
@@ -16,7 +16,7 @@ const mapStateToProps = state => {
     currentUser,
     friendsManagerVisible: friendsManager.visible,
     selectedNewsfeedItem: selectedItem,
-    socialEntryVisible: socialEntry.visible,
+    socialEntryVisible: socialEntryForm.visible,
   }
 }
 

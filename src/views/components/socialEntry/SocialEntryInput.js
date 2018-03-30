@@ -49,17 +49,77 @@ class SocialEntryInput extends Component {
   }
 
   updateText = e => {
-    const { creatableTags, selectedTagIndex } = this.state
-    const { updateSearchText, updateDraftSocialEntry } = this.props
+    const { selectedTagIndex } = this.state
+    const { updateSearchText } = this.props
     const newText = e.target.value
     const selectionStart = e.target.selectionStart
 
     this.setState({ text: newText })
     const cursorTextData = this.calculateCursorTextData(newText, selectionStart)
     updateSearchText({ ...cursorTextData, selectedTagIndex })
-    if ( cursorTextData.tagSymbol ) {
-      updateDraftSocialEntry(newText, creatableTags)
-      this.loadNewTags({ searchText: cursorTextData.searchText, tagSymbol: cursorTextData.tagSymbol })
+  }
+
+  onKeyDown = e => {
+    const { addTagToText, updateSearchHandles, updateSelectedTagIndex } = this.props
+    let { selectedTagIndex } = this.state
+    const { tagSymbol, tagSuggestions } = this.state
+    if ( tagSuggestions.length > 0 ) {
+      // right arrow key
+      if ( e.keyCode === 39 ) {
+        e.stopPropagation()
+        e.preventDefault()
+        const selectedTag = tagSuggestions[selectedTagIndex]
+        const selectedTaggable = selectedTag.embeddedTaggable
+        if ( selectedTaggable && selectedTaggable.children && selectedTaggable.children.length > 0 ) {
+          const childTagHandles = selectedTaggable.children.filter( c => {
+            return c.tagSymbol && c.tagHandle
+          }).map( c => c.tagSymbol + c.tagHandle )
+
+          this.setState({ searchStatus: `Loading ${ selectedTag.name }...` })
+          updateSearchHandles({ tagSymbol, searchHandles: childTagHandles, selectedTagIndex })
+        }
+      }
+      // left arrow key
+      else if ( e.keyCode === 37 ) {
+        e.stopPropagation()
+        e.preventDefault()
+        const selectedTag = tagSuggestions[selectedTagIndex]
+        if ( selectedTag.embeddedTaggable && selectedTag.embeddedTaggable.parent ) {
+          const parentTaggable = selectedTag.embeddedTaggable.parent
+          const parentHandle = parentTaggable.tagSymbol + parentTaggable.tagHandle
+          const parentSiblingHandles = (parentTaggable && parentTaggable.siblings) || []
+          const newSearchHandles = [parentHandle, ...parentSiblingHandles]
+
+          this.setState({ searchStatus: `Loading ${ selectedTag.name }...` })
+          updateSearchHandles({ tagSymbol, searchHandles: newSearchHandles, selectedTagIndex: 0 })
+        }
+      }
+      // down arrow key
+      else if ( e.keyCode === 40 ) {
+        e.stopPropagation()
+        e.preventDefault()
+        selectedTagIndex += 1
+        if ( selectedTagIndex >= tagSuggestions.length ) {
+          selectedTagIndex = 0
+        }
+        updateSelectedTagIndex(selectedTagIndex)
+      }
+      // up arrow key
+      else if ( e.keyCode === 38 ) {
+        e.stopPropagation()
+        e.preventDefault()
+        selectedTagIndex -= 1
+        if ( selectedTagIndex < 0 ) {
+          selectedTagIndex = tagSuggestions.length - 1
+        }
+        updateSelectedTagIndex(selectedTagIndex)
+      }
+      // enter arrow key
+      else if ( e.keyCode === 13 ) {
+        e.stopPropagation()
+        e.preventDefault()
+        addTagToText( tagSuggestions[selectedTagIndex] )
+      }
     }
   }
 
@@ -87,94 +147,8 @@ class SocialEntryInput extends Component {
         this.setState({ searchStatus: `Loaded all suggestions for '${ searchText }'...` })
       }
     }
-  }
-
-  onKeyDown = e => {
-    const { addTagToText, updateSearchHandles, searchHandles, updateSelectedTagIndex } = this.props
-    let { selectedTagIndex } = this.state
-    const { text, tagSymbol, tagSuggestions } = this.state
-    if ( tagSuggestions.length > 0 ) {
-      // right arrow key
-      if ( e.keyCode === 39 ) {
-        e.stopPropagation()
-        e.preventDefault()
-        const selectedTag = tagSuggestions[selectedTagIndex]
-        const selectedTaggable = selectedTag.embeddedTaggable
-        if ( selectedTaggable && selectedTaggable.children && selectedTaggable.children.length > 0 ) {
-          const childTagHandles = selectedTaggable.children.filter( c => {
-            return c.tagSymbol && c.tagHandle
-          }).map( c => c.tagSymbol + c.tagHandle )
-
-          this.setState({ searchStatus: `Loading ${ selectedTag.name }...` })
-          updateSearchHandles({ tagSymbol, searchHandles: childTagHandles, selectedTagIndex, text })
-          this.loadNewTags({ searchHandles: childTagHandles, tagSymbol })
-        }
-      }
-      // left arrow key
-      else if ( e.keyCode === 37 ) {
-        e.stopPropagation()
-        e.preventDefault()
-        const selectedTag = tagSuggestions[selectedTagIndex]
-        if ( selectedTag.embeddedTaggable && selectedTag.embeddedTaggable.parent ) {
-          const parentTaggable = selectedTag.embeddedTaggable.parent
-          const parentHandle = parentTaggable.tagSymbol + parentTaggable.tagHandle
-          const parentSiblingHandles = (parentTaggable && parentTaggable.siblings) || []
-          const newSearchHandles = [parentHandle, ...parentSiblingHandles]
-
-          this.setState({ searchStatus: `Loading ${ selectedTag.name }...` })
-          updateSearchHandles({ tagSymbol, searchHandles: newSearchHandles, selectedTagIndex: 0, text })
-          this.loadNewTags({ searchHandles: newSearchHandles, tagSymbol })
-        }
-      }
-      // down arrow key
-      else if ( e.keyCode === 40 ) {
-        e.stopPropagation()
-        e.preventDefault()
-        selectedTagIndex += 1
-        if ( selectedTagIndex >= tagSuggestions.length ) {
-          selectedTagIndex = 0
-        }
-        updateSelectedTagIndex(selectedTagIndex)
-      }
-      // up arrow key
-      else if ( e.keyCode === 38 ) {
-        e.stopPropagation()
-        e.preventDefault()
-        selectedTagIndex -= 1
-        if ( selectedTagIndex < 0 ) {
-          selectedTagIndex = tagSuggestions.length - 1
-        }
-        updateSelectedTagIndex(selectedTagIndex)
-      }
-      // enter arrow key
-      else if ( e.keyCode === 13 ) {
-        e.stopPropagation()
-        e.preventDefault()
-        updateSelectedTagIndex(0)
-        addTagToText( tagSuggestions[selectedTagIndex] )
-      }
-    }
-  }
-
-  // updateSocialEntry = async (text, creatableTags) => {
-  //   const { updateDraftSocialEntry } = this.props
-  //   await updateDraftSocialEntry( text, creatableTags )
-  // }
-
-  loadNewTags = ({ searchHandles, searchText, tagSymbol }) => {
-    const { suggestTags } = this.props
-    if ( tagSymbol ) {
-      if ( typeof searchText !== 'undefined' ) {
-        if ( searchText.length > 0 ) {
-          suggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
-        }
-      }
-      else if ( searchHandles ) {
-        suggestTags({ symbol: tagSymbol, handles: searchHandles, resultsPerPage: 5, page: 1 })
-      }
-    }
     else {
-      this.clearTagSearch()
+      this.setState({ searchStatus: null })
     }
   }
 
@@ -183,21 +157,17 @@ class SocialEntryInput extends Component {
     const { text, creatableTags } = this.state
 
     this.clearTagSearch()
-
     await postSocialEntry(text, creatableTags)
-
     this.props.toggleVisibility(false)
   }
 
   clearTagSearch = () => {
-    const { resetSearchCriteria } = this.props
-    resetSearchCriteria()
-    this.setState({ searchStatus: undefined })
+    this.props.resetSearchCriteria()
+    this.setState({ searchStatus: null })
   }
 
   close = e => {
     e.preventDefault()
-
     this.props.toggleVisibility(false)
   }
 
@@ -205,7 +175,6 @@ class SocialEntryInput extends Component {
     const { text, draftSocialEntry, searchStatus, selectedTagIndex, tagSuggestions  } = this.state
     const { addTagToText, visible } = this.props
     const { tags, creatableTags } = draftSocialEntry
-
     if ( !visible ) {
       return null
     }
@@ -266,26 +235,25 @@ class SocialEntryInput extends Component {
 }
 
 SocialEntryInput.propTypes = {
+  draftSocialEntry: PropTypes.object,
+  tagSearches: PropTypes.object,
+  visible: PropTypes.bool,
   creatableTags: PropTypes.arrayOf(PropTypes.object),
   cursorBeginIndex: PropTypes.number,
   cursorEndIndex: PropTypes.number,
-  draftSocialEntry: PropTypes.object,
   tagSuggestions: PropTypes.arrayOf(PropTypes.object),
   tagSymbol: PropTypes.string,
+  text: PropTypes.string,
   searchText: PropTypes.string,
   searchHandles: PropTypes.arrayOf(PropTypes.string),
   selectedTagIndex: PropTypes.numbrer,
-  tagSearches: PropTypes.object,
-  visible: PropTypes.bool,
 
   addTagToText: PropTypes.func,
   postSocialEntry: PropTypes.func,
   resetSearchCriteria: PropTypes.func,
-  suggestTags: PropTypes.func,
   toggleVisibility: PropTypes.func,
   updateSearchHandles: PropTypes.func,
   updateSearchText: PropTypes.func,
-  updateDraftSocialEntry: PropTypes.func,
   updateSelectedTagIndex: PropTypes.func,
 }
 
