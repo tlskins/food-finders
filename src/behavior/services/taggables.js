@@ -2,6 +2,14 @@ import { default as BaseService } from './base'
 import actions from '@actions'
 
 export class TaggablesService extends BaseService {
+  getEditTaggable = () => {
+    return this.getState().editTaggable
+  }
+
+  newTaggable = taggable => {
+    this.dispatch( actions.newTaggable(taggable) )
+  }
+
   loadTaggables = (taggableType, taggables, overwrite = false) => {
     this.dispatch( actions.loadTaggables(taggableType, taggables, overwrite) )
   }
@@ -16,6 +24,10 @@ export class TaggablesService extends BaseService {
 
   editTaggable = taggable => {
     this.dispatch( actions.editTaggable(taggable) )
+  }
+
+  editTaggableHandle = handle => {
+    this.dispatch( actions.editTaggableHandle(handle) )
   }
 
   resetTaggable = () => {

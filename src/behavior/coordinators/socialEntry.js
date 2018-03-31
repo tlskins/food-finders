@@ -41,6 +41,8 @@ export const updateSearchText = ({
   SocialEntryService,
   SuggestTags,
   UpdateDraftSocialEntry,
+  TaggablesService,
+  UIService,
 }) => async ({
   tagSymbol,
   text,
@@ -49,14 +51,37 @@ export const updateSearchText = ({
   cursorEndIndex,
 }) => {
   SocialEntryService.updateSearchText({ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex })
+  const { edited: taggableEdited } = TaggablesService.getEditTaggable()
+
   if ( tagSymbol ) {
     const { creatableTags } = SocialEntryService.getSocialEntry()
     UpdateDraftSocialEntry(text, creatableTags)
-    await SuggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
-    SocialEntryService.refreshTagSuggestions()
+    if ( tagSymbol && tagSymbol.length > 0 ) {
+      await SuggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
+      SocialEntryService.refreshTagSuggestions()
+
+      // Trigger new taggable if no tags exist for a creatable tag symbol
+      // TODO - need mapping table like one in TaggableManagerHeader but with the symbol... need mapping from API
+      const { tagSuggestions } = SocialEntryService.getSocialEntry()
+      if ( tagSymbol === '^' && tagSuggestions.length === 0 ) {
+        if ( !taggableEdited ) {
+          TaggablesService.newTaggable({ taggableType: 'foods', handle: searchText })
+          UIService.SocialEntryDetailPanel.toggleMode('EDIT TAGGABLE')
+        }
+        else {
+          TaggablesService.editTaggableHandle(searchText)
+        }
+      }
+      else if ( taggableEdited ) {
+        TaggablesService.resetTaggable()
+      }
+    }
   }
   else {
     SocialEntryService.resetSearchCriteria()
+    if ( taggableEdited ) {
+      TaggablesService.resetTaggable()
+    }
   }
 }
 

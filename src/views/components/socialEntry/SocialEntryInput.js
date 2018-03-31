@@ -172,7 +172,7 @@ class SocialEntryInput extends Component {
   }
 
   render() {
-    const { text, draftSocialEntry, searchStatus, selectedTagIndex, tagSuggestions  } = this.state
+    const { text, draftSocialEntry, searchStatus, selectedTagIndex, tagSuggestions } = this.state
     const { addTagToText, visible } = this.props
     const { tags, creatableTags } = draftSocialEntry
     if ( !visible ) {

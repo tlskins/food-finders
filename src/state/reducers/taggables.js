@@ -4,10 +4,19 @@ import {
   DELETE_TAGGABLE,
   EDIT_TAGGABLE,
   RESET_TAGGABLE,
+  NEW_TAGGABLE,
+  EDIT_TAGGABLE_HANDLE,
 } from '@actions/taggables'
 
 
 const initialEditTaggableState = { edited: false, taggableType: undefined }
+
+const newTaggableState = {
+  handle: "",
+  name: "",
+  synonyms: [],
+  description: "",
+}
 
 export const allTaggables = (state = {}, action) => {
   switch (action.type) {
@@ -39,13 +48,25 @@ export const allTaggables = (state = {}, action) => {
 
 export const editTaggable = (state = initialEditTaggableState, action) => {
   switch (action.type) {
+
+    // TODO - transform all edits to handle to correclty parsed handle format
+
+    case NEW_TAGGABLE: {
+      const { taggable } = action
+      return { ...newTaggableState, ...taggable, edited: true }
+    }
     case LOAD_EDIT_TAGGABLE: {
       const { taggable, taggableType } = action
 
       return { taggableType, ...taggable, edited: false }
     }
     case EDIT_TAGGABLE: {
-      return { ...action.taggable, edited: true }
+      return { ...state, ...action.taggable, edited: true }
+    }
+    case EDIT_TAGGABLE_HANDLE: {
+      const { handle } = action
+
+      return { ...state, handle, edited: true }
     }
     case RESET_TAGGABLE: {
       return { ...initialEditTaggableState }

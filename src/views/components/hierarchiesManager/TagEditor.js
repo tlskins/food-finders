@@ -10,17 +10,7 @@ import {
 } from 'react-bootstrap'
 
 
-const editTaggableNewState = {
-  name: "",
-  synonyms: [],
-  description: "",
-}
-
 class TagEditor extends Component {
-  // state = {
-  //   editTaggable: { ...editTaggableInitialState },
-  //   confirmedDelete: false,
-  // }
   constructor(props) {
     super(props)
     const { editTaggable } = props

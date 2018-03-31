@@ -491,10 +491,11 @@ body {
   border-radius: 4px;
   border-width: 1px;
   border-style: solid;
-  border-color: rgb(218, 225, 233);
+  border-color: black;
 }
 
 .main-nav--user--dropdown__profile {
+  font-size: 17px;
   position: relative;
   display: flex;
   flex-direction: column;

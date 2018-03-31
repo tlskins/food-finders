@@ -8,7 +8,7 @@ import presenters from '@presenters'
 
 
 const mapStateToProps = state => {
-  const { socialEntry, socialEntryDetailPanel } = state
+  const { editTaggable, socialEntry, socialEntryDetailPanel } = state
   const {
     tagSymbol,
     tagSuggestions,
@@ -19,18 +19,21 @@ const mapStateToProps = state => {
 
   return {
     activeTag,
+    editTaggable,
     mode,
     tagSymbol,
   }
 }
 
 const mapDispatchToProps = () => {
-  const { UIService } = services
+  const { TaggablesService, UIService } = services
 
   const toggleMode = mode => UIService.SocialEntryDetailPanel.toggleMode(mode)
+  const updateTaggable = (taggable) => TaggablesService.editTaggable(taggable)
 
   return {
     toggleMode,
+    updateTaggable,
   }
 }
 

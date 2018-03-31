@@ -8,9 +8,11 @@ import {
 
 
 export class SocialEntryService extends BaseService {
+  
   getSocialEntry = () => {
     return this.getState().socialEntry
   }
+
   refreshTagSuggestions = () => {
     const { tagDictionary } = this.getState().tags
     const { tagSymbol, searchText, searchHandles } = this.getState().socialEntry
@@ -18,6 +20,7 @@ export class SocialEntryService extends BaseService {
 
     this.dispatch( actions.updateSocialEntry({ tagSuggestions }) )
   }
+
   updateSearchText = ({ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex }) => {
     const { tagDictionary } = this.getState().tags
     const tagSuggestions = this._getTagSuggestions({ tagDictionary, tagSymbol, searchText })
@@ -33,6 +36,7 @@ export class SocialEntryService extends BaseService {
       text,
     }) )
   }
+
   updateSearchHandles = ({ tagSymbol, searchHandles, selectedTagIndex }) => {
     const { tagDictionary } = this.getState().tags
     const tagSuggestions = this._getTagSuggestions({ tagDictionary, tagSymbol, searchHandles })
@@ -45,6 +49,7 @@ export class SocialEntryService extends BaseService {
       tagSymbol,
     }) )
   }
+
   resetSearchCriteria = () => {
     this.dispatch( actions.updateSocialEntry({
       tagSymbol: null,
@@ -53,9 +58,11 @@ export class SocialEntryService extends BaseService {
       selectedTagIndex: 0,
     }) )
   }
+
   updateSelectedTagIndex = selectedTagIndex => {
     this.dispatch( actions.updateSocialEntry({ selectedTagIndex }) )
   }
+
   addTagToText = tag => {
     const { symbol, handle } = tag
     const { socialEntry } = this.getState()

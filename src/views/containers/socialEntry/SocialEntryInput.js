@@ -22,7 +22,7 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  const { RestService, TagService, SessionService, SocialEntryService, UIService } = services
+  const { RestService, TagService, TaggablesService, SessionService, SocialEntryService, UIService } = services
   const { pResponseGeneric, pResponseYelpBusinesses, pRequestUpdateSocialEntry } = presenters.Api
   const pResponseUser = pResponseGeneric
   const pResponseTags = pResponseGeneric
@@ -34,7 +34,7 @@ const mapDispatchToProps = () => {
   const resetSearchCriteria = () => SocialEntryService.resetSearchCriteria()
   const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
   const updateSearchHandles = coordinators.updateSearchHandles({ SocialEntryService, SuggestTags })
-  const updateSearchText = coordinators.updateSearchText({ SocialEntryService, SuggestTags, UpdateDraftSocialEntry })
+  const updateSearchText = coordinators.updateSearchText({ SocialEntryService, SuggestTags, UpdateDraftSocialEntry, TaggablesService, UIService })
   const updateSelectedTagIndex = selectedTagIndex => SocialEntryService.updateSelectedTagIndex(selectedTagIndex)
 
   return {

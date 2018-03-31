@@ -71,6 +71,54 @@ class SocialEntryDetailPanel extends Component {
     )
   }
 
+  onEditTaggable = attribute => e => {
+    const { value } = e.target
+    const { updateTaggable } = this.props
+    let { editTaggable } = this.props
+    editTaggable[attribute] = value
+    updateTaggable({ ...editTaggable })
+  }
+
+  onEditTaggableSynonyms = e => {
+    const { value } = e.target
+    const { updateTaggable } = this.props
+    let { editTaggable } = this.props
+    const synonyms = value.split(', ')
+    editTaggable['synonyms'] = synonyms
+    updateTaggable({ ...editTaggable })
+  }
+
+  renderEditTaggablePanel = editTaggable => {
+    if ( !editTaggable ) {
+      return null
+    }
+    const { taggableType, name, handle, synonyms, description } = editTaggable
+    const synonymsString = (synonyms && synonyms.join(', ')) || ''
+
+    return (
+      <div className="taggable-panel">
+        <div className="tag-section">
+          <div className="section-hdr">{ taggableType }</div>
+          <div className="section-hdr">{ handle }</div>
+        </div>
+        <div className="taggable-section">
+          <div className="section-body">
+            <span className="bold-attribute">Name: </span>
+            <input type="text" value={ name } onChange={ this.onEditTaggable('name') } />
+          </div>
+          <div className="section-body">
+            <span className="bold-attribute">Description: </span>
+            <input type="text" value={ description } onChange={ this.onEditTaggable('description') } />
+          </div>
+          <div className="section-body">
+            <span className="bold-attribute">Synonyms: </span>
+            <input type="text" value={ synonymsString } onChange={ this.onEditTaggableSynonyms } />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   renderEntityPanel = ({ activeTag, mapStyle, panelStyle }) => {
     const yelpBusiness = this.getActiveYelpBusiness( activeTag )
 
@@ -111,12 +159,16 @@ class SocialEntryDetailPanel extends Component {
   render() {
     const {
       activeTag,
+      editTaggable,
       mapStyle,
       panelStyle,
       tagSymbol,
     } = this.props
     const { mode } = this.state
     const isEntityTag = tagSymbol === '@'
+    const { edited } = editTaggable
+
+    console.log('mode=',mode,' edit taggable=',editTaggable)
 
     return (
       <div className="social-entry-detail-panel">
@@ -126,8 +178,11 @@ class SocialEntryDetailPanel extends Component {
         { isEntityTag && mode === 'SEARCH ENTITY' &&
           this.renderSearchEntityPanel({ mapStyle, panelStyle })
         }
-        { !isEntityTag &&
+        { !isEntityTag && activeTag &&
           this.renderTaggablePanel(activeTag)
+        }
+        { !isEntityTag && edited &&
+          this.renderEditTaggablePanel(editTaggable)
         }
       </div>
     )
@@ -138,6 +193,7 @@ class SocialEntryDetailPanel extends Component {
 SocialEntryDetailPanel.propTypes = {
   // props from redux
   activeTag: PropTypes.object,
+  editTaggable: PropTypes.object,
   tagSymbol: PropTypes.string,
   // ui props
   mode: PropTypes.string,
@@ -146,6 +202,7 @@ SocialEntryDetailPanel.propTypes = {
   mapStyle: PropTypes.object,
 
   toggleMode: PropTypes.func,
+  updateTaggable: PropTypes.func,
 }
 
 
