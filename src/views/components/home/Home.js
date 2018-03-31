@@ -54,9 +54,7 @@ class Home extends Component {
   renderStickyHeader = ({ isSticky, style }) => {
     const {
       toggleFriendsManagerVisibility,
-      toggleSocialEntryVisibility,
       friendsManagerVisible,
-      socialEntryVisible,
     } = this.props
     if ( isSticky ) {
       style = { ...style, top: '70px' }
@@ -65,7 +63,7 @@ class Home extends Component {
       <Header
         style={style}
         toggleFriendsManagerVisibility={ () => toggleFriendsManagerVisibility(!friendsManagerVisible) }
-        toggleSocialEntryVisibility={ () => toggleSocialEntryVisibility(!socialEntryVisible)}
+        toggleSocialEntryVisibility={ this.onToggleSocialEntryVisibility }
       />
     )
   }
@@ -84,6 +82,12 @@ class Home extends Component {
         yelpBusiness={ yelpBusiness }
       />
     )
+  }
+
+  onToggleSocialEntryVisibility = () => {
+    const { socialEntryVisible, toggleFriendsManagerVisibility, toggleSocialEntryVisibility } = this.props
+    toggleSocialEntryVisibility(!socialEntryVisible)
+    toggleFriendsManagerVisibility(false)
   }
 
   render() {

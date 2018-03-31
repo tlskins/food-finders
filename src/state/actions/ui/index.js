@@ -5,6 +5,7 @@ import * as socialEntryUiActions from './socialEntry'
 import * as tagEditorUIActions from './tagEditor'
 import * as hierarchiesManagerUIActions from './hierarchiesManager'
 import * as newsfeedUIActions from './newsfeed'
+import * as socialEntryDetailPanelUIActions from './socialEntryDetailPanel'
 
 
 export default {
@@ -15,4 +16,5 @@ export default {
   ...tagEditorUIActions,
   ...hierarchiesManagerUIActions,
   ...newsfeedUIActions,
+  ...socialEntryDetailPanelUIActions,
 }

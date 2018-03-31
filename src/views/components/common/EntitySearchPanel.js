@@ -29,8 +29,10 @@ class EntitySearchPanel extends Component {
     })()
   }
 
-  onEntityClick = tag => {
-    console.log('clicked tag=',tag)
+  onAddTagToText = (tag) => {
+    const { addTagToText, toggleMode } = this.props
+    addTagToText(tag)
+    toggleMode('DISPLAY ENTITY')
   }
 
   render() {
@@ -40,7 +42,6 @@ class EntitySearchPanel extends Component {
       style,
       yelpBusinesses,
     } = this.state
-    console.log('yelpBusinesses=',yelpBusinesses)
 
     return (
       <div className="map" style={{ ...style }}>
@@ -57,7 +58,7 @@ class EntitySearchPanel extends Component {
               showMap={false}
               yelpBusiness={ tag.yelpBusiness }
               panelStyle={ panelStyle }
-              onClick={ () => this.onEntityClick(tag) }
+              onClick={ () => this.onAddTagToText(tag) }
             />
           ) }
         </div>
@@ -71,7 +72,9 @@ EntitySearchPanel.propTypes = {
   style: PropTypes.object,
   panelStyle: PropTypes.object,
 
+  addTagToText: PropTypes.func,
   searchYelpBusinesses: PropTypes.func,
+  toggleMode: PropTypes.func,
 }
 
 

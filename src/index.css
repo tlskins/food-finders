@@ -757,6 +757,8 @@ body {
   /* margin: 5px 10px 0 0; */
 }
 
+/** Social Entry Detail Panel **/
+
 .social-entry-detail-panel {
   padding: 10px;
   width: 520px;
@@ -790,6 +792,45 @@ body {
   background: #eee;
   color: white;
   background-color: black;
+}
+
+/** Taggable Panel **/
+
+.taggable-panel {
+  background: #fcfcfc;
+  border: 1px solid #101820;
+  border-radius: 3px;
+  padding: 15px;
+  vertical-align: middle;
+}
+
+.tag-section {
+  background-color: #eee;
+  border: 1px solid #101820;
+  border-radius: 3px;
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.taggable-section {
+  border: 1px solid #101820;
+  border-radius: 3px;
+  padding: 10px;
+}
+
+.section-hdr {
+  color: #101820;
+  font-size: 14px;
+  font-family: "Calibre-Medium";
+  letter-spacing: .061em;
+  text-transform: uppercase;
+}
+
+.section-body {
+  color: #656666;
+  font-size: 15px;
+  letter-spacing: .013em;
 }
 
 /** Entity Search **/
@@ -1014,51 +1055,66 @@ body {
   color: white;
 }
 
-.social-entry-form__suggestions-container {
+.tag-suggestions-container {
   display: flex;
   flex-direction: row;
   background: #fcfcfc;
   border: 1px solid #101820;
 }
 
-.social-entry-form__suggestions {
+.tag-suggestions {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.social-entry-form__suggestions-children {
+.tag-suggestions-children {
   width: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.form__suggestions__item--main-description {
+.tag-suggestion-hdr {
+  font-size: 17px;
+  letter-spacing: .046em;
+  text-transform: uppercase;
+  width: 25%;
+}
+
+.tag-suggestion-description {
   height: 40px;
-  margin: 5px 5px 0 10px;
+  margin: 5px 5px 0 5px;
+  float: right;
+  font-size: 15px;
+  letter-spacing: .013em;
   line-height: 1;
   overflow-y: scroll;
+  text-align: center;
+  text-transform: none;
+  max-width: 300px;
+  width: 100%;
 }
 
-[class^="social-entry-form__suggestions__item"] {
-  cursor: pointer;
-  height: 45px;
-  font-size: 17px;
-  overflow-y: scroll;
-  display: flex;
-  flex-direction: row;
+[class^="tag-suggestion--"] {
   align-items: center;
-
-  margin: 5px 0 5px 0;
+  background-color: rgb(147, 218, 246);
   border: 1px solid rgb(147, 218, 246);
   border-radius: 7px;
-  background-color: rgb(147, 218, 246);
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  height: 45px;
   margin-left: 6px;
   margin-right: 6px;
+  overflow-y: scroll;
   padding: 13px;
 }
 
-.suggestions__item-container {
+.tag-suggestion-buffer {
+  height: 49px;
+}
+
+.tag-suggestion-container {
   padding-top: 2px;
   padding-bottom: 2px;
 }
@@ -1067,7 +1123,7 @@ body {
   background-color: rgb(246, 235, 34);
 }
 
-[class^="social-entry-form__suggestions__shortitem"] {
+[class^="tag-suggestions__shortitem"] {
   cursor: pointer;
   height: 45px;
   font-size: 17px;
@@ -1085,21 +1141,14 @@ body {
   padding: 2px 5px 2px 5px;
 }
 
-[class^="social-entry-form__suggestions__icon"] {
+[class^="tag-suggestions-icon--"] {
   display: block;
-  padding-right: 10px;
-  width: 45px;
-  height: 45px;
+  min-width: 45px;
+  min-height: 45px;
+  margin-right: 5px;
   z-index: 2;
   float: left;
 }
-
-/* [class^="social-entry-form__suggestions__item"]:hover {
-  border-width: 1px;
-  border-style: solid;
-  border-color: rgb(75, 173, 2);
-  border-radius: 7px;
-} */
 
 .selected {
   border-width: 1px;
@@ -1110,49 +1159,45 @@ body {
 
 /** Category Specific Tags **/
 
-.social-entry-form__suggestions__item--food {
+.tag-suggestion--food {
   background-color: rgb(79, 229, 211);
 }
-.social-entry-form__suggestions__icon--food {
+.tag-suggestions-icon--food {
   background: url("./_res/images/icons8-hamburger-48.png") no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
-.social-entry-form__suggestions__item--foodratingtype {
+.tag-suggestion--foodratingtype {
   background-color: rgb(240, 237, 86);
 }
-.social-entry-form__suggestions__icon--foodratingtype {
+.tag-suggestions-icon--foodratingtype {
   background: url("./_res/images/icons8-trophy-48.png") no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
-.social-entry-form__suggestions__item--entity {
+.tag-suggestion--entity {
   background-color: rgb(147, 218, 246);
 }
-.social-entry-form__suggestions__icon--entity {
+.tag-suggestions-icon--entity {
   background: url("./_res/images/icons8-meal-48.png") no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
-.social-entry-form__suggestions__item--user {
+.tag-suggestion--user {
   background-color: rgb(255,255,255);
 }
-.social-entry-form__suggestions__icon--user {
+.tag-suggestions-icon--user {
   background: url("./_res/images/icons8-street-view-48.png") no-repeat;
-  background-size: contain;
+  background-size: cover;
 }
 
-
-/* Ratings */
-
-/* .rating-component-badges {
-  display: flex;
-  flex-direction: column;
+.tag-suggestion--foodratingmetric {
+  background-color: rgb(242, 119, 0);
 }
-
-.badge-container {
-  margin-top: 2px;
-} */
+.tag-suggestions-icon--foodratingmetric {
+  background: url("./_res/images/icons8-combo-chart-64.png") no-repeat;
+  background-size: cover;
+}
 
 /** Hierarchies Manager **/
 

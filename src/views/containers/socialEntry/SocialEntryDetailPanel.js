@@ -8,41 +8,30 @@ import presenters from '@presenters'
 
 
 const mapStateToProps = state => {
-  const { tags } = state
+  const { socialEntry, socialEntryDetailPanel } = state
   const {
-    text,
     tagSymbol,
     tagSuggestions,
-    cursorBeginIndex,
-    cursorEndIndex,
     selectedTagIndex,
-   } = tags
-   const activeTag = tagSuggestions && tagSuggestions[selectedTagIndex]
+  } = socialEntry
+  const { mode } = socialEntryDetailPanel
+  const activeTag = tagSuggestions && tagSuggestions[selectedTagIndex]
 
   return {
     activeTag,
-    text,
+    mode,
     tagSymbol,
-    cursorBeginIndex,
-    cursorEndIndex,
   }
 }
 
 const mapDispatchToProps = () => {
-  // const { RestService } = services
-  // const { pResponseYelpBusinesses } = presenters.Api
-  // // const pResponseUser = pResponseGeneric
-  // // const pResponseTags = pResponseGeneric
-  // //
-  // const searchYelpBusinesses = coordinators.SearchYelpBusinesses({ RestService, pResponseYelpBusinesses })
-  // // const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
-  // // const updateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry })
-  // // const postSocialEntry = coordinators.postSocialEntry({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry })
-  // // const suggestTags = coordinators.suggestTags({ RestService, TagService, pResponseTags, pResponseYelpBusinesses })
-  // //
-  // return {
-  //   searchYelpBusinesses,
-  // }
+  const { UIService } = services
+
+  const toggleMode = mode => UIService.SocialEntryDetailPanel.toggleMode(mode)
+
+  return {
+    toggleMode,
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SocialEntryDetailPanel)

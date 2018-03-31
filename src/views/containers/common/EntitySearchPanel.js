@@ -11,12 +11,19 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  const { RestService } = services
-  const { pResponseYelpBusinesses } = presenters.Api
+  const { RestService, SocialEntryService, SessionService, UIService } = services
+  const { pResponseGeneric, pResponseYelpBusinesses, pRequestUpdateSocialEntry } = presenters.Api
+  const pResponseUser = pResponseGeneric
+  const UpdateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry })
+
   const searchYelpBusinesses = coordinators.SearchYelpBusinesses({ RestService, pResponseYelpBusinesses })
+  const addTagToText = coordinators.addTagToText({ SocialEntryService, UpdateDraftSocialEntry })
+  const toggleMode = mode => UIService.SocialEntryDetailPanel.toggleMode(mode)
 
   return {
+    addTagToText,
     searchYelpBusinesses,
+    toggleMode,
   }
 }
 

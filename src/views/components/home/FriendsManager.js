@@ -44,19 +44,20 @@ class FriendsManager extends Component {
     if (this.props !== nextProps) {
       const { users } = nextProps
       const { searchText } = this.state
-      this.setState({
-        suggestions: searchDictionaryBy(users, 'name', searchText)
-      })
+      let suggestions = []
+      searchDictionaryBy(users, 'name', searchText, suggestions, 15)
+
+      this.setState({ suggestions })
     }
   }
 
   updateText = e => {
     const { searchUsersByText, users } = this.props
     const { value } = e.target
-    this.setState({
-      searchText: value,
-      suggestions: searchDictionaryBy(users, 'name', value)
-    })
+    let suggestions = []
+    searchDictionaryBy(users, 'name', value, suggestions, 15)
+
+    this.setState({ searchText: value, suggestions })
     searchUsersByText && searchUsersByText(value)
   }
 

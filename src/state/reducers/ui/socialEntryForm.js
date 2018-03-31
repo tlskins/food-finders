@@ -3,10 +3,7 @@ import {
 } from '@actions/ui/socialEntry'
 
 
-const initialState = {
-  visible: false,
-}
-
+const initialState = { visible: false }
 
 export const socialEntryForm = ( state = initialState, action ) => {
   switch ( action.type ) {
