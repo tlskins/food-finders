@@ -4,10 +4,10 @@ import {
 
 
 const initialSocialEntryState = {
-  searchText: undefined,
-  searchHandles: undefined,
+  searchText: null,
+  searchHandles: null,
   tagSuggestions: [],
-  tagSymbol: undefined,
+  tagSymbol: null,
   text: '',
   creatableTags: [],
   cursorBeginIndex: 0,
@@ -54,6 +54,8 @@ export const socialEntry = (state = initialSocialEntryState, action) => {
         cursorBeginIndex,
         cursorEndIndex,
       }
+
+      // return { ...state, ...action }
     }
 
     default:

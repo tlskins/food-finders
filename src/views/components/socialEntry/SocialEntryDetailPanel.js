@@ -178,7 +178,7 @@ class SocialEntryDetailPanel extends Component {
 
     return (
       <div className="social-entry-detail-panel">
-        { isEntityTag && mode === 'DISPLAY ENTITY' &&
+        { isEntityTag && mode !== 'SEARCH ENTITY' &&
           this.renderEntityPanel({ activeTag, mapStyle, panelStyle })
         }
         { isEntityTag && mode === 'SEARCH ENTITY' &&
@@ -187,7 +187,7 @@ class SocialEntryDetailPanel extends Component {
         { !isEntityTag && mode === 'EDIT TAGGABLE' &&
           this.renderEditTaggablePanel(editTaggable)
         }
-        { !isEntityTag && mode === 'NONE' && activeTag &&
+        { !isEntityTag && activeTag &&
           this.renderTaggablePanel(activeTag)
         }
       </div>

@@ -16,7 +16,12 @@ export class SocialEntryService extends BaseService {
     return this.getState().socialEntry
   }
 
+  loadDraftSocialEntry = draftSocialEntry => {
+    this.dispatch( actions.updateSocialEntry(draftSocialEntry) )
+  }
+
   refreshTagSuggestions = () => {
+    console.log('SERVICE BEGIN refreshTagSuggestions')
     const { tagDictionary } = this.getState().tags
     const { tagSymbol, searchText, searchHandles } = this.getState().socialEntry
     const tagSuggestions = this._getTagSuggestions({ tagDictionary, tagSymbol, searchText, searchHandles })
@@ -27,6 +32,7 @@ export class SocialEntryService extends BaseService {
   updateSearchText = ({ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex }) => {
     const { tagDictionary } = this.getState().tags
     const tagSuggestions = this._getTagSuggestions({ tagDictionary, tagSymbol, searchText })
+    console.log('SERVICE updateSearchText ',{ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex },' tagSuggestions=',tagSuggestions)
 
     this.dispatch( actions.updateSocialEntry({
       cursorBeginIndex,
@@ -41,6 +47,7 @@ export class SocialEntryService extends BaseService {
   }
 
   updateSearchHandles = ({ tagSymbol, searchHandles, selectedTagIndex }) => {
+    console.log('SERVICE BEGIN updateSearchHandles')
     const { tagDictionary } = this.getState().tags
     const tagSuggestions = this._getTagSuggestions({ tagDictionary, tagSymbol, searchHandles })
 
@@ -67,6 +74,7 @@ export class SocialEntryService extends BaseService {
   }
 
   addTagToText = (tag, updateText = true) => {
+    console.log('SERVICE BEGIN addTagToText')
     const { symbol, handle } = tag
     const { socialEntry } = this.getState()
     let { text, cursorBeginIndex, cursorEndIndex, creatableTags } = socialEntry
@@ -97,7 +105,7 @@ export class SocialEntryService extends BaseService {
 
     if ( searchText != null ) {
       if ( searchText.length > 0 ) {
-        let tagSuggestions = []
+        let tagSuggestions = searchDictionaryByKeys(tagsBySymbol, [searchText])
         searchDictionaryBy(tagsBySymbol, 'name', searchText, tagSuggestions)
         searchDictionaryBy(tagsBySymbol, 'embeddedTaggable.description', searchText, tagSuggestions)
         searchDictionaryByArray(tagsBySymbol, 'embeddedTaggable.synonyms', searchText, tagSuggestions)

@@ -71,7 +71,7 @@ class TagSuggestions extends Component {
                 <div
                   key={i}
                   className={ 'tag-suggestion--' + (t.taggableType || '').toLowerCase() + (selectedTagIndex === i ? ' selected ' : '') }
-                  onClick={ () => onClickTag(t, new Date()) }
+                  onClick={ () => onClickTag(t) }
                   onMouseEnter={ () => onMouseOverTag(i) }
                 >
                   <div className={ 'tag-suggestions-icon--' + (t.taggableType || '').toLowerCase() }/>

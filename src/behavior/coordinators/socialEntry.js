@@ -13,6 +13,7 @@ export const updateDraftSocialEntry = ({
   pResponseUser,
   pRequestUpdateSocialEntry
 }) => async (text, creatableTags, requestedAt = new Date()) => {
+  console.log('COORDINATOR updateDraftSocialEntry BEGIN')
   const userId = SessionService.currentUserId()
   const payload = pRequestUpdateSocialEntry({ text, creatableTags })
 
@@ -50,6 +51,7 @@ export const updateSearchText = ({
   cursorBeginIndex,
   cursorEndIndex,
 }) => {
+  console.log('COORDINATOR updateSearchText ',{ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex })
   const { creatableTags, tagSuggestions } = SocialEntryService.getSocialEntry()
   const editTaggable = TaggablesService.getEditTaggable()
   const { edited } = editTaggable
@@ -87,6 +89,7 @@ export const updateSearchText = ({
   if ( tagSymbol ) {
     UpdateDraftSocialEntry(text, creatableTags)
   }
+  console.log('COORDINATOR updateSearchText END')
 }
 
 
@@ -102,6 +105,7 @@ export const updateCursorTextData = ({
   cursorBeginIndex,
   cursorEndIndex,
 }) => {
+  console.log('COORDINATOR updateCursorTextData BEGIN')
   // Save any edited taggable to creatable tag
   const editTaggable = TaggablesService.getEditTaggable()
   const { edited: taggableEdited } = editTaggable
@@ -133,6 +137,7 @@ export const updateSearchHandles = ({ SocialEntryService, SuggestTags }) => asyn
   searchHandles,
   selectedTagIndex,
 }) => {
+  console.log('COORDINATOR updateSearchHandles BEGIN')
   SocialEntryService.updateSearchHandles({ tagSymbol, searchHandles, selectedTagIndex })
   if ( tagSymbol ) {
     await SuggestTags({ symbol: tagSymbol, handles: searchHandles, resultsPerPage: 5, page: 1 })
@@ -145,6 +150,7 @@ export const updateSearchHandles = ({ SocialEntryService, SuggestTags }) => asyn
 
 
 export const addTagToText = ({ SocialEntryService, UpdateDraftSocialEntry }) => async ( tag, updateText = true ) => {
+  console.log('COORDINATOR addTagToText BEGIN')
   SocialEntryService.addTagToText(tag, updateText)
   const { creatableTags, text } = SocialEntryService.getSocialEntry()
   UpdateDraftSocialEntry(text, creatableTags)

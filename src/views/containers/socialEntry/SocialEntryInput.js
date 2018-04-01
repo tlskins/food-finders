@@ -12,6 +12,7 @@ const mapStateToProps = state => {
   const { user } = session
   const { visible } = socialEntryForm
   const draftSocialEntry = user ? user.draftSocialEntry : {}
+  console.log('CONTAINER SocialEntryInput, socialEntry=',socialEntry)
 
   return {
     draftSocialEntry,
@@ -30,6 +31,7 @@ const mapDispatchToProps = () => {
   const SuggestTags = coordinators.SuggestTags({ RestService, TagService, pResponseTags, pResponseYelpBusinesses })
 
   const addTagToText = coordinators.addTagToText({ SocialEntryService, UpdateDraftSocialEntry })
+  const loadDraftSocialEntry = draftSocialEntry => SocialEntryService.loadDraftSocialEntry(draftSocialEntry)
   const postSocialEntry = coordinators.postSocialEntry({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry })
   const resetSearchCriteria = () => SocialEntryService.resetSearchCriteria()
   const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
@@ -45,6 +47,7 @@ const mapDispatchToProps = () => {
 
   return {
     addTagToText,
+    loadDraftSocialEntry,
     postSocialEntry,
     resetSearchCriteria,
     toggleVisibility,

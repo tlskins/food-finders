@@ -17,9 +17,9 @@ const initialDraftSocialEntry = { text: '', tags: []}
 
 class SocialEntryInput extends Component {
   constructor(props) {
-    console.log('SocialEntryInput constructor called')
     super(props)
-    const { draftSocialEntry } = props
+    const { draftSocialEntry, loadDraftSocialEntry } = props
+    loadDraftSocialEntry(draftSocialEntry)
 
     this.state = {
       lastEditAt: undefined,
@@ -74,7 +74,7 @@ class SocialEntryInput extends Component {
       // right arrow key
       if ( e.keyCode === 39 ) {
         const selectedTag = tagSuggestions[selectedTagIndex]
-        const selectedTaggable = selectedTag.embeddedTaggable
+        const selectedTaggable = selectedTag && selectedTag.embeddedTaggable
         if ( selectedTaggable && selectedTaggable.children && selectedTaggable.children.length > 0 ) {
           e.stopPropagation()
           e.preventDefault()
@@ -146,7 +146,7 @@ class SocialEntryInput extends Component {
       return { cursorBeginIndex, cursorEndIndex, tagSymbol, text, searchText }
     }
     else {
-      return { cursorBeginIndex, cursorEndIndex, tagSymbol: undefined, text, searchText: '' }
+      return { cursorBeginIndex, cursorEndIndex, tagSymbol: null, text, searchText: '' }
     }
   }
 
@@ -263,6 +263,7 @@ SocialEntryInput.propTypes = {
   selectedTagIndex: PropTypes.numbrer,
 
   addTagToText: PropTypes.func,
+  loadDraftSocialEntry: PropTypes.func,
   postSocialEntry: PropTypes.func,
   resetSearchCriteria: PropTypes.func,
   toggleVisibility: PropTypes.func,
