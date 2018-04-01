@@ -139,15 +139,17 @@ export class SocialEntryService extends BaseService {
       const { symbol, handle, taggableObject } = t
       const tagPattern = new RegExp('\\' + symbol + handle,'i')
       // validate tag still exists within text AND reject duplicates
-      if ( tagPattern.test(text) && taggableObject.tmpId !== newTag.taggableObject.tmpId ) {
+      if ( tagPattern.test(text) && ( !newTag || taggableObject.tmpId !== newTag.taggableObject.tmpId ) ) {
         validCreatableTags.push(t)
       }
     })
     // Validate new tag
-    const { symbol, handle } = newTag
-    const tagPattern = new RegExp('\\' + symbol + handle,'i')
-    if ( tagPattern.test(text) ) {
-      validCreatableTags.push(newTag)
+    if ( newTag ) {
+      const { symbol, handle } = newTag
+      const tagPattern = new RegExp('\\' + symbol + handle,'i')
+      if ( tagPattern.test(text) ) {
+        validCreatableTags.push(newTag)
+      }
     }
     sortByAttribute(validCreatableTags, 'handle')
 
