@@ -22,6 +22,10 @@ export class TaggablesService extends BaseService {
     this.dispatch( actions.loadEditTaggable(taggableType, taggable) )
   }
 
+  loadNewTaggable = (taggableType, taggable) => {
+    this.dispatch( actions.loadNewTaggable(taggableType, taggable) )
+  }
+
   editTaggable = taggable => {
     this.dispatch( actions.editTaggable(taggable) )
   }

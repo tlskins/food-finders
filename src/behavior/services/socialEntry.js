@@ -4,11 +4,14 @@ import {
   searchDictionaryBy,
   searchDictionaryByArray,
   searchDictionaryByKeys,
+  sortByAttribute,
 } from '~/utils'
+
+import uniqid from 'uniqid'
 
 
 export class SocialEntryService extends BaseService {
-  
+
   getSocialEntry = () => {
     return this.getState().socialEntry
   }
@@ -63,13 +66,16 @@ export class SocialEntryService extends BaseService {
     this.dispatch( actions.updateSocialEntry({ selectedTagIndex }) )
   }
 
-  addTagToText = tag => {
+  addTagToText = (tag, updateText = true) => {
     const { symbol, handle } = tag
     const { socialEntry } = this.getState()
     let { text, cursorBeginIndex, cursorEndIndex, creatableTags } = socialEntry
-    const newText = text.slice(0, cursorBeginIndex) + symbol + handle + text.slice(cursorEndIndex)
-    const creatableEntityTag = this._getCreatableEntityTag(tag, creatableTags)
-    creatableTags = [ ...creatableTags, creatableEntityTag ]
+    let newText = text
+    if ( updateText ) {
+      newText = text.slice(0, cursorBeginIndex) + symbol + handle + text.slice(cursorEndIndex)
+    }
+    const creatableTag = this._getCreatableTag(tag, cursorBeginIndex, cursorEndIndex)
+    creatableTags = this._validateCreatableTags(newText, creatableTags, creatableTag)
 
     this.dispatch( actions.updateSocialEntry({
       text: newText,
@@ -110,12 +116,41 @@ export class SocialEntryService extends BaseService {
     return roots
   }
 
-  _getCreatableEntityTag = (tag, creatableTags) => {
+  _getCreatableTag = (tag, cursorBeginIndex, cursorEndIndex) => {
     const { id, yelpBusiness, taggableType, symbol, handle } = tag
+
     if ( !id ) {
       if ( taggableType === 'Entity' && yelpBusiness ) {
-        return { taggableType, symbol, handle }
+        return { taggableType, symbol, handle, cursorBeginIndex, cursorEndIndex }
+      }
+      else if ( taggableType === 'Food'  ) {
+        if ( !tag.tmpId ) {
+          tag.tmpId = uniqid()
+        }
+        return { taggableType, symbol, handle, cursorBeginIndex, cursorEndIndex, taggableObject: tag }
       }
     }
+  }
+
+  _validateCreatableTags = (text, creatableTags, newTag) => {
+    const validCreatableTags = []
+    // Validate old tags
+    creatableTags.filter( t => t ).forEach( t => {
+      const { symbol, handle, taggableObject } = t
+      const tagPattern = new RegExp('\\' + symbol + handle,'i')
+      // validate tag still exists within text AND reject duplicates
+      if ( tagPattern.test(text) && taggableObject.tmpId !== newTag.taggableObject.tmpId ) {
+        validCreatableTags.push(t)
+      }
+    })
+    // Validate new tag
+    const { symbol, handle } = newTag
+    const tagPattern = new RegExp('\\' + symbol + handle,'i')
+    if ( tagPattern.test(text) ) {
+      validCreatableTags.push(newTag)
+    }
+    sortByAttribute(validCreatableTags, 'handle')
+
+    return validCreatableTags
   }
 }

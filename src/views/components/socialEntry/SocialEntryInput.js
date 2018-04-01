@@ -59,6 +59,13 @@ class SocialEntryInput extends Component {
     updateSearchText({ ...cursorTextData, selectedTagIndex })
   }
 
+  onClick = e => {
+    const { updateCursorTextData } = this.props
+    const { selectionStart, value } = e.target
+    const cursorTextData = this.calculateCursorTextData(value, selectionStart)
+    updateCursorTextData({ ...cursorTextData })
+  }
+
   onKeyDown = e => {
     const { addTagToText, updateSearchHandles, updateSelectedTagIndex } = this.props
     let { selectedTagIndex } = this.state
@@ -66,11 +73,11 @@ class SocialEntryInput extends Component {
     if ( tagSuggestions.length > 0 ) {
       // right arrow key
       if ( e.keyCode === 39 ) {
-        e.stopPropagation()
-        e.preventDefault()
         const selectedTag = tagSuggestions[selectedTagIndex]
         const selectedTaggable = selectedTag.embeddedTaggable
         if ( selectedTaggable && selectedTaggable.children && selectedTaggable.children.length > 0 ) {
+          e.stopPropagation()
+          e.preventDefault()
           const childTagHandles = selectedTaggable.children.filter( c => {
             return c.tagSymbol && c.tagHandle
           }).map( c => c.tagSymbol + c.tagHandle )
@@ -81,10 +88,10 @@ class SocialEntryInput extends Component {
       }
       // left arrow key
       else if ( e.keyCode === 37 ) {
-        e.stopPropagation()
-        e.preventDefault()
         const selectedTag = tagSuggestions[selectedTagIndex]
         if ( selectedTag.embeddedTaggable && selectedTag.embeddedTaggable.parent ) {
+          e.stopPropagation()
+          e.preventDefault()
           const parentTaggable = selectedTag.embeddedTaggable.parent
           const parentHandle = parentTaggable.tagSymbol + parentTaggable.tagHandle
           const parentSiblingHandles = (parentTaggable && parentTaggable.siblings) || []
@@ -96,29 +103,35 @@ class SocialEntryInput extends Component {
       }
       // down arrow key
       else if ( e.keyCode === 40 ) {
-        e.stopPropagation()
-        e.preventDefault()
-        selectedTagIndex += 1
-        if ( selectedTagIndex >= tagSuggestions.length ) {
-          selectedTagIndex = 0
+        if ( tagSuggestions.length > 1 ) {
+          e.stopPropagation()
+          e.preventDefault()
+          selectedTagIndex += 1
+          if ( selectedTagIndex >= tagSuggestions.length ) {
+            selectedTagIndex = 0
+          }
+          updateSelectedTagIndex(selectedTagIndex)
         }
-        updateSelectedTagIndex(selectedTagIndex)
       }
       // up arrow key
       else if ( e.keyCode === 38 ) {
-        e.stopPropagation()
-        e.preventDefault()
-        selectedTagIndex -= 1
-        if ( selectedTagIndex < 0 ) {
-          selectedTagIndex = tagSuggestions.length - 1
+        if ( tagSuggestions.length > 1 ) {
+          e.stopPropagation()
+          e.preventDefault()
+          selectedTagIndex -= 1
+          if ( selectedTagIndex < 0 ) {
+            selectedTagIndex = tagSuggestions.length - 1
+          }
+          updateSelectedTagIndex(selectedTagIndex)
         }
-        updateSelectedTagIndex(selectedTagIndex)
       }
       // enter arrow key
       else if ( e.keyCode === 13 ) {
-        e.stopPropagation()
-        e.preventDefault()
-        addTagToText( tagSuggestions[selectedTagIndex] )
+        if ( tagSuggestions.length > 0 ) {
+          e.stopPropagation()
+          e.preventDefault()
+          addTagToText( tagSuggestions[selectedTagIndex] )
+        }
       }
     }
   }
@@ -196,6 +209,7 @@ class SocialEntryInput extends Component {
                 value={ text }
                 onChange={ this.updateText }
                 onKeyDown={ this.onKeyDown }
+                onClick={ this.onClick }
                 autoFocus
                 tabIndex={ 1 }
                 rows={ 7 }
@@ -252,6 +266,7 @@ SocialEntryInput.propTypes = {
   postSocialEntry: PropTypes.func,
   resetSearchCriteria: PropTypes.func,
   toggleVisibility: PropTypes.func,
+  updateCursorTextData: PropTypes.func,
   updateSearchHandles: PropTypes.func,
   updateSearchText: PropTypes.func,
   updateSelectedTagIndex: PropTypes.func,

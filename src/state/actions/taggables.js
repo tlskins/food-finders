@@ -6,6 +6,8 @@ export const DELETE_TAGGABLE = 'DELETE_TAGGABLE'
 
 export const LOAD_EDIT_TAGGABLE = 'LOAD_EDIT_TAGGABLE'
 
+export const LOAD_NEW_TAGGABLE = 'LOAD_NEW_TAGGABLE'
+
 export const EDIT_TAGGABLE = 'EDIT_TAGGABLE'
 
 export const EDIT_TAGGABLE_HANDLE = 'EDIT_TAGGABLE_HANDLE'
@@ -20,6 +22,8 @@ export const loadTaggables = (taggableType, taggables, overwrite = false) => ({ 
 export const deleteTaggable = (taggableType, taggableId) => ({ type: DELETE_TAGGABLE, taggableType, taggableId })
 
 export const loadEditTaggable = (taggableType, taggable) => ({ type: LOAD_EDIT_TAGGABLE, taggableType, taggable })
+
+export const loadNewTaggable = (taggableType, taggable) => ({ type: LOAD_NEW_TAGGABLE, taggableType, taggable })
 
 export const editTaggable = taggable => ({ type: EDIT_TAGGABLE, taggable })
 

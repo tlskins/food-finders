@@ -50,39 +50,81 @@ export const updateSearchText = ({
   cursorBeginIndex,
   cursorEndIndex,
 }) => {
-  SocialEntryService.updateSearchText({ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex })
-  const { edited: taggableEdited } = TaggablesService.getEditTaggable()
+  const { creatableTags, tagSuggestions } = SocialEntryService.getSocialEntry()
+  const editTaggable = TaggablesService.getEditTaggable()
+  const { edited } = editTaggable
 
-  if ( tagSymbol ) {
-    const { creatableTags } = SocialEntryService.getSocialEntry()
-    UpdateDraftSocialEntry(text, creatableTags)
-    if ( tagSymbol && tagSymbol.length > 0 ) {
-      await SuggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
-      SocialEntryService.refreshTagSuggestions()
-
-      // Trigger new taggable if no tags exist for a creatable tag symbol
-      // TODO - need mapping table like one in TaggableManagerHeader but with the symbol... need mapping from API
-      const { tagSuggestions } = SocialEntryService.getSocialEntry()
-      if ( tagSymbol === '^' && tagSuggestions.length === 0 ) {
-        if ( !taggableEdited ) {
-          TaggablesService.newTaggable({ taggableType: 'foods', handle: searchText })
-          UIService.SocialEntryDetailPanel.toggleMode('EDIT TAGGABLE')
-        }
-        else {
-          TaggablesService.editTaggableHandle(searchText)
-        }
-      }
-      else if ( taggableEdited ) {
-        TaggablesService.resetTaggable()
-      }
+  // creatable tags
+  if ( edited ) {
+    if ( tagSymbol ) {
+      TaggablesService.editTaggableHandle(searchText)
+      UIService.SocialEntryDetailPanel.toggleMode('EDIT TAGGABLE')
     }
+    else {
+      addTagToText({ SocialEntryService, UpdateDraftSocialEntry })(editTaggable, false)
+      TaggablesService.resetTaggable()
+      UIService.SocialEntryDetailPanel.toggleMode('NONE')
+    }
+  }
+  else if ( tagSymbol === '^' && tagSuggestions.length === 0 ) {
+    const creatableFoodTag = creatableTags.find( t => t.symbol === '^' && t.handle === searchText )
+    if ( !creatableFoodTag ) {
+      TaggablesService.newTaggable({ taggableType: 'Food', symbol: '^', handle: searchText })
+    }
+    else {
+      TaggablesService.loadNewTaggable(creatableFoodTag.taggableType, creatableFoodTag.taggableObject)
+    }
+    UIService.SocialEntryDetailPanel.toggleMode('EDIT TAGGABLE')
   }
   else {
-    SocialEntryService.resetSearchCriteria()
-    if ( taggableEdited ) {
-      TaggablesService.resetTaggable()
+    UIService.SocialEntryDetailPanel.toggleMode('NONE')
+  }
+
+  // tag suggestions
+  SocialEntryService.updateSearchText({ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex })
+  await SuggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
+  SocialEntryService.refreshTagSuggestions()
+  if ( tagSymbol ) {
+    UpdateDraftSocialEntry(text, creatableTags)
+  }
+}
+
+
+export const updateCursorTextData = ({
+  SocialEntryService,
+  UpdateDraftSocialEntry,
+  TaggablesService,
+  UIService,
+}) => async ({
+  tagSymbol,
+  text,
+  searchText,
+  cursorBeginIndex,
+  cursorEndIndex,
+}) => {
+  // Save any edited taggable to creatable tag
+  const editTaggable = TaggablesService.getEditTaggable()
+  const { edited: taggableEdited } = editTaggable
+  if ( taggableEdited ) {
+    addTagToText({ SocialEntryService, UpdateDraftSocialEntry })(editTaggable, false)
+    TaggablesService.resetTaggable()
+  }
+
+  if ( tagSymbol ) {
+    if ( tagSymbol === '^') {
+      const { creatableTags } = SocialEntryService.getSocialEntry()
+      const creatableFoodTag = creatableTags.find( t => t.symbol === '^' && t.handle === searchText )
+      if ( creatableFoodTag ) {
+        TaggablesService.loadNewTaggable(creatableFoodTag.taggableType, creatableFoodTag.taggableObject)
+        UIService.SocialEntryDetailPanel.toggleMode('EDIT TAGGABLE')
+        SocialEntryService.updateSearchText({ tagSymbol, searchText, text, cursorBeginIndex, cursorEndIndex })
+        return
+      }
     }
   }
+
+  SocialEntryService.updateSearchText({ tagSymbol, tagSuggestions: [], searchText, text, cursorBeginIndex, cursorEndIndex })
+  UIService.SocialEntryDetailPanel.toggleMode('NONE')
 }
 
 
@@ -102,8 +144,8 @@ export const updateSearchHandles = ({ SocialEntryService, SuggestTags }) => asyn
 }
 
 
-export const addTagToText = ({ SocialEntryService, UpdateDraftSocialEntry }) => async ( tag ) => {
-  SocialEntryService.addTagToText( tag )
+export const addTagToText = ({ SocialEntryService, UpdateDraftSocialEntry }) => async ( tag, updateText = true ) => {
+  SocialEntryService.addTagToText(tag, updateText)
   const { creatableTags, text } = SocialEntryService.getSocialEntry()
   UpdateDraftSocialEntry(text, creatableTags)
 }

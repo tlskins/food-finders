@@ -35,6 +35,12 @@ const mapDispatchToProps = () => {
   const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
   const updateSearchHandles = coordinators.updateSearchHandles({ SocialEntryService, SuggestTags })
   const updateSearchText = coordinators.updateSearchText({ SocialEntryService, SuggestTags, UpdateDraftSocialEntry, TaggablesService, UIService })
+  const updateCursorTextData = coordinators.updateCursorTextData({
+    SocialEntryService,
+    UpdateDraftSocialEntry,
+    TaggablesService,
+    UIService,
+  })
   const updateSelectedTagIndex = selectedTagIndex => SocialEntryService.updateSelectedTagIndex(selectedTagIndex)
 
   return {
@@ -42,6 +48,7 @@ const mapDispatchToProps = () => {
     postSocialEntry,
     resetSearchCriteria,
     toggleVisibility,
+    updateCursorTextData,
     updateSearchHandles,
     updateSearchText,
     updateSelectedTagIndex,

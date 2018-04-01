@@ -1,6 +1,7 @@
 import {
   LOAD_TAGGABLES,
   LOAD_EDIT_TAGGABLE,
+  LOAD_NEW_TAGGABLE,
   DELETE_TAGGABLE,
   EDIT_TAGGABLE,
   RESET_TAGGABLE,
@@ -12,6 +13,7 @@ import {
 const initialEditTaggableState = { edited: false, taggableType: undefined }
 
 const newTaggableState = {
+  symbol: null,
   handle: "",
   name: "",
   synonyms: [],
@@ -59,6 +61,11 @@ export const editTaggable = (state = initialEditTaggableState, action) => {
       const { taggable, taggableType } = action
 
       return { taggableType, ...taggable, edited: false }
+    }
+    case LOAD_NEW_TAGGABLE: {
+      const { taggable, taggableType } = action
+
+      return { taggableType, ...taggable, edited: true }
     }
     case EDIT_TAGGABLE: {
       return { ...state, ...action.taggable, edited: true }

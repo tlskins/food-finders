@@ -98,8 +98,15 @@ class SocialEntryDetailPanel extends Component {
     return (
       <div className="taggable-panel">
         <div className="tag-section">
-          <div className="section-hdr">{ taggableType }</div>
-          <div className="section-hdr">{ handle }</div>
+          <div className="section-hdr">
+            <span className="bold-attribute">Create New </span>
+          </div>
+          <div className="section-hdr">
+            <span className="bold-value">{ taggableType }</span>
+          </div>
+          <div className="section-hdr">
+            <span className="bold-value">{ handle }</span>
+          </div>
         </div>
         <div className="taggable-section">
           <div className="section-body">
@@ -166,7 +173,6 @@ class SocialEntryDetailPanel extends Component {
     } = this.props
     const { mode } = this.state
     const isEntityTag = tagSymbol === '@'
-    const { edited } = editTaggable
 
     console.log('mode=',mode,' edit taggable=',editTaggable)
 
@@ -178,11 +184,11 @@ class SocialEntryDetailPanel extends Component {
         { isEntityTag && mode === 'SEARCH ENTITY' &&
           this.renderSearchEntityPanel({ mapStyle, panelStyle })
         }
-        { !isEntityTag && activeTag &&
-          this.renderTaggablePanel(activeTag)
-        }
-        { !isEntityTag && edited &&
+        { !isEntityTag && mode === 'EDIT TAGGABLE' &&
           this.renderEditTaggablePanel(editTaggable)
+        }
+        { !isEntityTag && mode === 'NONE' && activeTag &&
+          this.renderTaggablePanel(activeTag)
         }
       </div>
     )
