@@ -6,6 +6,7 @@ import {
 const initialSocialEntryState = {
   searchText: null,
   searchHandles: null,
+  tags: [],
   tagSuggestions: [],
   tagSymbol: null,
   text: '',
@@ -19,32 +20,22 @@ export const socialEntry = (state = initialSocialEntryState, action) => {
   switch (action.type) {
     case UPDATE_SOCIAL_ENTRY: {
       const {
-        searchText: oldSearchText,
-        tagSuggestions: oldTagSuggestions,
-        tagSymbol: oldTagSymbol,
-        text: oldText,
-        searchHandles: oldSearchHandles,
-        selectedTagIndex: oldSelectedTagIndex,
-        creatableTags: oldCreatableTags,
-        cursorBeginIndex: oldCursorBeginIndex,
-        cursorEndIndex: oldCursorEndIndex,
-      } = state
-
-      const {
-        searchText = oldSearchText,
-        tagSuggestions = oldTagSuggestions,
-        tagSymbol = oldTagSymbol,
-        text = oldText,
-        searchHandles = oldSearchHandles,
-        selectedTagIndex = oldSelectedTagIndex,
-        creatableTags = oldCreatableTags,
-        cursorBeginIndex = oldCursorBeginIndex,
-        cursorEndIndex = oldCursorEndIndex,
+        searchText = state.searchText,
+        tags = state.tags,
+        tagSuggestions = state.tagSuggestions,
+        tagSymbol = state.tagSymbol,
+        text = state.text,
+        searchHandles = state.searchHandles,
+        selectedTagIndex = state.selectedTagIndex,
+        creatableTags = state.creatableTags,
+        cursorBeginIndex = state.cursorBeginIndex,
+        cursorEndIndex = state.cursorEndIndex,
       } = action
 
       return {
         ...state,
         searchText,
+        tags,
         tagSuggestions,
         tagSymbol,
         text,
@@ -54,8 +45,6 @@ export const socialEntry = (state = initialSocialEntryState, action) => {
         cursorBeginIndex,
         cursorEndIndex,
       }
-
-      // return { ...state, ...action }
     }
 
     default:

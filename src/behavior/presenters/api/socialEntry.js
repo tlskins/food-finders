@@ -8,3 +8,11 @@ export const pRequestUpdateSocialEntry = ({ text, creatableTags }) => {
   const user = { draft_social_entry: draftSocialEntry }
   return { user }
 }
+
+
+export const pRequestPostSocialEntry = ({ text, creatableTags }) => {
+  const req = {}
+  req.text = text
+  req.creatable_tags = snakeCaseify(creatableTags)
+  return req
+}

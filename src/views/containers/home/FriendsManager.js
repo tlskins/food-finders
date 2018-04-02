@@ -28,8 +28,7 @@ const mapDispatchToProps = () => {
   const { RestService, SessionService, UIService, UsersService } = services
 
   const toggleVisibility = visible => UIService.FriendsManager.toggleVisibility(visible)
-  const { pResponseGeneric  } = presenters.Api
-  const pResponseUser = pResponseGeneric
+  const { pResponseGeneric, pResponseUser  } = presenters.Api
   const pResponseUsers = pResponseGeneric
   const pResponseRelationships = pResponseGeneric
 

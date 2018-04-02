@@ -24,20 +24,11 @@ const mapStateToProps = state => {
 const mapDispatchToProps = () => {
   const { RestService, RouterService, SessionService, UIService } = services
   const { EmailSignIn, EmailSignUp } = coordinators
-  const { pResponseGeneric: pResponseUser } = presenters.Api
+  const { pResponseUser } = presenters.Api
 
   const signIn = EmailSignIn({ RestService, RouterService, SessionService, UIService, HandleError, pResponseUser })
-
   const signUp = EmailSignUp({ RestService, SessionService, UIService })
-
-  // const resendConfirmation = coordinators.ResendConfirmation({ UIService, RestService })
-  // const getNewPassword = coordinators.ForgotPassword({ RestService, SessionService, UIService })
-  //
-  // const close = () => RouterService.back()
-  // const flashError = message => UIService.FlashMessage.displayFailureMessage( message )
-  // const setErrors = errors => UIService.Errors.updateErrors({ errors, namespace: 'loginForm' })
   const toggleMode = mode => UIService.LoginForm.toggleMode( mode )
-
   const redirect = () => RouterService.replace({ pathname: '/' })
 
   return {

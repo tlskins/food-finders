@@ -12,8 +12,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = () => {
   const { RestService, SocialEntryService, SessionService, UIService } = services
-  const { pResponseGeneric, pResponseYelpBusinesses, pRequestUpdateSocialEntry } = presenters.Api
-  const pResponseUser = pResponseGeneric
+  const { pResponseUser, pResponseYelpBusinesses, pRequestUpdateSocialEntry } = presenters.Api
   const UpdateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry })
 
   const searchYelpBusinesses = coordinators.SearchYelpBusinesses({ RestService, pResponseYelpBusinesses })

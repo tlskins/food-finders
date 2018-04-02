@@ -28,6 +28,7 @@ class SocialEntryInput extends Component {
       searchHandles: undefined,
       searchStatus: undefined,
       draftSocialEntry: draftSocialEntry || initialDraftSocialEntry,
+      tags: [],
       tagSuggestions: [],
       tagSymbol: undefined,
       selectedTagIndex: 0,
@@ -192,6 +193,8 @@ class SocialEntryInput extends Component {
       return null
     }
 
+    const allTags = [...tags, ...creatableTags]
+
     return (
       <div className="modal-form-container">
         <div className="modal-screen"></div>
@@ -199,7 +202,7 @@ class SocialEntryInput extends Component {
           <div className="modal-section">
             <img className="close" src={ close } onClick={ this.close } alt="close-form"/>
             <div className='social-entry-form-header item-header'> New Social Entry </div>
-            <SocialEntryRating tags={ tags } />
+            <SocialEntryRating tags={ allTags } />
           </div>
 
           <div className="modal-column-section">
@@ -260,7 +263,7 @@ SocialEntryInput.propTypes = {
   text: PropTypes.string,
   searchText: PropTypes.string,
   searchHandles: PropTypes.arrayOf(PropTypes.string),
-  selectedTagIndex: PropTypes.numbrer,
+  selectedTagIndex: PropTypes.number,
 
   addTagToText: PropTypes.func,
   loadDraftSocialEntry: PropTypes.func,

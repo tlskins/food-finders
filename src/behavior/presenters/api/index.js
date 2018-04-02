@@ -4,6 +4,7 @@ import * as newsfeedApiPresenters from './newsfeed'
 import * as taggableApiPresenters from './taggable'
 import * as hierarchiesApiPresenters from './hierarchies'
 import * as socialEntryApiPresenters from './socialEntry'
+import * as userApiPresenters from './user'
 
 
 export default {
@@ -13,4 +14,5 @@ export default {
   ...taggableApiPresenters,
   ...hierarchiesApiPresenters,
   ...socialEntryApiPresenters,
+  ...userApiPresenters,
 }

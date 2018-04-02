@@ -128,14 +128,16 @@ export class SocialEntryService extends BaseService {
     const { id, yelpBusiness, taggableType, symbol, handle } = tag
 
     if ( !id ) {
+      if ( !tag.tmpId ) {
+        // Add id to tag to identify uniqueness
+        tag.tmpId = uniqid()
+      }
+
       if ( taggableType === 'Entity' && yelpBusiness ) {
-        return { taggableType, symbol, handle, cursorBeginIndex, cursorEndIndex }
+        return { taggableType, symbol, handle, name: symbol + handle, taggableObject: tag }
       }
       else if ( taggableType === 'Food'  ) {
-        if ( !tag.tmpId ) {
-          tag.tmpId = uniqid()
-        }
-        return { taggableType, symbol, handle, cursorBeginIndex, cursorEndIndex, taggableObject: tag }
+        return { taggableType, symbol, handle, name: symbol + handle, taggableObject: tag }
       }
     }
   }
@@ -147,7 +149,8 @@ export class SocialEntryService extends BaseService {
       const { symbol, handle, taggableObject } = t
       const tagPattern = new RegExp('\\' + symbol + handle,'i')
       // validate tag still exists within text AND reject duplicates
-      if ( tagPattern.test(text) && ( !newTag || taggableObject.tmpId !== newTag.taggableObject.tmpId ) ) {
+      const newTagId = newTag && newTag.taggableObject && newTag.taggableObject.tmpId
+      if ( tagPattern.test(text) && ( !newTagId || taggableObject.tmpId !== newTagId ) ) {
         validCreatableTags.push(t)
       }
     })

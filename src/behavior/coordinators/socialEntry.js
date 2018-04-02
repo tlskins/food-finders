@@ -27,12 +27,13 @@ export const postSocialEntry = ({
   RestService,
   SessionService,
   pResponseUser,
-  pRequestUpdateSocialEntry
+  pRequestPostSocialEntry
 }) => async (text, creatableTags) => {
   const userId = SessionService.currentUserId()
-  const payload = pRequestUpdateSocialEntry({ text, creatableTags })
+  const payload = pRequestPostSocialEntry({ text, creatableTags })
 
   let user = await RestService.post('/users/' + userId + '/publish_draft_social_entry', payload )
+  // let user = await RestService.post('/users/' + userId + '/publish_draft_social_entry', { text: text, creatable_tags: creatableTags } )
   user = pResponseUser(user)
   SessionService.setUserSession(user)
 }
