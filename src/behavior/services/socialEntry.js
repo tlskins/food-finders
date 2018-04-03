@@ -106,6 +106,7 @@ export class SocialEntryService extends BaseService {
     if ( searchText != null ) {
       if ( searchText.length > 0 ) {
         let tagSuggestions = searchDictionaryByKeys(tagsBySymbol, [searchText])
+        searchDictionaryBy(tagsBySymbol, 'handle', searchText, tagSuggestions)
         searchDictionaryBy(tagsBySymbol, 'name', searchText, tagSuggestions)
         searchDictionaryBy(tagsBySymbol, 'embeddedTaggable.description', searchText, tagSuggestions)
         searchDictionaryByArray(tagsBySymbol, 'embeddedTaggable.synonyms', searchText, tagSuggestions)

@@ -31,7 +31,15 @@ const mapDispatchToProps = () => {
 
   const addTagToText = coordinators.addTagToText({ SocialEntryService, UpdateDraftSocialEntry })
   const loadDraftSocialEntry = draftSocialEntry => SocialEntryService.loadDraftSocialEntry(draftSocialEntry)
-  const postSocialEntry = coordinators.postSocialEntry({ RestService, SessionService, pResponseUser, pRequestPostSocialEntry })
+  const postSocialEntry = coordinators.postSocialEntry({
+    RestService,
+    SessionService,
+    SocialEntryService,
+    TaggablesService,
+    pResponseUser,
+    pRequestPostSocialEntry,
+    UpdateDraftSocialEntry,
+  })
   const resetSearchCriteria = () => SocialEntryService.resetSearchCriteria()
   const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
   const updateSearchHandles = coordinators.updateSearchHandles({ SocialEntryService, SuggestTags })

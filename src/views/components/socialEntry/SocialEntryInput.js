@@ -168,10 +168,11 @@ class SocialEntryInput extends Component {
 
   onPost = async () => {
     const { postSocialEntry } = this.props
-    const { text, creatableTags } = this.state
+    // const { text, creatableTags } = this.state
 
     this.clearTagSearch()
-    await postSocialEntry(text, creatableTags)
+    // await postSocialEntry(text, creatableTags)
+    await postSocialEntry()
     this.props.toggleVisibility(false)
   }
 
