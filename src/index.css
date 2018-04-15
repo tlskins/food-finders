@@ -907,6 +907,39 @@ body {
   transition: border-bottom 0.2s ease-in-out;
 }
 
+.newsfeed-item-footer {
+  display: flex;
+  flex-direction: row;
+  /* border: 1px solid #101820; */
+  /* padding: 5px; */
+}
+
+.newsfeed-item-btn {
+  margin-right: 30px;
+  height: 25px;
+  width: 25px;
+}
+
+.reply-btn {
+  background: url("./_res/images/icons8-reply-all-arrow-filled-50.png") no-repeat;
+  background-size: contain;
+}
+
+.reply-btn:hover {
+  background: url("./_res/images/icons8-reply-all-arrow-filled-50-active.png") no-repeat;
+  background-size: contain;
+}
+
+.like-btn {
+  background: url("./_res/images/icons8-facebook-like-48.png") no-repeat;
+  background-size: contain;
+}
+
+.like-btn:hover {
+  background: url("./_res/images/icons8-facebook-like-48-active.png") no-repeat;
+  background-size: contain;
+}
+
 .item-sub-header {
   color: #656666;
   font-size: 15px;

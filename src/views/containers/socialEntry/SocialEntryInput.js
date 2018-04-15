@@ -43,7 +43,13 @@ const mapDispatchToProps = () => {
   const resetSearchCriteria = () => SocialEntryService.resetSearchCriteria()
   const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
   const updateSearchHandles = coordinators.updateSearchHandles({ SocialEntryService, SuggestTags })
-  const updateSearchText = coordinators.updateSearchText({ SocialEntryService, SuggestTags, UpdateDraftSocialEntry, TaggablesService, UIService })
+  const updateSearchText = coordinators.updateSearchText({
+    SocialEntryService,
+    SuggestTags,
+    UpdateDraftSocialEntry,
+    TaggablesService,
+    UIService
+  })
   const updateCursorTextData = coordinators.updateCursorTextData({
     SocialEntryService,
     UpdateDraftSocialEntry,

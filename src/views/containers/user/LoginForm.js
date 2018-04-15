@@ -22,11 +22,19 @@ const mapStateToProps = state => {
 
 
 const mapDispatchToProps = () => {
-  const { RestService, RouterService, SessionService, UIService } = services
+  const { RestService, RouterService, SessionService, SocialEntryService, UIService } = services
   const { EmailSignIn, EmailSignUp } = coordinators
   const { pResponseUser } = presenters.Api
 
-  const signIn = EmailSignIn({ RestService, RouterService, SessionService, UIService, HandleError, pResponseUser })
+  const signIn = EmailSignIn({
+    RestService,
+    RouterService,
+    SessionService,
+    SocialEntryService,
+    UIService,
+    HandleError,
+    pResponseUser
+  })
   const signUp = EmailSignUp({ RestService, SessionService, UIService })
   const toggleMode = mode => UIService.LoginForm.toggleMode( mode )
   const redirect = () => RouterService.replace({ pathname: '/' })

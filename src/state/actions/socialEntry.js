@@ -2,6 +2,7 @@ export const UPDATE_SOCIAL_ENTRY = 'UPDATE_SOCIAL_ENTRY'
 
 
 export const updateSocialEntry = ({
+  parentSocialEntry,
   searchText,
   tagSuggestions,
   tagSymbol,
@@ -13,6 +14,7 @@ export const updateSocialEntry = ({
   cursorEndIndex,
 }) => ({
   type: UPDATE_SOCIAL_ENTRY,
+  parentSocialEntry,
   searchText,
   tagSuggestions,
   tagSymbol,

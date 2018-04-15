@@ -21,7 +21,6 @@ export class SocialEntryService extends BaseService {
   }
 
   refreshTagSuggestions = () => {
-    console.log('SERVICE BEGIN refreshTagSuggestions')
     const { tagDictionary } = this.getState().tags
     const { tagSymbol, searchText, searchHandles } = this.getState().socialEntry
     const tagSuggestions = this._getTagSuggestions({ tagDictionary, tagSymbol, searchText, searchHandles })
@@ -32,7 +31,6 @@ export class SocialEntryService extends BaseService {
   updateSearchText = ({ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex }) => {
     const { tagDictionary } = this.getState().tags
     const tagSuggestions = this._getTagSuggestions({ tagDictionary, tagSymbol, searchText })
-    console.log('SERVICE updateSearchText ',{ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex },' tagSuggestions=',tagSuggestions)
 
     this.dispatch( actions.updateSocialEntry({
       cursorBeginIndex,
@@ -47,7 +45,6 @@ export class SocialEntryService extends BaseService {
   }
 
   updateSearchHandles = ({ tagSymbol, searchHandles, selectedTagIndex }) => {
-    console.log('SERVICE BEGIN updateSearchHandles')
     const { tagDictionary } = this.getState().tags
     const tagSuggestions = this._getTagSuggestions({ tagDictionary, tagSymbol, searchHandles })
 
@@ -91,6 +88,10 @@ export class SocialEntryService extends BaseService {
       selectedTagIndex: 0,
       tagSuggestions: [tag],
     }) )
+  }
+
+  setParentSocialEntry = ({ parentSocialEntry }) => {
+    this.dispatch( actions.updateSocialEntry({ parentSocialEntry }) )
   }
 
   // Helpers

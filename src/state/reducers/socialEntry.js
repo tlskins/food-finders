@@ -4,22 +4,24 @@ import {
 
 
 const initialSocialEntryState = {
-  searchText: null,
-  searchHandles: null,
-  tags: [],
-  tagSuggestions: [],
-  tagSymbol: null,
-  text: '',
   creatableTags: [],
   cursorBeginIndex: 0,
   cursorEndIndex: 0,
+  parentSocialEntry: null,
+  searchText: null,
+  searchHandles: null,
   selectedTagIndex: 0,
+  tags: [],
+  tagSuggestions: [],
+  tagSymbol: null,
+  text: null,
 }
 
 export const socialEntry = (state = initialSocialEntryState, action) => {
   switch (action.type) {
     case UPDATE_SOCIAL_ENTRY: {
       const {
+        parentSocialEntry = state.parentSocialEntry,
         searchText = state.searchText,
         tags = state.tags,
         tagSuggestions = state.tagSuggestions,
@@ -34,6 +36,7 @@ export const socialEntry = (state = initialSocialEntryState, action) => {
 
       return {
         ...state,
+        parentSocialEntry,
         searchText,
         tags,
         tagSuggestions,

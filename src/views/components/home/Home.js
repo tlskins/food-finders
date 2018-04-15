@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Sticky, StickyContainer } from 'react-sticky'
 
-import Newsfeed from '@containers/home/Newsfeed'
+import Newsfeed from '@containers/newsfeed/Newsfeed'
 import SocialEntryInput from '@containers/socialEntry/SocialEntryInput'
 import FriendsManager from '@containers/home/FriendsManager'
 import NavBar from '@containers/common/Navbar'
@@ -34,18 +34,15 @@ class Home extends Component {
     }
 
     if ( this.props.selectNewsfeedItem !== selectedNewsfeedItem ) {
-      console.log('selectedNewsfeedItem change detected',selectedNewsfeedItem)
       if ( selectedNewsfeedItem && selectedNewsfeedItem.metadata && selectedNewsfeedItem.metadata.foodRating ) {
         ( async() => {
           const ratee = selectedNewsfeedItem.metadata.foodRating.ratee
           const taggableType = pTaggableClassToType(ratee.taggableType)
           const selectedEntity = await loadTaggable( taggableType, ratee.taggableId )
-          console.log('selected entity = ',selectedEntity)
           this.setState({ selectedNewsfeedItem, selectedEntity })
         })()
       }
       else {
-        console.log('selected entity = ',undefined)
         this.setState({ selectedNewsfeedItem, selectedEntity: undefined })
       }
     }

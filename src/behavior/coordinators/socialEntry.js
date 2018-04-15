@@ -1,10 +1,21 @@
 
-export const loadDraftSocialEntry = ({ RestService, SessionService, pResponseUser }) => async () => {
-  const userId = SessionService.currentUserId()
-  let user = await RestService.get('/users/' + userId )
-  user = pResponseUser( user )
-  SessionService.setUserSession( user )
-}
+// export const loadDraftSocialEntry = ({ RestService, SessionService, SocialEntryService, pResponseUser }) => async () => {
+//   console.log('loadDraftSocialEntry')
+//   const userId = SessionService.currentUserId()
+//   let user = await RestService.get('/users/' + userId )
+//   user = pResponseUser( user )
+//   SessionService.setUserSession( user )
+//
+//   const { draftSocialEntry } = SessionService.currentUser()
+//   const parentSocialEntryId = draftSocialEntry && draftSocialEntry.parentSocialEntryId
+//   if ( parentSocialEntryId ) {
+//     const { parentSocialEntry } = SocialEntryService.getSocialEntry()
+//     if ( !parentSocialEntry ) {
+//       const socialEntry = await RestService.get('/social_entries/' + parentSocialEntryId )
+//       SocialEntryService.setParentSocialEntry({ parentSocialEntry: socialEntry })
+//     }
+//   }
+// }
 
 
 export const updateDraftSocialEntry = ({
@@ -13,13 +24,36 @@ export const updateDraftSocialEntry = ({
   pResponseUser,
   pRequestUpdateSocialEntry
 }) => async (text, creatableTags, requestedAt = new Date()) => {
-  console.log('COORDINATOR updateDraftSocialEntry BEGIN')
   const userId = SessionService.currentUserId()
   const payload = pRequestUpdateSocialEntry({ text, creatableTags })
 
   let user = await RestService.put('/users/' + userId, payload )
   user = pResponseUser(user)
   SessionService.setUserSession(user, requestedAt)
+}
+
+
+export const newReplySocialEntry = ({
+  RestService,
+  SessionService,
+  UIService,
+  SocialEntryService,
+  pResponseUser,
+  pRequestUpdateSocialEntry,
+}) => async (parentSocialEntry, requestedAt = new Date()) => {
+  const userId = SessionService.currentUserId()
+  const { id } = parentSocialEntry
+  const payload = pRequestUpdateSocialEntry({
+    text: '',
+    creatableTags: [],
+    parentSocialEntryId: id
+  })
+
+  let user = await RestService.put('/users/' + userId, payload )
+  user = pResponseUser(user)
+  SessionService.setUserSession(user, requestedAt)
+  SocialEntryService.setParentSocialEntry({ parentSocialEntry })
+  UIService.SocialEntry.toggleVisibility(true)
 }
 
 

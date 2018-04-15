@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 
-import Newsfeed from '@components/home/Newsfeed'
+import Newsfeed from '@components/newsfeed/Newsfeed'
 
 import services from '@services'
 import coordinators from '@coordinators'

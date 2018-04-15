@@ -13,13 +13,31 @@ export const EmailSignUp = ({ RestService, UIService }) => async ({ firstName, l
 }
 
 
-export const EmailSignIn = ({ RestService, RouterService, SessionService, UIService, HandleError, pResponseUser }) => async ({ email, password }) => {
+export const EmailSignIn = ({
+  RestService,
+  RouterService,
+  SessionService,
+  SocialEntryService,
+  UIService,
+  HandleError,
+  pResponseUser
+}) => async ({ email, password }) => {
   try {
     let user = await RestService.post( '/users/sign_in', { email, password })
     user = pResponseUser( user )
     SessionService.setUserSession( user )
     RouterService.replace({ pathname: '/' })
-    // RouterService.back()
+
+    // load parent social entry if it is not loaded already
+    const { draftSocialEntry } = SessionService.currentUser()
+    const parentSocialEntryId = draftSocialEntry && draftSocialEntry.parentSocialEntryId
+    if ( parentSocialEntryId ) {
+      const { parentSocialEntry } = SocialEntryService.getSocialEntry()
+      if ( !parentSocialEntry ) {
+        const socialEntry = await RestService.get('/newsfeed_items/' + parentSocialEntryId )
+        SocialEntryService.setParentSocialEntry({ parentSocialEntry: socialEntry })
+      }
+    }
   }
   catch ( error ) {
     HandleError({ error, namespace: 'loginForm'})

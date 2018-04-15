@@ -5,6 +5,7 @@ import TagSuggestions from '@components/socialEntry/TagSuggestions'
 import CurrentTags from '@components/socialEntry/CurrentTags'
 import SocialEntryRating from '@components/socialEntry/SocialEntryRating'
 import SocialEntryDetailPanel from '@containers/socialEntry/SocialEntryDetailPanel'
+import NewsFeedItem from '@components/newsfeed/NewsfeedItem'
 import close from '@res/images/x-icon-gray.png'
 
 import {
@@ -21,9 +22,12 @@ class SocialEntryInput extends Component {
     const { draftSocialEntry, loadDraftSocialEntry } = props
     loadDraftSocialEntry(draftSocialEntry)
 
+    const text = props.text || (draftSocialEntry && draftSocialEntry.text) || ''
+    const creatableTags = props.creatableTags || (draftSocialEntry && draftSocialEntry.creatableTags) || []
+
     this.state = {
       lastEditAt: undefined,
-      text: (draftSocialEntry && draftSocialEntry.text) || '',
+      text,
       searchText: undefined,
       searchHandles: undefined,
       searchStatus: undefined,
@@ -32,7 +36,7 @@ class SocialEntryInput extends Component {
       tagSuggestions: [],
       tagSymbol: undefined,
       selectedTagIndex: 0,
-      creatableTags: (draftSocialEntry && draftSocialEntry.creatableTags) || [],
+      creatableTags,
       cursorBeginIndex: 0,
       cursorEndIndex: 0,
       visible: false,
@@ -187,7 +191,14 @@ class SocialEntryInput extends Component {
   }
 
   render() {
-    const { text, draftSocialEntry, searchStatus, selectedTagIndex, tagSuggestions } = this.state
+    const {
+      text,
+      draftSocialEntry,
+      parentSocialEntry,
+      searchStatus,
+      selectedTagIndex,
+      tagSuggestions,
+    } = this.state
     const { addTagToText, visible } = this.props
     const { tags, creatableTags } = draftSocialEntry
     if ( !visible ) {
@@ -200,6 +211,13 @@ class SocialEntryInput extends Component {
       <div className="modal-form-container">
         <div className="modal-screen"></div>
         <div className="modal-inner-container">
+          { parentSocialEntry &&
+            <NewsFeedItem
+              feedItem={ parentSocialEntry }
+              renderFooter={ false }
+            />
+          }
+
           <div className="modal-section">
             <img className="close" src={ close } onClick={ this.close } alt="close-form"/>
             <div className='social-entry-form-header item-header'> New Social Entry </div>
