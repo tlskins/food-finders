@@ -7,7 +7,6 @@ class TagSuggestions extends Component {
     selectedTagIndex: undefined,
     selectedTag: undefined,
     selectedTagChanged: false,
-    parentTaggableType: '',
     tagSuggestions: [],
     childTagSuggestions: [],
   }
@@ -15,14 +14,12 @@ class TagSuggestions extends Component {
   componentWillReceiveProps = nextProps => {
     const { selectedTagIndex, tagSuggestions, childTagSuggestions } = nextProps
     const selectedTag = tagSuggestions[selectedTagIndex]
-    const parentTaggableType = selectedTag && selectedTag.taggableType && selectedTag.taggableType.toLowerCase()
     const selectedTagChanged = (selectedTag && selectedTag.id) !== (this.state.selectedTag && this.state.selectedTag.id)
 
     this.setState({
       selectedTagIndex,
       selectedTag,
       selectedTagChanged,
-      parentTaggableType,
       tagSuggestions,
       childTagSuggestions,
     })
@@ -43,11 +40,51 @@ class TagSuggestions extends Component {
     )
   }
 
+  renderTagSuggestion = ({ tagSuggestion, selected, index }) => {
+    const { onClickTag, onMouseOverTag } = this.props
+    const { taggableType, embeddedTaggable, name, symbol, handle } = tagSuggestion
+    const taggableTypeString = (taggableType || '').toLowerCase()
+
+    return (
+      <div className={ "tag-suggestion-container" + (selected ? " active-suggestion" : "") }>
+        <div
+          className={ 'tag-suggestion--' + taggableTypeString + (selected ? ' selected ' : '') }
+          onClick={ () => onClickTag(tagSuggestion) }
+          onMouseEnter={ () => onMouseOverTag(index) }
+        >
+          <div className={ 'tag-suggestions-icon--' + taggableTypeString }/>
+          <div className="tag-suggestion-hdr">
+            { name }
+          </div>
+          { /** TODO - put these div renders in a presenter **/
+          }
+          { ['FoodRatingMetric','FoodRatingType','User'].includes(taggableType) && embeddedTaggable &&
+            <div className="tag-suggestion-description">
+              { `${ symbol }${ handle }` }<br />
+              { embeddedTaggable.description }
+            </div>
+          }
+          { taggableType === 'Entity' && embeddedTaggable &&
+            <div className="tag-suggestion-description">
+              { `${ symbol }${ embeddedTaggable.handle }` }<br />
+              { embeddedTaggable.location.displayAddress.join(', ') }<br />
+            </div>
+          }
+          { taggableType === 'Entity' && tagSuggestion.yelpBusiness &&
+            <div className="tag-suggestion-description">
+              { `${ symbol }${ tagSuggestion.yelpBusiness.alias }` }<br />
+              { tagSuggestion.yelpBusiness.location.displayAddress.join(', ') }<br />
+            </div>
+          }
+        </div>
+      </div>
+    )
+  }
+
   render() {
-    const { onClickTag, onMouseOverTag, searchStatus } = this.props
+    const { searchStatus } = this.props
     const {
       selectedTagIndex,
-      parentTaggableType,
       tagSuggestions,
       childTagSuggestions,
     } = this.state
@@ -57,7 +94,6 @@ class TagSuggestions extends Component {
     }
 
     const childTagsPresent = childTagSuggestions.length > 0
-    const taggableTypeString = (parentTaggableType && parentTaggableType.toLowerCase()) || ""
     const parentChildTagGap = childTagsPresent ? selectedTagIndex - (childTagSuggestions.length - 1) : 0
 
     return (
@@ -65,60 +101,17 @@ class TagSuggestions extends Component {
         { searchStatus && searchStatus }
         <div className='tag-suggestions-container'>
           <div className='tag-suggestions'>
-            { tagSuggestions.map( (t,i) =>
-              <div className={ "tag-suggestion-container" + (selectedTagIndex === i ? " active-suggestion" : "") }>
-                <div
-                  key={i}
-                  className={ 'tag-suggestion--' + (t.taggableType || '').toLowerCase() + (selectedTagIndex === i ? ' selected ' : '') }
-                  onClick={ () => onClickTag(t) }
-                  onMouseEnter={ () => onMouseOverTag(i) }
-                >
-                  <div className={ 'tag-suggestions-icon--' + (t.taggableType || '').toLowerCase() }/>
-                  <div className="tag-suggestion-hdr">
-                    { t.name }
-                  </div>
-                  { /** TODO - put these div renders in a presenter **/
-                  }
-                  { ['FoodRatingMetric','FoodRatingType','User'].includes(t.taggableType) && t.embeddedTaggable &&
-                    <div className="tag-suggestion-description">
-                      { `${ t.symbol }${ t.handle }` }<br />
-                      { t.embeddedTaggable.description }
-                    </div>
-                  }
-                  { t.taggableType === 'Entity' && t.embeddedTaggable &&
-                    <div className="tag-suggestion-description">
-                      { `${ t.symbol }${ t.embeddedTaggable.handle }` }<br />
-                      { t.embeddedTaggable.location.displayAddress.join(', ') }<br />
-                    </div>
-                  }
-                  { t.taggableType === 'Entity' && t.yelpBusiness &&
-                    <div className="tag-suggestion-description">
-                      { `${ t.symbol }${ t.yelpBusiness.alias }` }<br />
-                      { t.yelpBusiness.location.displayAddress.join(', ') }<br />
-                    </div>
-                  }
-                </div>
-              </div>
-            ) }
+            { tagSuggestions.map( (tagSuggestion,index) => {
+              const selected = index === selectedTagIndex
+              return this.renderTagSuggestion({ tagSuggestion, selected, index })
+            })}
           </div>
           { childTagsPresent &&
             <div className='tag-suggestions-children'>
               { this.renderParentChildTagBuffer(parentChildTagGap) }
-              { childTagSuggestions.map( (t,i) =>
-                <div className="tag-suggestion-container active-suggestion">
-                  <div
-                    key={i}
-                    className={ "tag-suggestion--" + taggableTypeString }
-                  >
-                    <div className="tag-suggestion-hdr">
-                      { t.name }
-                    </div>
-                    <div className="tag-suggestion-description">
-                      { t.description }
-                    </div>
-                  </div>
-                </div>
-              ) }
+              { childTagSuggestions.map( (tagSuggestion,index) => {
+                return this.renderTagSuggestion({ tagSuggestion, selected: true, index })
+              })}
             </div>
           }
         </div>
