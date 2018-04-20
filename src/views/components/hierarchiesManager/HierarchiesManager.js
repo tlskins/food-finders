@@ -80,8 +80,8 @@ class HierarchiesManager extends Component {
 			this.setTaggables(newTaggables)
     }
 
+		const model = this.engine.getDiagramModel()
 		if ( unselectNodes ) {
-			const model = this.engine.getDiagramModel()
 			toggleUnselectNodes(false)
 			this.unselectNodes(model)
 			this.forceUpdate()
@@ -97,7 +97,7 @@ class HierarchiesManager extends Component {
 		}
 
 		let setStateCallback = undefined
-		if ( hierarchiesManager && hierarchiesManager !== this.props.hierarchiesManager ) {
+		if ( hierarchiesManager && hierarchiesManager.taggableType !== this.props.hierarchiesManager.taggableType ) {
 			newState = {
 				...newState,
 				taggableType: hierarchiesManager.taggableType,
@@ -135,6 +135,7 @@ class HierarchiesManager extends Component {
 	}
 
 	loadOrSetTaggables = () => {
+		console.log('loadOrSetTaggables')
 		const { taggableType } = this.state
 		const { allTaggables, loadTaggables } = this.props
 		if (!allTaggables[taggableType]) {
@@ -148,7 +149,7 @@ class HierarchiesManager extends Component {
 
 	setTaggables = taggables => {
 		this.loadInitialDiagramState()
-		console.log('trigger reload taggables')
+		console.log('setTaggables, taggables=',taggables)
 		const rootTaggables = Object.values(taggables).filter( t => !t.parentId )
 		this.setState({ taggables, rootTaggables }, () => this.diagramTaggables() )
 	}
