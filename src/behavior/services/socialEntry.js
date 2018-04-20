@@ -87,20 +87,28 @@ export class SocialEntryService extends BaseService {
     const { symbol, handle } = tag
     const { socialEntry } = this.getState()
     let { text, cursorBeginIndex, cursorEndIndex, creatableTags } = socialEntry
-    let newText = text
     if ( updateText ) {
-      newText = text.slice(0, cursorBeginIndex) + symbol + handle + text.slice(cursorEndIndex)
+      text = text.slice(0, cursorBeginIndex) + symbol + handle + text.slice(cursorEndIndex)
     }
-    const creatableTag = this._getCreatableTag(tag, cursorBeginIndex, cursorEndIndex)
-    creatableTags = this._validateCreatableTags(newText, creatableTags, creatableTag)
+    const creatableTag = this._getCreatableTag(tag)
+    creatableTags = this._validateCreatableTags(text, creatableTags, creatableTag)
 
     this.dispatch( actions.updateSocialEntry({
-      text: newText,
+      text,
       creatableTags,
       selectedTagIndex: 0,
       tagSuggestions: [tag],
     }) )
     this._loadChildTags()
+  }
+
+  addTaggableToCreatableTags = taggable => {
+    const { socialEntry } = this.getState()
+    let { creatableTags } = socialEntry
+    const creatableTag = this._getCreatableTag(taggable)
+    creatableTags = this._validateCreatableTags(taggable, creatableTags, creatableTag)
+
+    this.dispatch( actions.updateSocialEntry({ creatableTags }) )
   }
 
   setParentSocialEntry = ({ parentSocialEntry }) => {
@@ -180,7 +188,7 @@ export class SocialEntryService extends BaseService {
     }
   }
 
-  _getCreatableTag = (tag, cursorBeginIndex, cursorEndIndex) => {
+  _getCreatableTag = tag => {
     const { id, yelpBusiness, taggableType, symbol, handle } = tag
 
     if ( !id ) {

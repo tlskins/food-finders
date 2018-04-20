@@ -99,7 +99,7 @@ export function getAllNestedValues(target) {
 export function findWordAtCursor(text, cursorIndex) {
   let cursorEndIndex = text.indexOf(' ',cursorIndex)
   if ( cursorEndIndex === -1 ) {
-    cursorEndIndex = cursorIndex
+    cursorEndIndex = text.length
   }
 
   let cursorBeginIndex = text.slice(0,cursorIndex).lastIndexOf(' ') + 1

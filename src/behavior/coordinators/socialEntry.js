@@ -1,23 +1,4 @@
 
-// export const loadDraftSocialEntry = ({ RestService, SessionService, SocialEntryService, pResponseUser }) => async () => {
-//   console.log('loadDraftSocialEntry')
-//   const userId = SessionService.currentUserId()
-//   let user = await RestService.get('/users/' + userId )
-//   user = pResponseUser( user )
-//   SessionService.setUserSession( user )
-//
-//   const { draftSocialEntry } = SessionService.currentUser()
-//   const parentSocialEntryId = draftSocialEntry && draftSocialEntry.parentSocialEntryId
-//   if ( parentSocialEntryId ) {
-//     const { parentSocialEntry } = SocialEntryService.getSocialEntry()
-//     if ( !parentSocialEntry ) {
-//       const socialEntry = await RestService.get('/social_entries/' + parentSocialEntryId )
-//       SocialEntryService.setParentSocialEntry({ parentSocialEntry: socialEntry })
-//     }
-//   }
-// }
-
-
 export const updateDraftSocialEntry = ({
   RestService,
   SessionService,
@@ -104,28 +85,14 @@ export const updateSearchText = ({
   const editTaggable = TaggablesService.getEditTaggable()
   const { edited } = editTaggable
   if ( edited ) {
-    if ( tagSymbol ) {
-      TaggablesService.editTaggableHandle(searchText)
-      UIService.SocialEntryDetailPanel.toggleMode('EDIT TAGGABLE')
-    }
-    else {
-      addTagToText({ SocialEntryService, UpdateDraftSocialEntry })(editTaggable, false)
-      TaggablesService.resetTaggable()
-      UIService.SocialEntryDetailPanel.toggleMode('NONE')
-    }
-  }
-  else if ( tagSymbol === '^' && tagSuggestions.length === 0 ) {
-    const creatableFoodTag = creatableTags.find( t => t.symbol === '^' && t.handle === searchText )
-    if ( !creatableFoodTag ) {
-      TaggablesService.newTaggable({ taggableType: 'Food', symbol: '^', handle: searchText })
-    }
-    else {
-      TaggablesService.loadNewTaggable(creatableFoodTag.taggableType, creatableFoodTag.taggableObject)
-    }
-    UIService.SocialEntryDetailPanel.toggleMode('EDIT TAGGABLE')
+    _updateEditTaggable({ TaggablesService, SocialEntryService, UIService, tagSymbol, searchText })
   }
   else {
-    UIService.SocialEntryDetailPanel.toggleMode('NONE')
+    const createNew = tagSuggestions.length === 0
+    const loaded = _loadOrBuildCreatableTaggable({ TaggablesService, SocialEntryService, UIService,tagSymbol, searchText, createNew })
+    if ( !loaded ) {
+      UIService.SocialEntryDetailPanel.toggleMode('NONE')
+    }
   }
 
   // tag suggestions
@@ -170,15 +137,9 @@ export const updateCursorTextData = ({
   }
 
   if ( tagSymbol ) {
-    if ( tagSymbol === '^') {
-      const { creatableTags } = SocialEntryService.getSocialEntry()
-      const creatableFoodTag = creatableTags.find( t => t.symbol === '^' && t.handle === searchText )
-      if ( creatableFoodTag ) {
-        TaggablesService.loadNewTaggable(creatableFoodTag.taggableType, creatableFoodTag.taggableObject)
-        UIService.SocialEntryDetailPanel.toggleMode('EDIT TAGGABLE')
-        SocialEntryService.updateSearchText({ tagSymbol, searchText, text, cursorBeginIndex, cursorEndIndex })
-        return
-      }
+    const loaded = _loadOrBuildCreatableTaggable({ tagSymbol, TaggablesService, SocialEntryService, UIService, searchText })
+    if ( loaded ) {
+      SocialEntryService.updateSearchText({ tagSymbol, searchText, text, cursorBeginIndex, cursorEndIndex })
     }
   }
   else {
@@ -217,6 +178,40 @@ export const addTagToText = ({ SocialEntryService, UpdateDraftSocialEntry }) => 
 }
 
 // Helpers
+
+const _updateEditTaggable = ({ TaggablesService, SocialEntryService, UIService, tagSymbol, searchText }) => {
+  const editTaggable = TaggablesService.getEditTaggable()
+  if ( tagSymbol ) {
+    TaggablesService.editTaggableHandle(searchText)
+    UIService.SocialEntryDetailPanel.toggleMode('EDIT TAGGABLE')
+  }
+  else {
+    SocialEntryService.addTaggableToCreatableTags(editTaggable)
+    TaggablesService.resetTaggable()
+    UIService.SocialEntryDetailPanel.toggleMode('NONE')
+  }
+}
+
+const _loadOrBuildCreatableTaggable = ({ TaggablesService, SocialEntryService, UIService, tagSymbol, searchText, createNew }) => {
+  if ( tagSymbol === '^' ) {
+    const { creatableTags } = SocialEntryService.getSocialEntry()
+    const creatableFoodTag = creatableTags.find( t => t.symbol === '^' && t.handle === searchText )
+    if ( !creatableFoodTag ) {
+      if ( createNew ) {
+        TaggablesService.newTaggable({ taggableType: 'Food', symbol: '^', handle: searchText })
+      }
+      else {
+        return false
+      }
+    }
+    else {
+      TaggablesService.loadNewTaggable(creatableFoodTag.taggableType, creatableFoodTag.taggableObject)
+    }
+    UIService.SocialEntryDetailPanel.toggleMode('EDIT TAGGABLE')
+    return true
+  }
+  return false
+}
 
 const _getChildHandles = ({ tagSymbol, handle, TagService }) => {
   const tag = TagService.getTag(tagSymbol, handle)
