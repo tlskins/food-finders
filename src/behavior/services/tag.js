@@ -13,7 +13,7 @@ export class TagService extends BaseService {
     this.dispatch( actions.loadRootTags(rootTags) )
   }
   getTag = (symbol, handle) => {
-    const tagsBySymbol = this.getTagsBySybmol(symbol)
+    const tagsBySymbol = this.getTagsBySymbol(symbol)
     if ( !tagsBySymbol) {
       return undefined
     }
@@ -21,7 +21,7 @@ export class TagService extends BaseService {
       return tagsBySymbol[handle]
     }
   }
-  getTagsBySybmol = (symbol) => {
+  getTagsBySymbol = (symbol) => {
     const { tagDictionary } = this.getState().tags
 
     const tagsBySymbol = tagDictionary[symbol]

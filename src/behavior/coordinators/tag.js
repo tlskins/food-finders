@@ -5,6 +5,65 @@ export const LoadRootTags = async ({ TagService, RestService, pResponseRoots }) 
 }
 
 
+export const SearchYelpBusinesses = ({ RestService, pResponseYelpBusinesses }) => async term => {
+  const response = await RestService.get('/entities/yelp_businesses_search', { term } )
+  return pResponseYelpBusinesses(response)
+}
+
+
+// Returns true if new tags suggested
+export const SuggestTags = ({ RestService, TagService, pResponseTags, pResponseYelpBusinesses }) =>
+async ({ symbol, text, handles, resultsPerPage, page }) =>
+{
+  if ( !symbol || (!text && !handles)) {
+    return false
+  }
+
+  if ( text ) {
+    const searchIndex = { symbol, text, resultsPerPage, page }
+    if ( symbol === '@' ) {
+      const priorYelpSearchStatus = _getPriorSearchStatus({ source: 'yelp', TagService, searchIndex })
+      if ( !priorYelpSearchStatus || priorYelpSearchStatus === 'INCOMPLETE' ) {
+        await _searchYelpTags({ TagService, RestService, pResponseYelpBusinesses, searchIndex })
+        return true
+      }
+    }
+
+    const priorCoreSearchStatus = _getPriorSearchStatus({ source: 'core', TagService, searchIndex })
+    if ( !priorCoreSearchStatus || priorCoreSearchStatus === 'INCOMPLETE' ) {
+      await _searchCoreTags({ TagService, RestService, pResponseTags, searchIndex })
+      return true
+    }
+  }
+  else if ( handles ) {
+    const missingTags = _getMissingTags({ symbol, TagService, handles })
+    if ( missingTags.length > 0 ) {
+      await _searchCoreTags({ TagService, RestService, pResponseTags, searchIndex: { symbol, handles: missingTags, resultsPerPage, page } })
+      return true
+    }
+  }
+  return false
+}
+
+
+export const EditTag = ({ RestService, TagService, pResponseTags, UIService }) => async (symbol, handle) => {
+  const { tags } = TagService.getState()
+  const editTag = tags[symbol][handle]
+  if ( editTag ) {
+    UIService.TagEditor.toggleVisibility(true)
+    TagService.editTag(editTag)
+  }
+  else {
+    const handles = [symbol + handle]
+    const searchIndex = { symbol, handles, resultsPerPage: 1, page: 1 }
+    UIService.TagEditor.toggleVisibility(true)
+    const foundTags = await _searchCoreTagsByHandles({ TagService, RestService, pResponseTags, searchIndex })
+    TagService.editTag(foundTags[0])
+  }
+}
+
+// helpers
+
 const _getPriorSearchStatus = ({ source, TagService, searchIndex }) => {
   const { tagSearches } = TagService.getState()
   const { symbol, text, resultsPerPage, page } = searchIndex
@@ -81,63 +140,5 @@ const _searchYelpTags = async ({ TagService, RestService, pResponseYelpBusinesse
   }
   catch ( error ) {
     TagService.incompleteTagSearch(yelpSearchIndex)
-  }
-}
-
-
-export const SearchYelpBusinesses = ({ RestService, pResponseYelpBusinesses }) => async term => {
-  const response = await RestService.get('/entities/yelp_businesses_search', { term } )
-  return pResponseYelpBusinesses(response)
-}
-
-
-// Returns true if new tags suggested
-export const SuggestTags = ({ RestService, TagService, pResponseTags, pResponseYelpBusinesses }) =>
-async ({ symbol, text, handles, resultsPerPage, page }) =>
-{
-  if ( !symbol || (!text && !handles)) {
-    return false
-  }
-
-  if ( text ) {
-    const searchIndex = { symbol, text, resultsPerPage, page }
-    if ( symbol === '@' ) {
-      const priorYelpSearchStatus = _getPriorSearchStatus({ source: 'yelp', TagService, searchIndex })
-      if ( !priorYelpSearchStatus || priorYelpSearchStatus === 'INCOMPLETE' ) {
-        await _searchYelpTags({ TagService, RestService, pResponseYelpBusinesses, searchIndex })
-        return true
-      }
-    }
-
-    const priorCoreSearchStatus = _getPriorSearchStatus({ source: 'core', TagService, searchIndex })
-    if ( !priorCoreSearchStatus || priorCoreSearchStatus === 'INCOMPLETE' ) {
-      await _searchCoreTags({ TagService, RestService, pResponseTags, searchIndex })
-      return true
-    }
-  }
-  else if ( handles ) {
-    const missingTags = _getMissingTags({ symbol, TagService, handles })
-    if ( missingTags.length > 0 ) {
-      await _searchCoreTags({ TagService, RestService, pResponseTags, searchIndex: { symbol, handles: missingTags, resultsPerPage, page } })
-      return true
-    }
-  }
-  return false
-}
-
-
-export const EditTag = ({ RestService, TagService, pResponseTags, UIService }) => async (symbol, handle) => {
-  const { tags } = TagService.getState()
-  const editTag = tags[symbol][handle]
-  if ( editTag ) {
-    UIService.TagEditor.toggleVisibility(true)
-    TagService.editTag(editTag)
-  }
-  else {
-    const handles = [symbol + handle]
-    const searchIndex = { symbol, handles, resultsPerPage: 1, page: 1 }
-    UIService.TagEditor.toggleVisibility(true)
-    const foundTags = await _searchCoreTagsByHandles({ TagService, RestService, pResponseTags, searchIndex })
-    TagService.editTag(foundTags[0])
   }
 }
