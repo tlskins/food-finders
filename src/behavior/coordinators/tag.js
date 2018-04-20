@@ -91,11 +91,12 @@ export const SearchYelpBusinesses = ({ RestService, pResponseYelpBusinesses }) =
 }
 
 
+// Returns true if new tags suggested
 export const SuggestTags = ({ RestService, TagService, pResponseTags, pResponseYelpBusinesses }) =>
 async ({ symbol, text, handles, resultsPerPage, page }) =>
 {
   if ( !symbol || (!text && !handles)) {
-    return
+    return false
   }
 
   if ( text ) {
@@ -104,20 +105,24 @@ async ({ symbol, text, handles, resultsPerPage, page }) =>
       const priorYelpSearchStatus = _getPriorSearchStatus({ source: 'yelp', TagService, searchIndex })
       if ( !priorYelpSearchStatus || priorYelpSearchStatus === 'INCOMPLETE' ) {
         await _searchYelpTags({ TagService, RestService, pResponseYelpBusinesses, searchIndex })
+        return true
       }
     }
 
     const priorCoreSearchStatus = _getPriorSearchStatus({ source: 'core', TagService, searchIndex })
     if ( !priorCoreSearchStatus || priorCoreSearchStatus === 'INCOMPLETE' ) {
       await _searchCoreTags({ TagService, RestService, pResponseTags, searchIndex })
+      return true
     }
   }
   else if ( handles ) {
     const missingTags = _getMissingTags({ symbol, TagService, handles })
     if ( missingTags.length > 0 ) {
       await _searchCoreTags({ TagService, RestService, pResponseTags, searchIndex: { symbol, handles: missingTags, resultsPerPage, page } })
+      return true
     }
   }
+  return false
 }
 
 

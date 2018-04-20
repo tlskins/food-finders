@@ -99,11 +99,10 @@ export const updateSearchText = ({
   cursorBeginIndex,
   cursorEndIndex,
 }) => {
+  // creatable tags
   const { creatableTags, tagSuggestions } = SocialEntryService.getSocialEntry()
   const editTaggable = TaggablesService.getEditTaggable()
   const { edited } = editTaggable
-
-  // creatable tags
   if ( edited ) {
     if ( tagSymbol ) {
       TaggablesService.editTaggableHandle(searchText)
@@ -131,9 +130,12 @@ export const updateSearchText = ({
 
   // tag suggestions
   SocialEntryService.updateSearchText({ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex })
-  await SuggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
-  _findAnyNewChildTags({ SocialEntryService, SuggestTags })
   if ( tagSymbol ) {
+    const newTagsFound = await SuggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
+    if ( newTagsFound ) {
+      SocialEntryService.refreshTagSuggestions()
+    }
+    _findAnyNewChildTags({ SocialEntryService, SuggestTags })
     UpdateDraftSocialEntry(text, creatableTags)
   }
 }
@@ -197,8 +199,10 @@ export const loadTagSuggestionsByHandles = ({ SocialEntryService, TagService, Su
   if ( tagSymbol ) {
     const childHandles = _getChildHandles({ TagService, tagSymbol, handle: selectedTagHandle })
     searchHandles = searchHandles.concat(childHandles)
-    await SuggestTags({ symbol: tagSymbol, handles: searchHandles, resultsPerPage: 5, page: 1 })
-    SocialEntryService.refreshTagSuggestions()
+    const newTagsFound = await SuggestTags({ symbol: tagSymbol, handles: searchHandles, resultsPerPage: 5, page: 1 })
+    if ( newTagsFound ) {
+      SocialEntryService.refreshTagSuggestions()
+    }
   }
   else {
     SocialEntryService.resetSearchCriteria()
@@ -230,8 +234,10 @@ const _findAnyNewChildTags = async ({ SocialEntryService, SuggestTags }) => {
   if ( selectedTag && selectedTag.embeddedTaggable && selectedTag.embeddedTaggable.children ) {
     const { children: childHandles } = selectedTag.embeddedTaggable
     if ( childHandles.length > 0 ) {
-      await SuggestTags({ symbol: tagSymbol, handles: childHandles, resultsPerPage: 5, page: 1 })
-      SocialEntryService.refreshTagSuggestions()
+      const newTagsFound = await SuggestTags({ symbol: tagSymbol, handles: childHandles, resultsPerPage: 5, page: 1 })
+      if ( newTagsFound ) {
+        SocialEntryService.refreshTagSuggestions()
+      }
     }
   }
 }

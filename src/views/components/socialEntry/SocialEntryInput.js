@@ -197,7 +197,7 @@ class SocialEntryInput extends Component {
       selectedTagIndex,
       tagSuggestions,
     } = this.state
-    const { addTagToText, visible } = this.props
+    const { addTagToText, updateSelectedTagIndex, visible } = this.props
     const { tags, creatableTags } = draftSocialEntry
     if ( !visible ) {
       return null
@@ -244,7 +244,7 @@ class SocialEntryInput extends Component {
                 searchStatus={ searchStatus }
                 selectedTagIndex={ selectedTagIndex }
                 onClickTag={ addTagToText }
-                onMouseOverTag={ (selectedTagIndex) => this.setState({ selectedTagIndex }) }
+                onMouseOverTag={ (selectedTagIndex) => updateSelectedTagIndex(selectedTagIndex) }
               />
               <div className="modal-section">
                 <button

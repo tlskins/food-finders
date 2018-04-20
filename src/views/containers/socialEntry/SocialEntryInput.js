@@ -25,7 +25,12 @@ const mapDispatchToProps = () => {
   const { RestService, TagService, TaggablesService, SessionService, SocialEntryService, UIService } = services
   const { pResponseGeneric, pResponseUser, pResponseYelpBusinesses, pRequestUpdateSocialEntry, pRequestPostSocialEntry } = presenters.Api
   const pResponseTags = pResponseGeneric
-  const UpdateDraftSocialEntry = coordinators.updateDraftSocialEntry({ RestService, SessionService, pResponseUser, pRequestUpdateSocialEntry })
+  const UpdateDraftSocialEntry = coordinators.updateDraftSocialEntry({
+    RestService,
+    SessionService,
+    pResponseUser,
+    pRequestUpdateSocialEntry
+  })
   const SuggestTags = coordinators.SuggestTags({ RestService, TagService, pResponseTags, pResponseYelpBusinesses })
 
   const addTagToText = coordinators.addTagToText({ SocialEntryService, UpdateDraftSocialEntry })
