@@ -27,10 +27,9 @@ export class SocialEntryService extends BaseService {
   }
 
   refreshTagSuggestions = () => {
-    const { tagDictionary } = this.getState().tags
-    const { tagSymbol, searchText, searchHandles } = this.getSocialEntry()
-    const tagSuggestions = this._getTagSuggestions({ tagDictionary, tagSymbol, searchText, searchHandles })
-    const childTagSuggestions = this._getChildTags()
+    const { tagSymbol, searchText, searchHandles, selectedTagIndex } = this.getSocialEntry()
+    const tagSuggestions = this._getTagSuggestions({ tagSymbol, searchText, searchHandles })
+    const childTagSuggestions = this._getChildTags(tagSuggestions[selectedTagIndex])
 
     this.dispatch( actions.updateSocialEntry({
       tagSuggestions,
@@ -39,9 +38,9 @@ export class SocialEntryService extends BaseService {
   }
 
   updateSearchText = ({ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex }) => {
-    const { tagDictionary } = this.getState().tags
-    const tagSuggestions = this._getTagSuggestions({ tagDictionary, tagSymbol, searchText })
-    const childTagSuggestions = this._getChildTags()
+    const { selectedTagIndex } = this.getSocialEntry()
+    const tagSuggestions = this._getTagSuggestions({ tagSymbol, searchText })
+    const childTagSuggestions = this._getChildTags(tagSuggestions[selectedTagIndex])
 
     this.dispatch( actions.updateSocialEntry({
       childTagSuggestions,
@@ -57,9 +56,8 @@ export class SocialEntryService extends BaseService {
   }
 
   loadTagSuggestionsByHandles = ({ tagSymbol, searchHandles, selectedTagIndex }) => {
-    const { tagDictionary } = this.getState().tags
-    const tagSuggestions = this._getTagSuggestions({ tagDictionary, tagSymbol, searchHandles })
-    const childTagSuggestions = this._getChildTags()
+    const tagSuggestions = this._getTagSuggestions({ tagSymbol, searchHandles })
+    const childTagSuggestions = this._getCurrentChildTags()
 
     this.dispatch( actions.updateSocialEntry({
       childTagSuggestions,
@@ -113,7 +111,8 @@ export class SocialEntryService extends BaseService {
 
   // TODO - Move all these helpers to tag service
 
-  _getTagsBySymbol = ({ tagDictionary, tagSymbol }) => {
+  _getTagsBySymbol = ({ tagSymbol }) => {
+    const { tagDictionary } = this.getState().tags
     const tagsBySymbol = tagDictionary[tagSymbol]
     const emptyTagsBySymbol = tagsBySymbol && Object.values(tagsBySymbol).length < 1
     if ( !tagsBySymbol || emptyTagsBySymbol ) {
@@ -122,26 +121,31 @@ export class SocialEntryService extends BaseService {
     return tagsBySymbol
   }
 
-  _getChildTags = () => {
-    const { tagDictionary } = this.getState().tags
-    const { tagSymbol } = this.getSocialEntry()
-    const tagsBySymbol = this._getTagsBySymbol({ tagDictionary, tagSymbol })
+  _getCurrentChildTags = () => {
     const selectedTag = this.getSelectedTag()
-    if ( !tagsBySymbol || !selectedTag ) {
+    return this._getChildTags(selectedTag)
+  }
+
+  _getChildTags = selectedTag => {
+    const { tagSymbol } = this.getSocialEntry()
+    const tagsBySymbol = this._getTagsBySymbol({ tagSymbol })
+
+    if ( selectedTag && selectedTag.embeddedTaggable && selectedTag.embeddedTaggable.children && tagsBySymbol ) {
+      const { children } = selectedTag.embeddedTaggable
+      return this._getTagsByKey({ tagsBySymbol, searchHandles: children })
+    }
+    else {
       return []
     }
-
-    const { children } = selectedTag.embeddedTaggable
-    return this._getTagsByKey({ tagsBySymbol, searchHandles: children })
   }
 
   _loadChildTags = () => {
-    const childTagSuggestions = this._getChildTags()
+    const childTagSuggestions = this._getCurrentChildTags()
     this.dispatch( actions.updateSocialEntry({ childTagSuggestions }) )
   }
 
-  _getTagSuggestions = ({ tagDictionary, tagSymbol, searchText, searchHandles }) => {
-    const tagsBySymbol = this._getTagsBySymbol({ tagDictionary, tagSymbol })
+  _getTagSuggestions = ({ tagSymbol, searchText, searchHandles }) => {
+    const tagsBySymbol = this._getTagsBySymbol({ tagSymbol })
     if ( !tagsBySymbol ) {
       return []
     }

@@ -150,6 +150,7 @@ export const updateCursorTextData = ({
   UpdateDraftSocialEntry,
   TaggablesService,
   UIService,
+  SuggestTags,
 }) => async ({
   tagSymbol,
   text,
@@ -161,6 +162,7 @@ export const updateCursorTextData = ({
   const editTaggable = TaggablesService.getEditTaggable()
   const { edited: taggableEdited } = editTaggable
   if ( taggableEdited ) {
+    // TODO - refactor out creatable tag logic from addTag
     addTagToText({ SocialEntryService, UpdateDraftSocialEntry })(editTaggable, false)
     TaggablesService.resetTaggable()
   }
@@ -177,9 +179,11 @@ export const updateCursorTextData = ({
       }
     }
   }
-
-  SocialEntryService.updateSearchText({ tagSymbol, tagSuggestions: [], searchText, text, cursorBeginIndex, cursorEndIndex })
-  UIService.SocialEntryDetailPanel.toggleMode('NONE')
+  else {
+    SocialEntryService.updateSearchText({ tagSymbol, tagSuggestions: [], searchText, text, cursorBeginIndex, cursorEndIndex })
+    UIService.SocialEntryDetailPanel.toggleMode('NONE')
+  }
+  _findAnyNewChildTags({ SocialEntryService, SuggestTags })
 }
 
 

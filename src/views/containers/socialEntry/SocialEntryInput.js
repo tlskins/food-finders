@@ -59,6 +59,7 @@ const mapDispatchToProps = () => {
     UpdateDraftSocialEntry,
     TaggablesService,
     UIService,
+    SuggestTags,
   })
   const updateSelectedTagIndex = coordinators.updateSelectedTagIndex({ SocialEntryService, SuggestTags })
 

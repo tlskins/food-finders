@@ -6,7 +6,7 @@ export const pResponseYelpBusinesses = json => {
   let businesses = []
   yelpBusinesses.forEach(yelpBusiness => {
     const business = { yelpBusiness }
-    business.handle = yelpBusiness.id
+    business.handle = yelpBusiness.alias
     business.name = yelpBusiness.name
     business.symbol = "@"
     business.taggableType = 'Entity'
