@@ -12,7 +12,6 @@ const mapStateToProps = state => {
   const { user } = session
   const { visible } = socialEntryForm
   const draftSocialEntry = user ? user.draftSocialEntry : {}
-  console.log('CONTAINER SocialEntryInput, socialEntry=',socialEntry)
 
   return {
     draftSocialEntry,
@@ -31,6 +30,11 @@ const mapDispatchToProps = () => {
 
   const addTagToText = coordinators.addTagToText({ SocialEntryService, UpdateDraftSocialEntry })
   const loadDraftSocialEntry = draftSocialEntry => SocialEntryService.loadDraftSocialEntry(draftSocialEntry)
+  const loadTagSuggestionsByHandles = coordinators.loadTagSuggestionsByHandles({
+    SocialEntryService,
+    SuggestTags,
+    TagService,
+  })
   const postSocialEntry = coordinators.postSocialEntry({
     RestService,
     SessionService,
@@ -42,11 +46,11 @@ const mapDispatchToProps = () => {
   })
   const resetSearchCriteria = () => SocialEntryService.resetSearchCriteria()
   const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
-  const updateSearchHandles = coordinators.updateSearchHandles({ SocialEntryService, SuggestTags })
   const updateSearchText = coordinators.updateSearchText({
     SocialEntryService,
     SuggestTags,
     UpdateDraftSocialEntry,
+    TagService,
     TaggablesService,
     UIService
   })
@@ -56,7 +60,7 @@ const mapDispatchToProps = () => {
     TaggablesService,
     UIService,
   })
-  const updateSelectedTagIndex = selectedTagIndex => SocialEntryService.updateSelectedTagIndex(selectedTagIndex)
+  const updateSelectedTagIndex = coordinators.updateSelectedTagIndex({ SocialEntryService, SuggestTags })
 
   return {
     addTagToText,
@@ -65,7 +69,7 @@ const mapDispatchToProps = () => {
     resetSearchCriteria,
     toggleVisibility,
     updateCursorTextData,
-    updateSearchHandles,
+    loadTagSuggestionsByHandles,
     updateSearchText,
     updateSelectedTagIndex,
   }

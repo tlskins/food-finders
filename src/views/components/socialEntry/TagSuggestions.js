@@ -9,13 +9,12 @@ class TagSuggestions extends Component {
     selectedTagChanged: false,
     parentTaggableType: '',
     tagSuggestions: [],
-    childTags: [],
+    childTagSuggestions: [],
   }
 
   componentWillReceiveProps = nextProps => {
-    const { selectedTagIndex, tagSuggestions } = nextProps
+    const { selectedTagIndex, tagSuggestions, childTagSuggestions } = nextProps
     const selectedTag = tagSuggestions[selectedTagIndex]
-    const childTags = (selectedTag && selectedTag.embeddedTaggable && selectedTag.embeddedTaggable.children) || []
     const parentTaggableType = selectedTag && selectedTag.taggableType && selectedTag.taggableType.toLowerCase()
     const selectedTagChanged = (selectedTag && selectedTag.id) !== (this.state.selectedTag && this.state.selectedTag.id)
 
@@ -25,7 +24,7 @@ class TagSuggestions extends Component {
       selectedTagChanged,
       parentTaggableType,
       tagSuggestions,
-      childTags,
+      childTagSuggestions,
     })
   }
 
@@ -47,19 +46,19 @@ class TagSuggestions extends Component {
   render() {
     const { onClickTag, onMouseOverTag, searchStatus } = this.props
     const {
-      childTags,
       selectedTagIndex,
       parentTaggableType,
       tagSuggestions,
+      childTagSuggestions,
     } = this.state
 
     if ( this.state.selectedTagChanged ) {
       this.setState({ selectedTagChanged: false })
     }
 
-    const childTagsPresent = childTags && childTags.length > 0
+    const childTagsPresent = childTagSuggestions.length > 0
     const taggableTypeString = (parentTaggableType && parentTaggableType.toLowerCase()) || ""
-    const parentChildTagGap = childTagsPresent ? selectedTagIndex - (childTags.length - 1) : 0
+    const parentChildTagGap = childTagsPresent ? selectedTagIndex - (childTagSuggestions.length - 1) : 0
 
     return (
       <div>
@@ -88,13 +87,13 @@ class TagSuggestions extends Component {
                   }
                   { t.taggableType === 'Entity' && t.embeddedTaggable &&
                     <div className="tag-suggestion-description">
-                      { `${ t.symbol }${ t.embeddedTaggable.id }` }<br />
+                      { `${ t.symbol }${ t.embeddedTaggable.handle }` }<br />
                       { t.embeddedTaggable.location.displayAddress.join(', ') }<br />
                     </div>
                   }
                   { t.taggableType === 'Entity' && t.yelpBusiness &&
                     <div className="tag-suggestion-description">
-                      { `${ t.symbol }${ t.yelpBusiness.id }` }<br />
+                      { `${ t.symbol }${ t.yelpBusiness.alias }` }<br />
                       { t.yelpBusiness.location.displayAddress.join(', ') }<br />
                     </div>
                   }
@@ -105,7 +104,7 @@ class TagSuggestions extends Component {
           { childTagsPresent &&
             <div className='tag-suggestions-children'>
               { this.renderParentChildTagBuffer(parentChildTagGap) }
-              { childTags.map( (t,i) =>
+              { childTagSuggestions.map( (t,i) =>
                 <div className="tag-suggestion-container active-suggestion">
                   <div
                     key={i}
@@ -131,6 +130,7 @@ class TagSuggestions extends Component {
 TagSuggestions.propTypes = {
   searchStatus: PropTypes.string,
   tagSuggestions: PropTypes.arrayOf(PropTypes.object),
+  childTagSuggestions: PropTypes.arrayOf(PropTypes.object),
   selectedTagIndex: PropTypes.number,
 
   onClickTag: PropTypes.func,

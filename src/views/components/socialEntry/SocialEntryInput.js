@@ -31,6 +31,7 @@ class SocialEntryInput extends Component {
       searchText: undefined,
       searchHandles: undefined,
       searchStatus: undefined,
+      childTagSuggestions: [],
       draftSocialEntry: draftSocialEntry || initialDraftSocialEntry,
       tags: [],
       tagSuggestions: [],
@@ -72,7 +73,7 @@ class SocialEntryInput extends Component {
   }
 
   onKeyDown = e => {
-    const { addTagToText, updateSearchHandles, updateSelectedTagIndex } = this.props
+    const { addTagToText, loadTagSuggestionsByHandles, updateSelectedTagIndex } = this.props
     let { selectedTagIndex } = this.state
     const { tagSymbol, tagSuggestions } = this.state
     if ( tagSuggestions.length > 0 ) {
@@ -83,27 +84,23 @@ class SocialEntryInput extends Component {
         if ( selectedTaggable && selectedTaggable.children && selectedTaggable.children.length > 0 ) {
           e.stopPropagation()
           e.preventDefault()
-          const childTagHandles = selectedTaggable.children.filter( c => {
-            return c.tagSymbol && c.tagHandle
-          }).map( c => c.tagSymbol + c.tagHandle )
-
+          const { children } = selectedTaggable
+          const selectedTagHandle = selectedTag.symbol + selectedTag.handle
           this.setState({ searchStatus: `Loading ${ selectedTag.name }...` })
-          updateSearchHandles({ tagSymbol, searchHandles: childTagHandles, selectedTagIndex })
+          loadTagSuggestionsByHandles({ tagSymbol, searchHandles: children, selectedTagIndex, selectedTagHandle })
         }
       }
       // left arrow key
       else if ( e.keyCode === 37 ) {
         const selectedTag = tagSuggestions[selectedTagIndex]
-        if ( selectedTag.embeddedTaggable && selectedTag.embeddedTaggable.parent ) {
+        const { embeddedTaggable } = selectedTag
+        if ( embeddedTaggable && embeddedTaggable.parentGeneration ) {
           e.stopPropagation()
           e.preventDefault()
-          const parentTaggable = selectedTag.embeddedTaggable.parent
-          const parentHandle = parentTaggable.tagSymbol + parentTaggable.tagHandle
-          const parentSiblingHandles = (parentTaggable && parentTaggable.siblings) || []
-          const newSearchHandles = [parentHandle, ...parentSiblingHandles]
-
+          const { parentGeneration } = embeddedTaggable
+          const selectedTagHandle = selectedTag.symbol + selectedTag.handle
           this.setState({ searchStatus: `Loading ${ selectedTag.name }...` })
-          updateSearchHandles({ tagSymbol, searchHandles: newSearchHandles, selectedTagIndex: 0 })
+          loadTagSuggestionsByHandles({ tagSymbol, searchHandles: parentGeneration, selectedTagIndex: 0, selectedTagHandle })
         }
       }
       // down arrow key
@@ -193,6 +190,7 @@ class SocialEntryInput extends Component {
   render() {
     const {
       text,
+      childTagSuggestions,
       draftSocialEntry,
       parentSocialEntry,
       searchStatus,
@@ -242,6 +240,7 @@ class SocialEntryInput extends Component {
               />
               <TagSuggestions
                 tagSuggestions={ tagSuggestions }
+                childTagSuggestions={ childTagSuggestions }
                 searchStatus={ searchStatus }
                 selectedTagIndex={ selectedTagIndex }
                 onClickTag={ addTagToText }
@@ -274,6 +273,7 @@ SocialEntryInput.propTypes = {
   draftSocialEntry: PropTypes.object,
   tagSearches: PropTypes.object,
   visible: PropTypes.bool,
+  childTagSuggestions: PropTypes.arrayOf(PropTypes.object),
   creatableTags: PropTypes.arrayOf(PropTypes.object),
   cursorBeginIndex: PropTypes.number,
   cursorEndIndex: PropTypes.number,
@@ -290,7 +290,7 @@ SocialEntryInput.propTypes = {
   resetSearchCriteria: PropTypes.func,
   toggleVisibility: PropTypes.func,
   updateCursorTextData: PropTypes.func,
-  updateSearchHandles: PropTypes.func,
+  loadTagSuggestionsByHandles: PropTypes.func,
   updateSearchText: PropTypes.func,
   updateSelectedTagIndex: PropTypes.func,
 }

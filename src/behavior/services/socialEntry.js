@@ -16,23 +16,35 @@ export class SocialEntryService extends BaseService {
     return this.getState().socialEntry
   }
 
+  getSelectedTag = () => {
+    const { tagSuggestions, selectedTagIndex } = this.getSocialEntry()
+    return tagSuggestions[selectedTagIndex]
+  }
+
   loadDraftSocialEntry = draftSocialEntry => {
     this.dispatch( actions.updateSocialEntry(draftSocialEntry) )
+    this._loadChildTags()
   }
 
   refreshTagSuggestions = () => {
     const { tagDictionary } = this.getState().tags
-    const { tagSymbol, searchText, searchHandles } = this.getState().socialEntry
+    const { tagSymbol, searchText, searchHandles } = this.getSocialEntry()
     const tagSuggestions = this._getTagSuggestions({ tagDictionary, tagSymbol, searchText, searchHandles })
+    const childTagSuggestions = this._getChildTags()
 
-    this.dispatch( actions.updateSocialEntry({ tagSuggestions }) )
+    this.dispatch( actions.updateSocialEntry({
+      tagSuggestions,
+      childTagSuggestions,
+    }) )
   }
 
   updateSearchText = ({ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex }) => {
     const { tagDictionary } = this.getState().tags
     const tagSuggestions = this._getTagSuggestions({ tagDictionary, tagSymbol, searchText })
+    const childTagSuggestions = this._getChildTags()
 
     this.dispatch( actions.updateSocialEntry({
+      childTagSuggestions,
       cursorBeginIndex,
       cursorEndIndex,
       searchText,
@@ -44,11 +56,13 @@ export class SocialEntryService extends BaseService {
     }) )
   }
 
-  updateSearchHandles = ({ tagSymbol, searchHandles, selectedTagIndex }) => {
+  loadTagSuggestionsByHandles = ({ tagSymbol, searchHandles, selectedTagIndex }) => {
     const { tagDictionary } = this.getState().tags
     const tagSuggestions = this._getTagSuggestions({ tagDictionary, tagSymbol, searchHandles })
+    const childTagSuggestions = this._getChildTags()
 
     this.dispatch( actions.updateSocialEntry({
+      childTagSuggestions,
       searchText: null,
       searchHandles,
       selectedTagIndex,
@@ -68,10 +82,10 @@ export class SocialEntryService extends BaseService {
 
   updateSelectedTagIndex = selectedTagIndex => {
     this.dispatch( actions.updateSocialEntry({ selectedTagIndex }) )
+    this._loadChildTags()
   }
 
   addTagToText = (tag, updateText = true) => {
-    console.log('SERVICE BEGIN addTagToText')
     const { symbol, handle } = tag
     const { socialEntry } = this.getState()
     let { text, cursorBeginIndex, cursorEndIndex, creatableTags } = socialEntry
@@ -88,6 +102,7 @@ export class SocialEntryService extends BaseService {
       selectedTagIndex: 0,
       tagSuggestions: [tag],
     }) )
+    this._loadChildTags()
   }
 
   setParentSocialEntry = ({ parentSocialEntry }) => {
@@ -96,10 +111,38 @@ export class SocialEntryService extends BaseService {
 
   // Helpers
 
-  _getTagSuggestions = ({ tagDictionary, tagSymbol, searchText, searchHandles }) => {
+  // TODO - Move all these helpers to tag service
+
+  _getTagsBySymbol = ({ tagDictionary, tagSymbol }) => {
     const tagsBySymbol = tagDictionary[tagSymbol]
     const emptyTagsBySymbol = tagsBySymbol && Object.values(tagsBySymbol).length < 1
     if ( !tagsBySymbol || emptyTagsBySymbol ) {
+      return undefined
+    }
+    return tagsBySymbol
+  }
+
+  _getChildTags = () => {
+    const { tagDictionary } = this.getState().tags
+    const { tagSymbol } = this.getSocialEntry()
+    const tagsBySymbol = this._getTagsBySymbol({ tagDictionary, tagSymbol })
+    const selectedTag = this.getSelectedTag()
+    if ( !tagsBySymbol || !selectedTag ) {
+      return []
+    }
+
+    const { children } = selectedTag.embeddedTaggable
+    return this._getTagsByKey({ tagsBySymbol, searchHandles: children })
+  }
+
+  _loadChildTags = () => {
+    const childTagSuggestions = this._getChildTags()
+    this.dispatch( actions.updateSocialEntry({ childTagSuggestions }) )
+  }
+
+  _getTagSuggestions = ({ tagDictionary, tagSymbol, searchText, searchHandles }) => {
+    const tagsBySymbol = this._getTagsBySymbol({ tagDictionary, tagSymbol })
+    if ( !tagsBySymbol ) {
       return []
     }
     const { roots = [] } = tagsBySymbol
@@ -116,14 +159,21 @@ export class SocialEntryService extends BaseService {
       }
     }
     else if ( searchHandles ) {
-      const searchKeys = searchHandles.map( h => h.slice(1) )
-      if ( searchKeys.length > 0 ) {
-        const tagSuggestions = searchDictionaryByKeys(tagsBySymbol, searchKeys)
-
-        return tagSuggestions
-      }
+      return this._getTagsByKey({ tagsBySymbol, searchHandles })
     }
     return roots
+  }
+
+  _getTagsByKey = ({ tagsBySymbol, searchHandles }) => {
+    const searchKeys = searchHandles && searchHandles.map( h => h.slice(1) )
+    if ( searchHandles && searchKeys.length > 0 ) {
+      const tags = searchDictionaryByKeys(tagsBySymbol, searchKeys)
+
+      return tags
+    }
+    else {
+      return []
+    }
   }
 
   _getCreatableTag = (tag, cursorBeginIndex, cursorEndIndex) => {

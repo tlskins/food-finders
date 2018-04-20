@@ -13,6 +13,7 @@ const initialSocialEntryState = {
   selectedTagIndex: 0,
   tags: [],
   tagSuggestions: [],
+  childTagSuggestions: [],
   tagSymbol: null,
   text: null,
 }
@@ -29,6 +30,7 @@ export const socialEntry = (state = initialSocialEntryState, action) => {
         text = state.text,
         searchHandles = state.searchHandles,
         selectedTagIndex = state.selectedTagIndex,
+        childTagSuggestions = state.childTagSuggestions,
         creatableTags = state.creatableTags,
         cursorBeginIndex = state.cursorBeginIndex,
         cursorEndIndex = state.cursorEndIndex,
@@ -44,6 +46,7 @@ export const socialEntry = (state = initialSocialEntryState, action) => {
         text,
         searchHandles,
         selectedTagIndex,
+        childTagSuggestions,
         creatableTags,
         cursorBeginIndex,
         cursorEndIndex,

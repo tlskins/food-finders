@@ -89,6 +89,7 @@ export const updateSearchText = ({
   SocialEntryService,
   SuggestTags,
   UpdateDraftSocialEntry,
+  TagService,
   TaggablesService,
   UIService,
 }) => async ({
@@ -98,7 +99,6 @@ export const updateSearchText = ({
   cursorBeginIndex,
   cursorEndIndex,
 }) => {
-  console.log('COORDINATOR updateSearchText ',{ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex })
   const { creatableTags, tagSuggestions } = SocialEntryService.getSocialEntry()
   const editTaggable = TaggablesService.getEditTaggable()
   const { edited } = editTaggable
@@ -132,11 +132,16 @@ export const updateSearchText = ({
   // tag suggestions
   SocialEntryService.updateSearchText({ tagSymbol, text, searchText, cursorBeginIndex, cursorEndIndex })
   await SuggestTags({ symbol: tagSymbol, text: searchText, resultsPerPage: 5, page: 1 })
-  SocialEntryService.refreshTagSuggestions()
+  _findAnyNewChildTags({ SocialEntryService, SuggestTags })
   if ( tagSymbol ) {
     UpdateDraftSocialEntry(text, creatableTags)
   }
-  console.log('COORDINATOR updateSearchText END')
+}
+
+
+export const updateSelectedTagIndex = ({ SocialEntryService, SuggestTags }) => ( selectedTagIndex ) => {
+  SocialEntryService.updateSelectedTagIndex(selectedTagIndex)
+  _findAnyNewChildTags({ SocialEntryService, SuggestTags })
 }
 
 
@@ -152,7 +157,6 @@ export const updateCursorTextData = ({
   cursorBeginIndex,
   cursorEndIndex,
 }) => {
-  console.log('COORDINATOR updateCursorTextData BEGIN')
   // Save any edited taggable to creatable tag
   const editTaggable = TaggablesService.getEditTaggable()
   const { edited: taggableEdited } = editTaggable
@@ -179,14 +183,16 @@ export const updateCursorTextData = ({
 }
 
 
-export const updateSearchHandles = ({ SocialEntryService, SuggestTags }) => async ({
+export const loadTagSuggestionsByHandles = ({ SocialEntryService, TagService, SuggestTags }) => async ({
   tagSymbol,
   searchHandles,
   selectedTagIndex,
+  selectedTagHandle,
 }) => {
-  console.log('COORDINATOR updateSearchHandles BEGIN')
-  SocialEntryService.updateSearchHandles({ tagSymbol, searchHandles, selectedTagIndex })
+  SocialEntryService.loadTagSuggestionsByHandles({ tagSymbol, searchHandles, selectedTagIndex })
   if ( tagSymbol ) {
+    const childHandles = _getChildHandles({ TagService, tagSymbol, handle: selectedTagHandle })
+    searchHandles = searchHandles.concat(childHandles)
     await SuggestTags({ symbol: tagSymbol, handles: searchHandles, resultsPerPage: 5, page: 1 })
     SocialEntryService.refreshTagSuggestions()
   }
@@ -197,8 +203,31 @@ export const updateSearchHandles = ({ SocialEntryService, SuggestTags }) => asyn
 
 
 export const addTagToText = ({ SocialEntryService, UpdateDraftSocialEntry }) => async ( tag, updateText = true ) => {
-  console.log('COORDINATOR addTagToText BEGIN')
   SocialEntryService.addTagToText(tag, updateText)
   const { creatableTags, text } = SocialEntryService.getSocialEntry()
   UpdateDraftSocialEntry(text, creatableTags)
+}
+
+// Helpers
+
+const _getChildHandles = ({ tagSymbol, handle, TagService }) => {
+  const tag = TagService.getTag(tagSymbol, handle)
+  if ( !tag || !tag.children ) {
+    return []
+  }
+  else {
+    return tag.children
+  }
+}
+
+const _findAnyNewChildTags = async ({ SocialEntryService, SuggestTags }) => {
+  const selectedTag = SocialEntryService.getSelectedTag()
+  const { tagSymbol } = SocialEntryService.getSocialEntry()
+  if ( selectedTag && selectedTag.embeddedTaggable && selectedTag.embeddedTaggable.children ) {
+    const { children: childHandles } = selectedTag.embeddedTaggable
+    if ( childHandles.length > 0 ) {
+      await SuggestTags({ symbol: tagSymbol, handles: childHandles, resultsPerPage: 5, page: 1 })
+      SocialEntryService.refreshTagSuggestions()
+    }
+  }
 }

@@ -12,6 +12,25 @@ export class TagService extends BaseService {
   loadRootTags = (rootTags) => {
     this.dispatch( actions.loadRootTags(rootTags) )
   }
+  getTag = (symbol, handle) => {
+    const tagsBySymbol = this.getTagsBySybmol(symbol)
+    if ( !tagsBySymbol) {
+      return undefined
+    }
+    else {
+      return tagsBySymbol[handle]
+    }
+  }
+  getTagsBySybmol = (symbol) => {
+    const { tagDictionary } = this.getState().tags
+
+    const tagsBySymbol = tagDictionary[symbol]
+    const emptyTagsBySymbol = tagsBySymbol && Object.values(tagsBySymbol).length < 1
+    if ( !tagsBySymbol || emptyTagsBySymbol ) {
+      return undefined
+    }
+    return tagsBySymbol
+  }
 
   // Tag Searches
   startTagSearch = ({ symbol, text, page, resultsPerPage, source }) => {
