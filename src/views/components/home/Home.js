@@ -65,13 +65,14 @@ class Home extends Component {
     )
   }
 
-  renderStickyEntityPanel = ({ isSticky, style, }) => {
+  renderStickyEntityPanel = ({ isSticky, style }) => {
     const { selectedEntity } = this.state
     if ( isSticky ) {
       style = { ...style, width: '100%', top: '155px' }
     }
     // TODO - move to presenter
     const yelpBusiness = selectedEntity && selectedEntity.yelpBusiness
+
     return (
       <EntityPanel
         showMap={ true }
@@ -96,6 +97,7 @@ class Home extends Component {
     if ( !currentUser ) {
       return null
     }
+    const { selectedEntity } = this.state
     let socialContainerClass = "social-container"
     if ( friendsManagerVisible ) {
       socialContainerClass += " show-sidebar"
@@ -115,12 +117,14 @@ class Home extends Component {
             <FriendsManager />
               <div className={ socialContainerClass }>
                 <Newsfeed />
-                <div className="home-page-entity-container">
-                  <Sticky topOffset={-70}>
-                    { this.renderStickyEntityPanel }
-                  </Sticky>
-                  <div style={{ height: '100%' }}></div>
-                </div>
+                { selectedEntity &&
+                  <div className="home-page-entity-container">
+                    <Sticky topOffset={-70}>
+                      { this.renderStickyEntityPanel }
+                    </Sticky>
+                    <div style={{ height: '100%' }}></div>
+                  </div>
+                }
                 { socialEntryVisible && <SocialEntryInput /> }
               </div>
           </div>
