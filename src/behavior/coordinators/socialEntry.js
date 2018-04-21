@@ -8,7 +8,7 @@ export const updateDraftSocialEntry = ({
   const userId = SessionService.currentUserId()
   const payload = pRequestUpdateSocialEntry({ text, creatableTags })
 
-  let user = await RestService.put('/users/' + userId, payload )
+  let user = await RestService.put('/api/users/' + userId, payload )
   user = pResponseUser(user)
   SessionService.setUserSession(user, requestedAt)
 }
@@ -30,7 +30,7 @@ export const newReplySocialEntry = ({
     parentSocialEntryId: id
   })
 
-  let user = await RestService.put('/users/' + userId, payload )
+  let user = await RestService.put('/api/users/' + userId, payload )
   user = pResponseUser(user)
   SessionService.setUserSession(user, requestedAt)
   SocialEntryService.setParentSocialEntry({ parentSocialEntry })
@@ -60,7 +60,7 @@ export const postSocialEntry = ({
   const { text, creatableTags } = socialEntry
   const payload = pRequestPostSocialEntry({ text, creatableTags })
 
-  let user = await RestService.post('/users/' + userId + '/publish_draft_social_entry', payload )
+  let user = await RestService.post('/api/users/' + userId + '/publish_draft_social_entry', payload )
   user = pResponseUser(user)
   SessionService.setUserSession(user)
 }

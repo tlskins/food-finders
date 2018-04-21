@@ -1,12 +1,12 @@
 export const LoadRootTags = async ({ TagService, RestService, pResponseRoots }) => {
-  const response = await RestService.get('/tags/all_roots' )
+  const response = await RestService.get('/api/tags/all_roots' )
   const tags = pResponseRoots(response)
   TagService.loadRootTags(tags)
 }
 
 
 export const SearchYelpBusinesses = ({ RestService, pResponseYelpBusinesses }) => async term => {
-  const response = await RestService.get('/entities/yelp_businesses_search', { term } )
+  const response = await RestService.get('/api/entities/yelp_businesses_search', { term } )
   return pResponseYelpBusinesses(response)
 }
 
@@ -107,7 +107,7 @@ const _searchCoreTagsByText = async ({ TagService, RestService, pResponseTags, s
   const coreSearchIndex = { ...searchIndex, source: 'core' }
   try {
     TagService.startTagSearch(coreSearchIndex)
-    const response = await RestService.get('/tags', payload )
+    const response = await RestService.get('/api/tags', payload )
     const tags = pResponseTags(response)
     TagService.addTags(symbol, tags)
     TagService.completeTagSearch(coreSearchIndex)
@@ -121,7 +121,7 @@ const _searchCoreTagsByText = async ({ TagService, RestService, pResponseTags, s
 const _searchCoreTagsByHandles = async ({ TagService, RestService, pResponseTags, searchIndex }) => {
   const { symbol, handles, resultsPerPage, page } = searchIndex
   const payload = { handles: encodeURIComponent(handles), results_per_page: resultsPerPage, page }
-  const response = await RestService.get('/tags', payload )
+  const response = await RestService.get('/api/tags', payload )
   const tags = pResponseTags(response)
   TagService.addTags(symbol, tags)
   return tags
@@ -133,7 +133,7 @@ const _searchYelpTags = async ({ TagService, RestService, pResponseYelpBusinesse
   const yelpSearchIndex = { ...searchIndex, source: 'yelp' }
   TagService.startTagSearch(yelpSearchIndex)
   try {
-    const response = await RestService.get('/entities/yelp_businesses_search', { term: text } )
+    const response = await RestService.get('/api/entities/yelp_businesses_search', { term: text } )
     const tags = pResponseYelpBusinesses(response)
     TagService.addTags(symbol, tags)
     TagService.completeTagSearch(yelpSearchIndex)

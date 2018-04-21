@@ -1,6 +1,6 @@
 export const EmailSignUp = ({ RestService, UIService }) => async ({ firstName, lastName, email, password, name }) => {
   try {
-    await RestService.post( '/users', { user: {
+    await RestService.post( '/api/users', { user: {
       first_name: firstName, last_name: lastName, email, password, name,
     }})
     // UIService.FlashMessage.displayInfoMessage( 'Please check your email to confirm your account.' )
@@ -23,7 +23,7 @@ export const EmailSignIn = ({
   pResponseUser
 }) => async ({ email, password }) => {
   try {
-    let user = await RestService.post( '/users/sign_in', { email, password })
+    let user = await RestService.post( '/api/users/sign_in', { email, password })
     user = pResponseUser( user )
     SessionService.setUserSession( user )
     RouterService.replace({ pathname: '/' })
@@ -47,7 +47,7 @@ export const EmailSignIn = ({
 
 export const SignOut = ({ RestService, SessionService, RouterService }) => async () => {
   try {
-    await RestService.delete( '/users/sign_out' )
+    await RestService.delete( '/api/users/sign_out' )
     SessionService.clearUserSession()
     RouterService.replace({ pathname: '/login' })
   }
@@ -61,7 +61,7 @@ export const SignOut = ({ RestService, SessionService, RouterService }) => async
 export const ConfirmEmail = ({ RestService, RouterService, SessionService, UIService, pResponseUser }) => async () => {
   try {
     const token = RouterService.getState().routing.location.search
-    let user = await RestService.get( `/users/confirmation${ token }` )
+    let user = await RestService.get( `/api/users/confirmation${ token }` )
     user = pResponseUser( user )
     SessionService.setUserSession( user )
     RouterService.push({ pathname: '/' })
@@ -101,7 +101,7 @@ export const UpdatePassword = ({ RestService, SessionService, UIService }) => as
   const userId =  SessionService.getState().user.id
 
   try {
-    await RestService.put( `/users/password/${ userId }`, { password })
+    await RestService.put( `/api/users/password/${ userId }`, { password })
     // UIService.FlashMessage.displaySuccessMessage( 'Your password has been updated' )
     SessionService.refreshSession()
   }
@@ -114,7 +114,7 @@ export const UpdatePassword = ({ RestService, SessionService, UIService }) => as
 
 export const ForgotPassword = ({ RestService, UIService }) => async ({ email }) => {
   try {
-    await RestService.post( '/users/password/', { user: { email }})
+    await RestService.post( '/api/users/password/', { user: { email }})
     // UIService.FlashMessage.displaySuccessMessage( 'An email has been sent to reset your password' )
   }
   catch ( error ) {
