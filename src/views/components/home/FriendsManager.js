@@ -10,6 +10,8 @@ class SearchHeader extends PureComponent {
     const {
       followersCount,
       followingCount,
+      renderEditRelationshipButton,
+      suggestions,
       searchText,
       updateText,
       visible,
@@ -17,6 +19,8 @@ class SearchHeader extends PureComponent {
     if (!visible) {
       return <div />
     }
+    const searchTextEmpty = searchText.length === 0
+
     return (
       <div className="friends-manager--content--search" style={{ ...this.props.style }}>
         <div>
@@ -29,6 +33,20 @@ class SearchHeader extends PureComponent {
           onChange={ updateText }
           placeholder='Find friends...'
           />
+        <div className='friends-manager--content--suggestions'>
+          { !searchTextEmpty && suggestions.map( (s,i) =>
+            <div key={ i } className='sidebar-item'>
+              <div className="sidebar-item-title">
+                @{ s.name }
+              </div>
+              <div className="sidebar-item-details">
+                { s.firstName } { s.lastName } <br />
+                following: { s.following } { renderEditRelationshipButton(s.following, s.id) }<br />
+                follower: { s.follower }
+              </div>
+            </div>
+          ) }
+        </div>
      </div> )
   }
 }
@@ -74,7 +92,7 @@ class FriendsManager extends Component {
 
   renderStickySearchHeader = ({ isSticky, style }) => {
     const { followersCount, followingCount, visible } = this.props
-    const { searchText } = this.state
+    const { searchText, suggestions } = this.state
     if ( isSticky ) {
       style = { ...style, top: '160px' }
     }
@@ -84,7 +102,9 @@ class FriendsManager extends Component {
         followersCount={ followersCount }
         followingCount={ followingCount }
         updateText={ this.updateText }
+        renderEditRelationshipButton={ this.renderEditRelationshipButton }
         searchText={ searchText }
+        suggestions={ suggestions }
         visible={ visible }
       />
     )
@@ -92,8 +112,6 @@ class FriendsManager extends Component {
 
   render() {
     const { visible } = this.props
-    const { suggestions, searchText } = this.state
-    const searchTextEmpty = searchText.length === 0
     let className = "friends-manager sidebar"
     if (!visible) {
       className += " hide-sidebar"
@@ -108,20 +126,6 @@ class FriendsManager extends Component {
                 <Sticky topOffset={-145}>
                   { this.renderStickySearchHeader }
                 </Sticky>
-                <div className='friends-manager--content--suggestions'>
-                  { !searchTextEmpty && suggestions.map( (s,i) =>
-                    <div key={ i } className='sidebar-item'>
-                      <div className="sidebar-item-title">
-                        @{ s.name }
-                      </div>
-                      <div className="sidebar-item-details">
-                        { s.firstName } { s.lastName } <br />
-                        following: { s.following } { this.renderEditRelationshipButton(s.following, s.id) }<br />
-                        follower: { s.follower }
-                      </div>
-                    </div>
-                  ) }
-                </div>
               </div>
             </div>
           </div>

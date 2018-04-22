@@ -651,7 +651,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   padding-top: 15px;
   width: 100%;
 }
@@ -693,6 +693,7 @@ body {
 .social-container {
   height: 100%;
   width: 100%;
+  min-height: 500px;
   display: flex;
   flex-direction: row;
   flex: 1;
@@ -1146,7 +1147,7 @@ body {
   height: 45px;
   margin-left: 6px;
   margin-right: 6px;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
   padding: 13px;
 }
 
