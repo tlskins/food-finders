@@ -294,8 +294,8 @@ class HierarchiesManager extends Component {
 	}
 
 	createTaggable = () => {
-		const { taggableType, toggleTagEditorVisibility, loadEditTaggable } = this.props
-		const { newTaggableName } = this.state
+		const { toggleTagEditorVisibility, loadEditTaggable } = this.props
+		const { newTaggableName, taggableType } = this.state
 		const newTaggable = { name: newTaggableName }
 
 		const model = this.engine.getDiagramModel()
