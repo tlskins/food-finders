@@ -8,10 +8,12 @@ import TagEditor from './tagEditor'
 import HierarchiesManager from './hierarchiesManager'
 import Newsfeed from './newsfeed'
 import SocialEntryDetailPanel from './socialEntryDetailPanel'
+import Errors from './errors'
 
 
 const SubServices = {
   LoginForm,
+  Errors,
   FlashMessage,
   FriendsManager,
   SocialEntry,

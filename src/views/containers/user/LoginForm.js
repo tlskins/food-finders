@@ -9,14 +9,20 @@ import { HandleError } from '@coordinators/composed'
 
 
 const mapStateToProps = state => {
-  const { loginFormPage, session } = state
-  const errors = (state.errors && state.errors.loginForm) || {}
+  const { loginFormPage, session, errors } = state
+  const { mode } = loginFormPage
+  let errors_
+  if ( mode === 'signIn') {
+    errors_ = (errors && errors.loginForm) || {}
+  } else if ( mode === 'signUp' ) {
+    errors_ = (errors && errors.signUpForm) || {}
+  }
   const currentUser = session ? session.user : undefined
 
   return {
     currentUser,
-    errors,
-    mode: loginFormPage.mode,
+    errors: errors_,
+    mode,
   }
 }
 
@@ -35,7 +41,7 @@ const mapDispatchToProps = () => {
     HandleError,
     pResponseUser
   })
-  const signUp = EmailSignUp({ RestService, SessionService, UIService })
+  const signUp = EmailSignUp({ RestService, HandleError, UIService })
   const toggleMode = mode => UIService.LoginForm.toggleMode( mode )
   const redirect = () => RouterService.replace({ pathname: '/' })
 

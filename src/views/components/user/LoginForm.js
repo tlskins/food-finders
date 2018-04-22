@@ -228,7 +228,7 @@ class LoginForm extends Component {
         </div>
 
         <button value="submit" onClick={ this.signUp }> Create </button>
-        <a href="#" onClick={ e => this.toggleMode( e, 'signIn' ) }> Back to Sign In </a>
+        <a href="/" onClick={ e => this.toggleMode( e, 'signIn' ) }> Back to Sign In </a>
       </div>
     )
   }

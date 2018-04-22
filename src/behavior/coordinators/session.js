@@ -1,14 +1,13 @@
-export const EmailSignUp = ({ RestService, UIService }) => async ({ firstName, lastName, email, password, name }) => {
+export const EmailSignUp = ({ RestService, UIService, HandleError }) => async ({ firstName, lastName, email, password, name }) => {
   try {
     await RestService.post( '/api/users', { user: {
       first_name: firstName, last_name: lastName, email, password, name,
     }})
-    // UIService.FlashMessage.displayInfoMessage( 'Please check your email to confirm your account.' )
+    UIService.FlashMessage.displayInfoMessage( 'Please check your email to confirm your account.' )
     UIService.LoginForm.toggleMode( 'signIn' )
   }
   catch ( error ) {
-    console.log('EmailSignUp error:',error)
-    // HandleError({ error, namespace: 'loginForm' })
+    HandleError({ error, namespace: 'signUpForm' })
   }
 }
 

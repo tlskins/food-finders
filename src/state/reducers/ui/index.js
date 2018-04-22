@@ -6,6 +6,7 @@ import * as tagEditorUIReducers from './tagEditor'
 import * as hierarchiesManagerUIReducers from './hierarchiesManager'
 import * as newsfeedUIReducers from './newsfeed'
 import * as socialEntryDetailPanelUIReducers from './socialEntryDetailPanel'
+import * as errorsReducers from './errors'
 
 
 export default {
@@ -17,4 +18,5 @@ export default {
   ...hierarchiesManagerUIReducers,
   ...newsfeedUIReducers,
   ...socialEntryDetailPanelUIReducers,
+  ...errorsReducers,
 }
