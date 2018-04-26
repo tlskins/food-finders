@@ -52,17 +52,9 @@ class LoginForm extends Component {
   }
 
   onInput = ( e, fieldName ) => {
-    const { errors, setErrors } = this.props
-
     const newState = {}
     newState[fieldName] = e.target.value
     this.setState( newState )
-
-    if ( errors[fieldName]) {
-      const newErrors = { ...errors }
-      newErrors[fieldName] = undefined
-      setErrors( newErrors )
-    }
   }
 
   renderSignIn() {
@@ -73,12 +65,12 @@ class LoginForm extends Component {
       <div className='login-page'>
         <h2> Sign In </h2>
         <div>
-          { errors && errors.email &&
-            <div className="error-message"> { errors.email }</div>
-          }
           <label htmlFor="email">
             Email Address
           </label>
+          { errors && errors.email &&
+            <div className="error-message"> { errors.email }</div>
+          }
           <input id="email"
             type="email"
             value={ email }
@@ -88,12 +80,12 @@ class LoginForm extends Component {
         </div>
 
         <div>
-          { errors && errors.password &&
-            <div className="error-message"> { errors.password }</div>
-          }
           <label htmlFor="password">
             Password
           </label>
+          { errors && errors.password &&
+            <div className="error-message"> { errors.password }</div>
+          }
           <input id="password"
             type="password"
             value={ password }
@@ -110,17 +102,21 @@ class LoginForm extends Component {
           <button value="submit" onClick={ this.signIn }> Sign In </button>
         </div>
 
-        <div className="check-box">
-          <input id="sign-in-check"
-            type="checkbox"
-            value=""
-          />
-          <label htmlFor="sign-in-check"> Keep me signed in. </label>
-        </div>
+        {
+          /**
+          <div className="check-box">
+            <input id="sign-in-check"
+              type="checkbox"
+              value=""
+            />
+            <label htmlFor="sign-in-check"> Keep me signed in. </label>
+          </div>
+          **/
+        }
 
         <div>
           <div><div></div><p>New here?</p></div>
-          <a href="#" onClick={ e => this.toggleMode( e, 'signUp' ) }> Create your account </a>
+          <a href="signUp" onClick={ e => this.toggleMode( e, 'signUp' ) }> Create your account </a>
         </div>
       </div>
     )
@@ -141,12 +137,12 @@ class LoginForm extends Component {
       <div>
         <h2> Create a User </h2>
         <div>
-          { errors && errors.name &&
-            <div className="error-message"> { errors.name }</div>
-          }
           <label htmlFor="name">
             User Name*
           </label>
+          { errors && errors.name &&
+            <div className="error-message"> { errors.name }</div>
+          }
           <input id="name"
             type="text"
             value={ name }
@@ -156,12 +152,12 @@ class LoginForm extends Component {
         </div>
 
         <div>
-          { errors && errors.firstName &&
-            <div className="error-message"> { errors.firstName }</div>
-          }
           <label htmlFor="name">
             First Name*
           </label>
+          { errors && errors.firstName &&
+            <div className="error-message"> { errors.firstName }</div>
+          }
           <input id="name"
             className={ errors && errors.firstName && 'input-error' }
             type="text"
@@ -172,12 +168,12 @@ class LoginForm extends Component {
         </div>
 
         <div>
-          { errors && errors.lastName &&
-            <div className="error-message"> { errors.lastName }</div>
-          }
           <label htmlFor="last-name">
             Last Name*
           </label>
+          { errors && errors.lastName &&
+            <div className="error-message"> { errors.lastName }</div>
+          }
           <input id="last-name"
             type="text"
             value={ lastName }
@@ -187,12 +183,12 @@ class LoginForm extends Component {
         </div>
 
         <div>
-          { errors && errors.email &&
-            <div className="error-message"> { errors.email }</div>
-          }
           <label htmlFor="email">
             Email Address*
           </label>
+          { errors && errors.email &&
+            <div className="error-message"> { errors.email }</div>
+          }
           <input id="email"
             type="email"
             value={ email }
@@ -201,12 +197,12 @@ class LoginForm extends Component {
           />
         </div>
         <div>
-          { errors && errors.password &&
-            <div className="error-message"> { errors.password }</div>
-          }
           <label htmlFor="password">
             Create Password
           </label>
+          { errors && errors.password &&
+            <div className="error-message"> { errors.password }</div>
+          }
           <input id="password"
             type="password"
             value={ password }
