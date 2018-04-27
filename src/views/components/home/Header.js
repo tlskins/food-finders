@@ -5,12 +5,27 @@ import DropdownArrow from '@res/images/icons8-expand-arrow-48.png'
 
 
 class Header extends PureComponent {
+
+  toggleSocialEntryVisibility = () => {
+    const {
+      currentUser,
+      toggleSocialEntryVisibility,
+      displayInfoMessage,
+    } = this.props
+
+    if ( currentUser ) {
+      toggleSocialEntryVisibility && toggleSocialEntryVisibility()
+    }
+    else {
+      displayInfoMessage && displayInfoMessage('Create an account before you can start socializing with your buds!')
+    }
+  }
+
   render() {
     const {
       currentUser,
       style,
       toggleFriendsManagerVisibility,
-      toggleSocialEntryVisibility,
     } = this.props
 
     return (
@@ -30,7 +45,7 @@ class Header extends PureComponent {
         </button>
         <button
           className="header-button"
-          onClick={ toggleSocialEntryVisibility }
+          onClick={ this.toggleSocialEntryVisibility }
         >
           New Social Entry
         </button>
@@ -43,6 +58,7 @@ Header.propTypes = {
   currentUser: PropTypes.object,
   style: PropTypes.object,
 
+  displayInfoMessage: PropTypes.func,
   toggleFriendsManagerVisibility: PropTypes.func,
   toggleSocialEntryVisibility: PropTypes.func,
 }

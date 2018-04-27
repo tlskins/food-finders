@@ -43,6 +43,7 @@ class Home extends Component {
 
   renderStickyHeader = ({ isSticky, style }) => {
     const {
+      displayInfoMessage,
       toggleFriendsManagerVisibility,
       friendsManagerVisible,
       currentUser,
@@ -53,6 +54,7 @@ class Home extends Component {
     return (
       <Header
         style={style}
+        displayInfoMessage={ displayInfoMessage }
         toggleFriendsManagerVisibility={ () => toggleFriendsManagerVisibility(!friendsManagerVisible) }
         toggleSocialEntryVisibility={ this.onToggleSocialEntryVisibility }
         currentUser={ currentUser }
@@ -132,6 +134,7 @@ Home.propTypes = {
   selectedNewsfeedItem: PropTypes.object,
   socialEntryVisible: PropTypes.bool,
 
+  displayInfoMessage: PropTypes.func,
   loadTaggable: PropTypes.func,
   pTaggableClassToType: PropTypes.func,
   redirect: PropTypes.func,

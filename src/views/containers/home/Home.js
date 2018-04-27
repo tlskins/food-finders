@@ -31,8 +31,10 @@ const mapDispatchToProps = () => {
   const redirect = () => RouterService.replace({ pathname: '/login' })
   const loadRootTags = coordinators.LoadRootTags({ TagService, RestService, pResponseRoots })
   const loadTaggable = coordinators.LoadTaggable({ RestService, TaggablesService, pResponseTaggable, UIService })
+  const displayInfoMessage = message => UIService.FlashMessage.displayInfoMessage(message)
 
   return {
+    displayInfoMessage,
     loadRootTags,
     loadTaggable,
     pTaggableClassToType,
