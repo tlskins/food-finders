@@ -9,7 +9,7 @@ const sessionInitialState = { user: undefined, lastRefresh: undefined, requested
 export const session = ( state = sessionInitialState, action ) => {
   switch( action.type ) {
   case CLEAR_USER_SESSION:
-    return null
+    return { ...sessionInitialState }
   case REFRESH_SESSION:
     return {
       ...state,

@@ -111,6 +111,11 @@ body {
   align-items: center;
 }
 
+.login-options {
+  display: flex;
+  flex-direction: column;
+}
+
 /** Sticky **/
 
 .sticky-header {

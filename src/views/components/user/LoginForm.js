@@ -59,7 +59,7 @@ class LoginForm extends Component {
 
   renderSignIn() {
     const { email, password } = this.state
-    const { errors } = this.props
+    const { errors, redirect } = this.props
 
     return (
       <div className='login-page'>
@@ -114,9 +114,10 @@ class LoginForm extends Component {
           **/
         }
 
-        <div>
+        <div className="login-options">
           <div><div></div><p>New here?</p></div>
           <a href="signUp" onClick={ e => this.toggleMode( e, 'signUp' ) }> Create your account </a>
+          <a href="guestLogIn" onClick={ redirect }> Proceed as guest </a>
         </div>
       </div>
     )
