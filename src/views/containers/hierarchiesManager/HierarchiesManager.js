@@ -35,6 +35,7 @@ const mapDispatchToProps = () => {
   const { pResponseGeneric } = presenters.Api
   const pResponseTaggables = pResponseGeneric
 
+  const displayInfoMessage = message => UIService.FlashMessage.displayInfoMessage(message)
   const toggleTagEditorVisibility = visible => UIService.TagEditor.toggleVisibility(visible)
   const redirect = () => RouterService.replace({ pathname: '/login' })
   const toggleUnselectNodes = (status) => UIService.HierarchiesManager.toggleUnselectNodes(status)
@@ -50,6 +51,7 @@ const mapDispatchToProps = () => {
   })
 
   return {
+    displayInfoMessage,
     loadEditTaggable,
     loadTaggables,
     redirect,

@@ -58,10 +58,14 @@ class HierarchiesManager extends Component {
 	}
 
   componentDidMount() {
+		const { currentUser, displayInfoMessage } = this.props
 		window.scrollTo(0, 0)
     this.engine.registerNodeFactory(new DefaultNodeFactory())
     this.engine.registerLinkFactory(new DefaultLinkFactory())
 		this.loadOrSetTaggables()
+		if ( !currentUser ) {
+			displayInfoMessage('Please explore all of our food tags, but only logged in users will be able to edit or create new tags.')
+		}
     // setTimeout(() => {
 		// 	const { currentUser, redirect } = this.props
     //   if ( !currentUser ) {
@@ -437,6 +441,7 @@ HierarchiesManager.propTypes = {
 	unselectNodes: PropTypes.bool,
 	visible: PropTypes.bool,
 
+	displayInfoMessage: PropTypes.func,
 	loadEditTaggable: PropTypes.func,
 	loadTaggables: PropTypes.func,
 	redirect: PropTypes.func,
