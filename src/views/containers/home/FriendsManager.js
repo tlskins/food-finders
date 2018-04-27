@@ -20,6 +20,7 @@ const mapStateToProps = state => {
     followingCount,
     followersCount,
     visible,
+    user,
     users,
   }
 }

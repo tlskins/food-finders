@@ -8,13 +8,9 @@ import coordinators from '@coordinators'
 
 const mapStateToProps = state => {
   const { user } = state.session
-  const { firstName, lastName, name, email } = user
-  const fullName = [ firstName, lastName ].filter( o => o ).join( ' ' )
 
   return {
-    userName: name,
-    email,
-    fullName,
+    user,
   }
 }
 

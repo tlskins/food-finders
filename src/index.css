@@ -475,10 +475,14 @@ body {
 }
 
 .main-nav--user {
-  /* color: #fcfcfc; */
-  /* color: #656666;
-  border: 1px solid #d0d2d3; */
-  /* background: url("./_res/images/ic_person_outline_white_24px.svg") no-repeat; */
+  padding-left: 30px;
+  margin-right: 90px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.main-nav--guest {
+  width: 150px;
   padding-left: 30px;
   margin-right: 90px;
   height: 30px;

@@ -17,7 +17,7 @@ export class SessionService extends BaseService {
 
   currentUser() {
     const currentUser = this.getState().session.user
-    if ( !currentUser.id ) {
+    if ( !currentUser || !currentUser.id ) {
       return undefined
     }
     else {

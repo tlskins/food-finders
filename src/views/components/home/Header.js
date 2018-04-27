@@ -7,6 +7,7 @@ import DropdownArrow from '@res/images/icons8-expand-arrow-48.png'
 class Header extends PureComponent {
   render() {
     const {
+      currentUser,
       style,
       toggleFriendsManagerVisibility,
       toggleSocialEntryVisibility,
@@ -14,11 +15,13 @@ class Header extends PureComponent {
 
     return (
       <div className="sticky-header" style={{ ...style }}>
-        <div className="sticky-sidebar-toggle"
-          onClick={ toggleFriendsManagerVisibility }
-        >
-          Buddies
-        </div>
+        { currentUser &&
+          <div className="sticky-sidebar-toggle"
+            onClick={ toggleFriendsManagerVisibility }
+          >
+            Buddies
+          </div>
+        }
         <div className="sticky-header-title">Newsfeed</div>
         <button className="sticky-header-dropdown">
           <span className="sticky-header-dropdown-title">Sort by - </span>
@@ -37,6 +40,7 @@ class Header extends PureComponent {
 
 
 Header.propTypes = {
+  currentUser: PropTypes.object,
   style: PropTypes.object,
 
   toggleFriendsManagerVisibility: PropTypes.func,

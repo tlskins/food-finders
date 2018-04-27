@@ -8,15 +8,17 @@ class NewsFeedItem extends Component {
   renderFeedItem = item => {
     const { renderFooter } = this.props
     const { conductedAt, metadata } = item
+    const authorName = metadata && metadata.authorName
+    const renderContent = item && item.renderContent
 
     return (
       <div className='newsfeed-item-container'>
         <div className='newsfeed-item'>
           <div>
             <h3 className='p-header'>
-              { metadata.authorName }
+              { authorName }
             </h3>
-              { item.renderContent() }
+              { renderContent && renderContent() }
             <p className='p-footer'>
               Posted at { Moment(conductedAt).format( 'MM-DD-YY h:mma' ) }
             </p>

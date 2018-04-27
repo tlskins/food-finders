@@ -18,13 +18,6 @@ class Home extends Component {
 
   componentDidMount() {
     window.scrollTo(0, 0)
-    setTimeout(() => {
-      const { currentUser, redirect } = this.props
-
-      if ( !currentUser ) {
-        redirect()
-      }
-    }, 100 )
   }
 
   componentWillReceiveProps(nextProps) {
@@ -52,6 +45,7 @@ class Home extends Component {
     const {
       toggleFriendsManagerVisibility,
       friendsManagerVisible,
+      currentUser,
     } = this.props
     if ( isSticky ) {
       style = { ...style, top: '70px' }
@@ -61,6 +55,7 @@ class Home extends Component {
         style={style}
         toggleFriendsManagerVisibility={ () => toggleFriendsManagerVisibility(!friendsManagerVisible) }
         toggleSocialEntryVisibility={ this.onToggleSocialEntryVisibility }
+        currentUser={ currentUser }
       />
     )
   }
@@ -90,13 +85,9 @@ class Home extends Component {
 
   render() {
     const {
-      currentUser,
       friendsManagerVisible,
       socialEntryVisible,
     } = this.props
-    if ( !currentUser ) {
-      return null
-    }
     const { selectedEntity } = this.state
     let socialContainerClass = "social-container"
     if ( friendsManagerVisible ) {

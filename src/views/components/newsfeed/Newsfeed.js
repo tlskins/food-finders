@@ -12,7 +12,7 @@ class NewsFeed extends Component {
 
   componentDidMount() {
     this.reloadFeedItems()
-    // this.interval = setInterval(this.reloadFeedItems, 10000)
+    this.interval = setInterval(this.reloadFeedItems, 10000)
   }
 
   componentWillUnmount() {

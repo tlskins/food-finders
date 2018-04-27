@@ -10,13 +10,34 @@ class NavBar extends Component {
     showUserDropdown: false,
   }
 
+  renderGuestNav = () => {
+    return (
+      <nav className='main-nav fb-sticky'>
+        <ul className='main-nav--links'>
+          <li>
+            <NavLink className="nav-links" to="/"> Newsfeed </NavLink>
+          </li>
+          <li>
+            <NavLink className="nav-links" to="#"> Bests </NavLink>
+          </li>
+          <li>
+            <NavLink className="nav-links" to="/hierarchies"> Tag Manager </NavLink>
+          </li>
+        </ul>
+
+        <div className='main-nav--guest nav-links'>
+          <NavLink to="/login"> Sign In </NavLink>
+        </div>
+      </nav>
+    )
+  }
+
   render() {
-    const {
-      signOut,
-      email,
-      fullName,
-      userName,
-    } = this.props
+    const { user, signOut } = this.props
+    if ( !user ) {
+      return this.renderGuestNav()
+    }
+    const { fullName, name, email } = user
     const { showUserDropdown } = this.state
 
     return (
@@ -34,7 +55,7 @@ class NavBar extends Component {
         </ul>
 
         <div className='main-nav--user nav-links' onClick={ () => this.setState({ showUserDropdown: !showUserDropdown })} >
-          { userName }
+          { name }
         </div>
         { showUserDropdown &&
           <div className='main-nav--user--dropdown'>
@@ -59,9 +80,7 @@ class NavBar extends Component {
 
 
 NavBar.propTypes = {
-  userName: PropTypes.string,
-  email: PropTypes.string,
-  fullName: PropTypes.string,
+  user: PropTypes.object,
 
   signOut: PropTypes.func,
 }
