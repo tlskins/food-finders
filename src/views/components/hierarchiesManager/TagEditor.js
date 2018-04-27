@@ -69,7 +69,7 @@ class TagEditor extends Component {
         No Tag Selected
       </div>
     }
-    const { toggleUnselectNodes } = this.props
+    const { toggleUnselectNodes, currentUser } = this.props
     const { name, synonyms, description } = editTaggable
     const synonymsString = (synonyms && synonyms.join(', ')) || ''
 
@@ -82,6 +82,7 @@ class TagEditor extends Component {
           value={ name }
           onChange={ e => this.updateTaggable('name', e.target.value) }
           onFocus={ () => toggleUnselectNodes(true) }
+          disabled={ !currentUser }
         />
 
         <ControlLabel>Description</ControlLabel>
@@ -92,6 +93,7 @@ class TagEditor extends Component {
           onChange={ e => this.updateTaggable('description', e.target.value) }
           onFocus={ () => toggleUnselectNodes(true) }
           rows="5"
+          disabled={ !currentUser }
         />
 
         <ControlLabel>Synonyms</ControlLabel>
@@ -101,14 +103,16 @@ class TagEditor extends Component {
           value={ synonymsString }
           onChange={ e => this.updateTaggable('synonyms', e.target.value.split(', ')) }
           onFocus={ () => toggleUnselectNodes(true) }
+          disabled={ !currentUser }
         />
       </Well>
     )
   }
 
   renderDeleteButtons = () => {
+    const { currentUser } = this.props
     const { confirmedDelete, editTaggable } = this.state
-    if ( !editTaggable.id ) {
+    if ( !currentUser || !editTaggable.id ) {
       return null
     }
     return (
@@ -134,7 +138,7 @@ class TagEditor extends Component {
   }
 
   render() {
-    const { edited, visible } = this.props
+    const { edited, visible, currentUser } = this.props
     const { editTaggable } = this.state
     const formVisible = visible && editTaggable
     let className = "tag-editor-container sidebar"
@@ -149,7 +153,7 @@ class TagEditor extends Component {
             <div>
               { this.renderTaggable(editTaggable) }
               { this.renderDeleteButtons() }
-              { edited &&
+              { currentUser && edited &&
                 <Col smOffset={2} sm={10}>
                   <Button
                     type="submit"
@@ -168,6 +172,7 @@ class TagEditor extends Component {
 }
 
 TagEditor.propTypes = {
+  currentUser: PropTypes.object,
   edited: PropTypes.bool,
   editTaggable: PropTypes.object,
   taggableType: PropTypes.string,

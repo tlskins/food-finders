@@ -9,12 +9,14 @@ import { HandleError } from '@coordinators/composed'
 
 
 const mapStateToProps = state => {
-  const { editTaggable, tagEditor } = state
+  const { editTaggable, tagEditor, session } = state
   const { visible } = tagEditor
   const edited = editTaggable && editTaggable.edited
   const taggableType = editTaggable && editTaggable.taggableType
+  const currentUser = session ? session.user : undefined
 
   return {
+    currentUser,
     edited,
     editTaggable,
     taggableType,

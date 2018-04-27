@@ -61,15 +61,16 @@ class HierarchiesManager extends Component {
 		window.scrollTo(0, 0)
     this.engine.registerNodeFactory(new DefaultNodeFactory())
     this.engine.registerLinkFactory(new DefaultLinkFactory())
-    setTimeout(() => {
-			const { currentUser, redirect } = this.props
-      if ( !currentUser ) {
-        redirect()
-      }
-      else {
-				this.loadOrSetTaggables()
-      }
-    }, 100 )
+		this.loadOrSetTaggables()
+    // setTimeout(() => {
+		// 	const { currentUser, redirect } = this.props
+    //   if ( !currentUser ) {
+    //     redirect()
+    //   }
+    //   else {
+		// 		this.loadOrSetTaggables()
+    //   }
+    // }, 100 )
   }
 
   componentWillReceiveProps = (nextProps) => {
@@ -199,7 +200,9 @@ class HierarchiesManager extends Component {
 				const model = this.engine.getDiagramModel()
 				if ( oldTaggable && oldTaggable.name ) {
 					const oldTaggableNode = getNode(oldTaggable.name, model)
-					oldTaggableNode.color = this.nodeColor
+					if ( oldTaggableNode ) {
+						oldTaggableNode.color = this.nodeColor
+					}
 				}
 				const selectedTaggableNode = getNode(taggable.name, model)
 				selectedTaggableNode.color = this.selectedNodeColor
@@ -315,55 +318,82 @@ class HierarchiesManager extends Component {
 	 	Object.values(model.nodes).filter( n => n.selected === true ).forEach( n => n.selected = false )
 	}
 
-	renderButtons = () => {
-		const { edited, mode, selectedTaggable, taggableName } = this.state
-		const selectTaggableMode = mode === 'Select Taggable'
-		const createTaggableMode = mode === 'Create Taggable'
+	renderEditRelationsButton = () => {
+		const { edited, selectedTaggable } = this.state
 		const canEditRelations = edited || (selectedTaggable && selectedTaggable.name)
 
+		if ( !canEditRelations ) {
+			return null
+		}
+		else if ( selectedTaggable.parentId ) {
+			return (
+				<Button onClick={ this.unlinkTaggable }>Unlink Parent</Button>
+			)
+		}
+		else if ( !selectedTaggable.parentId ) {
+			return (
+				<Button onClick={ this.selectParent }>Link Parent</Button>
+			)
+		}
+	}
+
+	renderEditButtons = () => {
+		const { currentUser } = this.props
+		const { edited, mode, taggableName } = this.state
+
+		if ( !currentUser ) {
+			return null
+		}
+
+		const selectTaggableMode = mode === 'Select Taggable'
+		const createTaggableMode = mode === 'Create Taggable'
+
+		return (
+			<div>
+				{ !edited && selectTaggableMode &&
+					<Button
+						onClick={ () => {
+							this.reset()
+							this.setState({ mode: 'Create Taggable'})
+						}}>
+						New { taggableName }
+					</Button>
+				}
+				{ this.renderEditRelationsButton() }
+				{ (edited || createTaggableMode) &&
+					<Button onClick={ this.reset }>Clear Edits</Button>
+				}
+				{ !edited && createTaggableMode &&
+					<div className='hierarchies-manager-button'>
+						<FormControl
+							type="text"
+							placeholder={ 'New ' + taggableName + ' Name' }
+							onChange={ e => this.setState({ newTaggableName: e.target.value }) }
+						/>
+						<Button onClick={ this.createTaggable }>Create</Button>
+					</div>
+				}
+			</div>
+		)
+	}
+
+	renderButtons = () => {
 		return(
 			<ButtonToolbar className='hierarchies-manager-button'>
 				<ButtonGroup>
 					<Button onClick={ () => this.engine.zoomToFit() }>
 						Zoom To Fit
 					</Button>
-					{ !edited && selectTaggableMode &&
-						<Button
-							onClick={ () => {
-								this.reset()
-								this.setState({ mode: 'Create Taggable'})
-							}}>
-							New { taggableName }
-						</Button>
-					}
-					{ canEditRelations && selectedTaggable.parentId &&
-						<Button onClick={ this.unlinkTaggable }>Unlink Parent</Button>
-					}
-					{ canEditRelations && !selectedTaggable.parentId &&
-						<Button onClick={ this.selectParent }>Link Parent</Button>
-					}
-					{ (edited || createTaggableMode) &&
-						<Button onClick={ this.reset }>Clear Edits</Button>
-					}
-					{ !edited && createTaggableMode &&
-						<div className='hierarchies-manager-button'>
-							<FormControl
-								type="text"
-								placeholder={ 'New ' + taggableName + ' Name' }
-								onChange={ e => this.setState({ newTaggableName: e.target.value }) }
-							/>
-							<Button onClick={ this.createTaggable }>Create</Button>
-						</div>
-					}
+					{ this.renderEditButtons() }
 				</ButtonGroup>
 			</ButtonToolbar>
 		)
 	}
 
   render() {
-    const { currentUser, toggleTagEditorVisibility, setHierarchiesManagerTaggable, visible } = this.props
+    const { toggleTagEditorVisibility, setHierarchiesManagerTaggable, visible } = this.props
 		const { taggableName } = this.state
-		if ( !currentUser || !this.engine ) {
+		if ( !this.engine ) {
       return null
     }
     let props = {
@@ -404,6 +434,7 @@ HierarchiesManager.propTypes = {
 	editTaggable: PropTypes.object,
 	currentUser: PropTypes.object,
 	hierarchiesManager: PropTypes.object,
+	unselectNodes: PropTypes.bool,
 	visible: PropTypes.bool,
 
 	loadEditTaggable: PropTypes.func,
@@ -413,7 +444,6 @@ HierarchiesManager.propTypes = {
 	setHierarchiesManagerTaggable: PropTypes.func,
 	toggleTagEditorVisibility: PropTypes.func,
 	toggleUnselectNodes: PropTypes.func,
-	unselectNodes: PropTypes.func,
 	updateTaggable: PropTypes.func,
 }
 
