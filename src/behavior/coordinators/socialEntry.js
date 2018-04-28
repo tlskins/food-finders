@@ -176,8 +176,9 @@ export const loadTagSuggestionsByHandles = ({ SocialEntryService, TagService, Su
 }
 
 
-export const addTagToText = ({ SocialEntryService, UpdateDraftSocialEntry }) => async ( tag, updateText = true ) => {
+export const addTagToText = ({ SocialEntryService, UpdateDraftSocialEntry, TaggablesService }) => async ( tag, updateText = true ) => {
   SocialEntryService.addTagToText(tag, updateText)
+  TaggablesService.resetTaggable()
   const { creatableTags, text } = SocialEntryService.getSocialEntry()
   UpdateDraftSocialEntry(text, creatableTags)
 }
@@ -198,7 +199,7 @@ const _updateEditTaggable = ({ TaggablesService, SocialEntryService, UIService, 
 }
 
 const _loadOrBuildCreatableTaggable = ({ TaggablesService, SocialEntryService, UIService, tagSymbol, searchText, createNew }) => {
-  if ( tagSymbol === '^' ) {
+  if ( tagSymbol === '^' && searchText && searchText.length > 0 ) {
     const { creatableTags } = SocialEntryService.getSocialEntry()
     const creatableFoodTag = creatableTags.find( t => t.symbol === '^' && t.handle === searchText )
     if ( !creatableFoodTag ) {

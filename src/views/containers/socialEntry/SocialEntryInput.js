@@ -40,7 +40,7 @@ const mapDispatchToProps = () => {
   })
   const SuggestTags = coordinators.SuggestTags({ RestService, TagService, pResponseTags, pResponseYelpBusinesses })
 
-  const addTagToText = coordinators.addTagToText({ SocialEntryService, UpdateDraftSocialEntry })
+  const addTagToText = coordinators.addTagToText({ SocialEntryService, UpdateDraftSocialEntry, TaggablesService })
   const loadDraftSocialEntry = draftSocialEntry => SocialEntryService.loadDraftSocialEntry(draftSocialEntry)
   const loadTagSuggestionsByHandles = coordinators.loadTagSuggestionsByHandles({
     SocialEntryService,

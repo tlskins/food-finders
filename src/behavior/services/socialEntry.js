@@ -98,7 +98,6 @@ export class SocialEntryService extends BaseService {
       text,
       creatableTags,
       selectedTagIndex: 0,
-      // tagSuggestions: [tag],
     }) )
     this._loadCurrentChildTags()
   }
@@ -200,10 +199,6 @@ export class SocialEntryService extends BaseService {
         tag.tmpId = uniqid()
       }
 
-      // if ( taggableType === 'Entity' && yelpBusiness ) {
-      //   return { taggableType, symbol, handle, name: symbol + handle, taggableObject: tag }
-      // }
-      // else
       if ( taggableType === 'Food' ) {
         return { taggableType, symbol, handle, name: symbol + handle, taggableObject: tag }
       }
