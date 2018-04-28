@@ -8,32 +8,13 @@ import EntitySearchPanel from '@containers/common/EntitySearchPanel'
 class SocialEntryDetailPanel extends Component {
   constructor(props) {
     super(props)
-    const { mode, style } = props
+    const { style } = props
 
     this.state = {
       style,
-      mode,
       searchText: '',
       yelpBusinesses: [],
     }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const {  mode } = nextProps
-    this.setState({ mode })
-  }
-
-  // TODO - move to presenter
-  getActiveYelpBusiness = activeTag => {
-    if ( activeTag ) {
-      if ( activeTag.yelpBusiness ) {
-        return activeTag.yelpBusiness
-      }
-      else if ( activeTag.taggableType === 'Entity' ) {
-        return activeTag.embeddedTaggable
-      }
-    }
-    return undefined
   }
 
   renderEmbeddedTaggable = embeddedTaggable => {
@@ -127,12 +108,13 @@ class SocialEntryDetailPanel extends Component {
   }
 
   renderEntityPanel = ({ activeTag, mapStyle, panelStyle }) => {
-    const yelpBusiness = this.getActiveYelpBusiness( activeTag )
+    const { toggleMode } = this.props
+    const yelpBusiness = activeTag && activeTag.embeddedTaggable
 
     return (
       <div>
         <button
-          onClick={ () => this.setState({ mode: 'SEARCH ENTITY' }) }
+          onClick={ () => toggleMode('SEARCH ENTITY') }
           className="social-entry-dtl-hdr-btn"
         >
           Search
@@ -148,10 +130,12 @@ class SocialEntryDetailPanel extends Component {
   }
 
   renderSearchEntityPanel = ({ mapStyle, panelStyle }) => {
+    const { toggleMode } = this.props
+
     return (
       <div>
         <button
-          onClick={ () => this.setState({ mode: 'DISPLAY ENTITY' }) }
+          onClick={ () => toggleMode('DISPLAY ENTITY') }
           className="social-entry-dtl-hdr-btn active-header-button"
         >
           Details
@@ -168,10 +152,10 @@ class SocialEntryDetailPanel extends Component {
       activeTag,
       editTaggable,
       mapStyle,
+      mode,
       panelStyle,
       tagSymbol,
     } = this.props
-    const { mode } = this.state
     const isEntityTag = tagSymbol === '@'
 
     console.log('mode=',mode,' edit taggable=',editTaggable)
@@ -184,7 +168,7 @@ class SocialEntryDetailPanel extends Component {
         { isEntityTag && mode === 'SEARCH ENTITY' &&
           this.renderSearchEntityPanel({ mapStyle, panelStyle })
         }
-        { !isEntityTag && mode === 'EDIT TAGGABLE' &&
+        { !isEntityTag && !activeTag && mode === 'EDIT TAGGABLE' &&
           this.renderEditTaggablePanel(editTaggable)
         }
         { !isEntityTag && activeTag &&

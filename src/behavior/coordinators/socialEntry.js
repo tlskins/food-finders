@@ -89,10 +89,7 @@ export const updateSearchText = ({
   }
   else {
     const createNew = tagSuggestions.length === 0
-    const loaded = _loadOrBuildCreatableTaggable({ TaggablesService, SocialEntryService, UIService,tagSymbol, searchText, createNew })
-    if ( !loaded ) {
-      UIService.SocialEntryDetailPanel.toggleMode('NONE')
-    }
+    _loadOrBuildCreatableTaggable({ TaggablesService, SocialEntryService, UIService,tagSymbol, searchText, createNew })
   }
 
   // tag suggestions
@@ -201,6 +198,7 @@ const _loadOrBuildCreatableTaggable = ({ TaggablesService, SocialEntryService, U
         TaggablesService.newTaggable({ taggableType: 'Food', symbol: '^', handle: searchText })
       }
       else {
+        UIService.SocialEntryDetailPanel.toggleMode('NONE')
         return false
       }
     }
@@ -210,6 +208,7 @@ const _loadOrBuildCreatableTaggable = ({ TaggablesService, SocialEntryService, U
     UIService.SocialEntryDetailPanel.toggleMode('EDIT TAGGABLE')
     return true
   }
+  UIService.SocialEntryDetailPanel.toggleMode('NONE')
   return false
 }
 

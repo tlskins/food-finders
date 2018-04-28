@@ -97,7 +97,7 @@ export class SocialEntryService extends BaseService {
       text,
       creatableTags,
       selectedTagIndex: 0,
-      tagSuggestions: [tag],
+      // tagSuggestions: [tag],
     }) )
     this._loadChildTags()
   }
@@ -190,7 +190,7 @@ export class SocialEntryService extends BaseService {
   }
 
   _getCreatableTag = tag => {
-    const { id, yelpBusiness, taggableType, symbol, handle } = tag
+    const { id, taggableType, symbol, handle } = tag
 
     if ( !id ) {
       if ( !tag.tmpId ) {
@@ -198,10 +198,11 @@ export class SocialEntryService extends BaseService {
         tag.tmpId = uniqid()
       }
 
-      if ( taggableType === 'Entity' && yelpBusiness ) {
-        return { taggableType, symbol, handle, name: symbol + handle, taggableObject: tag }
-      }
-      else if ( taggableType === 'Food'  ) {
+      // if ( taggableType === 'Entity' && yelpBusiness ) {
+      //   return { taggableType, symbol, handle, name: symbol + handle, taggableObject: tag }
+      // }
+      // else
+      if ( taggableType === 'Food' ) {
         return { taggableType, symbol, handle, name: symbol + handle, taggableObject: tag }
       }
     }
@@ -209,8 +210,8 @@ export class SocialEntryService extends BaseService {
 
   _validateCreatableTags = (text, creatableTags, newTag) => {
     const validCreatableTags = []
-    // Validate old tags
-    creatableTags.filter( t => t ).forEach( t => {
+    // Validate old tags & only front end created tags
+    creatableTags.filter( t => t && t.taggableObject ).forEach( t => {
       const { symbol, handle, taggableObject } = t
       const tagPattern = new RegExp('\\' + symbol + handle,'i')
       // validate tag still exists within text AND reject duplicates
