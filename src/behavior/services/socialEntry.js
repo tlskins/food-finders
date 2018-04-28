@@ -23,7 +23,7 @@ export class SocialEntryService extends BaseService {
 
   loadDraftSocialEntry = draftSocialEntry => {
     this.dispatch( actions.updateSocialEntry(draftSocialEntry) )
-    this._loadChildTags()
+    this._loadCurrentChildTags()
   }
 
   refreshTagSuggestions = () => {
@@ -57,7 +57,8 @@ export class SocialEntryService extends BaseService {
 
   loadTagSuggestionsByHandles = ({ tagSymbol, searchHandles, selectedTagIndex }) => {
     const tagSuggestions = this._getTagSuggestions({ tagSymbol, searchHandles })
-    const childTagSuggestions = this._getCurrentChildTags()
+    const activeTag = tagSuggestions[selectedTagIndex]
+    const childTagSuggestions = this._getChildTags(activeTag)
 
     this.dispatch( actions.updateSocialEntry({
       childTagSuggestions,
@@ -80,7 +81,7 @@ export class SocialEntryService extends BaseService {
 
   updateSelectedTagIndex = selectedTagIndex => {
     this.dispatch( actions.updateSocialEntry({ selectedTagIndex }) )
-    this._loadChildTags()
+    this._loadCurrentChildTags()
   }
 
   addTagToText = (tag, updateText = true) => {
@@ -99,7 +100,7 @@ export class SocialEntryService extends BaseService {
       selectedTagIndex: 0,
       // tagSuggestions: [tag],
     }) )
-    this._loadChildTags()
+    this._loadCurrentChildTags()
   }
 
   addTaggableToCreatableTags = taggable => {
@@ -148,8 +149,9 @@ export class SocialEntryService extends BaseService {
     }
   }
 
-  _loadChildTags = () => {
-    const childTagSuggestions = this._getCurrentChildTags()
+  _loadCurrentChildTags = () => {
+    const selectedTag = this.getSelectedTag()
+    const childTagSuggestions = this._getChildTags(selectedTag)
     this.dispatch( actions.updateSocialEntry({ childTagSuggestions }) )
   }
 
