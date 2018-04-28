@@ -16,11 +16,13 @@ const mapStateToProps = state => {
 
 
 const mapDispatchToProps = () => {
-  const { RestService, RouterService, SessionService } = services
+  const { RestService, RouterService, SessionService, UIService } = services
 
   const signOut = coordinators.SignOut({ RestService, RouterService, SessionService })
+  const displayInfoMessage = message => UIService.FlashMessage.displayInfoMessage(message)
 
   return {
+    displayInfoMessage,
     signOut,
   }
 }

@@ -51,6 +51,8 @@ class NavBar extends Component {
   }
 
   render() {
+    const { displayInfoMessage } = this.props
+
     return (
       <nav className='main-nav fb-sticky'>
         <ul className='main-nav--links'>
@@ -58,7 +60,7 @@ class NavBar extends Component {
             <NavLink className="nav-links" to="/"> Newsfeed </NavLink>
           </li>
           <li>
-            <NavLink className="nav-links" to="#"> Bests </NavLink>
+            <NavLink className="nav-links" to="#" onClick={ () => displayInfoMessage('#Bests coming soon!') }> #Bests </NavLink>
           </li>
           <li>
             <NavLink className="nav-links" to="/hierarchies"> Tag Manager </NavLink>
@@ -74,6 +76,7 @@ class NavBar extends Component {
 NavBar.propTypes = {
   user: PropTypes.object,
 
+  displayInfoMessage: PropTypes.func,
   signOut: PropTypes.func,
 }
 
