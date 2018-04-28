@@ -56,24 +56,10 @@ class TagSuggestions extends Component {
           <div className="tag-suggestion-hdr">
             { name }
           </div>
-          { /** TODO - put these div renders in a presenter **/
-          }
-          { ['FoodRatingMetric','FoodRatingType','User'].includes(taggableType) && embeddedTaggable &&
+          { ['FoodRatingMetric','FoodRatingType','User','Entity'].includes(taggableType) && embeddedTaggable &&
             <div className="tag-suggestion-description">
               { `${ symbol }${ handle }` }<br />
               { embeddedTaggable.description }
-            </div>
-          }
-          { taggableType === 'Entity' && embeddedTaggable &&
-            <div className="tag-suggestion-description">
-              { `${ symbol }${ embeddedTaggable.handle }` }<br />
-              { embeddedTaggable.location.displayAddress.join(', ') }<br />
-            </div>
-          }
-          { taggableType === 'Entity' && tagSuggestion.yelpBusiness &&
-            <div className="tag-suggestion-description">
-              { `${ symbol }${ tagSuggestion.yelpBusiness.alias }` }<br />
-              { tagSuggestion.yelpBusiness.location.displayAddress.join(', ') }<br />
             </div>
           }
         </div>

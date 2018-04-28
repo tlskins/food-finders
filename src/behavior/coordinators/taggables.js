@@ -1,5 +1,5 @@
 
-export const LoadTaggable = ({ RestService, TaggablesService, pResponseTaggable, UIService }) => async (taggableType, id) => {
+export const LoadTaggable = ({ RestService, TaggablesService, pResponseTaggable, UIService, pResponseYelpBusiness }) => async (taggableType, id) => {
   const { allTaggables } = TaggablesService.getState()
   const taggables = allTaggables[taggableType]
 
@@ -7,15 +7,24 @@ export const LoadTaggable = ({ RestService, TaggablesService, pResponseTaggable,
     return taggables[id]
   }
   else {
-    const response = await RestService.get(`/api/${ taggableType }/${ id }`)
-    const taggable = pResponseTaggable(response)
-    TaggablesService.loadTaggables(taggableType, taggable)
-    return taggable
+    if ( taggableType === 'entities' ) {
+      const response = await RestService.get('/api/entities/yelp_businesses', { id } )
+      const taggable = pResponseYelpBusiness(response)
+      TaggablesService.loadTaggable(taggableType, taggable)
+      return taggable
+    }
+    else {
+      const response = await RestService.get(`/api/${ taggableType }/${ id }`)
+      const taggable = pResponseTaggable(response)
+      TaggablesService.loadTaggable(taggableType, taggable)
+      return taggable
+    }
   }
 }
 
 
 export const LoadTaggables = ({ RestService, TaggablesService, pResponseTaggables, UIService }) => async (taggableType, overwrite = false) => {
+  // Currently just being used for hierchical tags dont need to hit yelp
   const { allTaggables } = TaggablesService.getState()
   let taggables = allTaggables[taggableType]
 

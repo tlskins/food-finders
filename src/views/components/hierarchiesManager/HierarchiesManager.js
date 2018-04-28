@@ -66,15 +66,6 @@ class HierarchiesManager extends Component {
 		if ( !currentUser ) {
 			displayInfoMessage('Please explore all of our food tags, but only logged in users will be able to edit or create new tags.')
 		}
-    // setTimeout(() => {
-		// 	const { currentUser, redirect } = this.props
-    //   if ( !currentUser ) {
-    //     redirect()
-    //   }
-    //   else {
-		// 		this.loadOrSetTaggables()
-    //   }
-    // }, 100 )
   }
 
   componentWillReceiveProps = (nextProps) => {

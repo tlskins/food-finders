@@ -104,9 +104,10 @@ export class SocialEntryService extends BaseService {
 
   addTaggableToCreatableTags = taggable => {
     const { socialEntry } = this.getState()
+    const { text } = socialEntry
     let { creatableTags } = socialEntry
     const creatableTag = this._getCreatableTag(taggable)
-    creatableTags = this._validateCreatableTags(taggable, creatableTags, creatableTag)
+    creatableTags = this._validateCreatableTags(text, creatableTags, creatableTag)
 
     this.dispatch( actions.updateSocialEntry({ creatableTags }) )
   }

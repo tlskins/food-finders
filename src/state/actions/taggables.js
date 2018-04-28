@@ -1,5 +1,7 @@
 export const NEW_TAGGABLE = 'NEW_TAGGABLE'
 
+export const LOAD_TAGGABLE = 'LOAD_TAGGABLE'
+
 export const LOAD_TAGGABLES = 'LOAD_TAGGABLES'
 
 export const DELETE_TAGGABLE = 'DELETE_TAGGABLE'
@@ -16,6 +18,8 @@ export const RESET_TAGGABLE = 'RESET_TAGGABLE'
 
 
 export const newTaggable = taggable => ({ type: NEW_TAGGABLE, taggable })
+
+export const loadTaggable = (taggableType, taggable, overwrite = false) => ({ type: LOAD_TAGGABLE, taggable, taggableType, overwrite })
 
 export const loadTaggables = (taggableType, taggables, overwrite = false) => ({ type: LOAD_TAGGABLES, taggables, taggableType, overwrite })
 

@@ -36,6 +36,7 @@ async ({ symbol, text, handles, resultsPerPage, page }) =>
     }
   }
   else if ( handles ) {
+    // Currently just used for tag navigation -> hiearchical tags which dont cover entities so dont need to search yelp
     const missingTags = _getMissingTags({ symbol, TagService, handles })
     if ( missingTags.length > 0 ) {
       await _searchCoreTags({ TagService, RestService, pResponseTags, searchIndex: { symbol, handles: missingTags, resultsPerPage, page } })

@@ -31,7 +31,7 @@ class Home extends Component {
         ( async() => {
           const ratee = selectedNewsfeedItem.metadata.foodRating.ratee
           const taggableType = pTaggableClassToType(ratee.taggableType)
-          const selectedEntity = await loadTaggable( taggableType, ratee.taggableId )
+          const selectedEntity = await loadTaggable( taggableType, ratee.handle )
           this.setState({ selectedNewsfeedItem, selectedEntity })
         })()
       }
@@ -67,8 +67,7 @@ class Home extends Component {
     if ( isSticky ) {
       style = { ...style, width: '100%', top: '155px' }
     }
-    // TODO - move to presenter
-    const yelpBusiness = selectedEntity && selectedEntity.yelpBusiness
+    const yelpBusiness = selectedEntity && selectedEntity.embeddedTaggable
 
     return (
       <EntityPanel

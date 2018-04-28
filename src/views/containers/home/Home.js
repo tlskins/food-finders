@@ -22,7 +22,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = () => {
   const { RouterService, RestService, TagService, TaggablesService, UIService } = services
-  const { pResponseGeneric, pTaggableClassToType } = presenters.Api
+  const { pResponseGeneric, pTaggableClassToType, pResponseYelpBusiness } = presenters.Api
   const pResponseRoots = pResponseGeneric
   const pResponseTaggable = pResponseGeneric
 
@@ -30,7 +30,7 @@ const mapDispatchToProps = () => {
   const toggleSocialEntryVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
   const redirect = () => RouterService.replace({ pathname: '/login' })
   const loadRootTags = coordinators.LoadRootTags({ TagService, RestService, pResponseRoots })
-  const loadTaggable = coordinators.LoadTaggable({ RestService, TaggablesService, pResponseTaggable, UIService })
+  const loadTaggable = coordinators.LoadTaggable({ RestService, TaggablesService, pResponseTaggable, UIService, pResponseYelpBusiness })
   const displayInfoMessage = message => UIService.FlashMessage.displayInfoMessage(message)
 
   return {

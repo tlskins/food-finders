@@ -1,4 +1,5 @@
 import {
+  LOAD_TAGGABLE,
   LOAD_TAGGABLES,
   LOAD_EDIT_TAGGABLE,
   LOAD_NEW_TAGGABLE,
@@ -22,17 +23,22 @@ const newTaggableState = {
 
 export const allTaggables = (state = {}, action) => {
   switch (action.type) {
+    case LOAD_TAGGABLE: {
+      const { taggableType, taggable, overwrite } = action
+      if ( !state[taggableType] || overwrite) {
+        state[taggableType] = {}
+      }
+      state[taggableType][taggable.id] = taggable
+
+      return { ...state }
+    }
     case LOAD_TAGGABLES: {
-      if ( !state[action.taggableType] || action.overwrite) {
-        state[action.taggableType] = {}
+      const { taggableType, taggables, overwrite } = action
+      if ( !state[taggableType] || overwrite) {
+        state[taggableType] = {}
       }
 
-      if ( Array.isArray(action.taggables) ) {
-        action.taggables.forEach( t => state[action.taggableType][t.id] = t )
-      }
-      else {
-        state[action.taggableType][action.taggables.id] = action.taggables
-      }
+      taggables.forEach( t => state[taggableType][t.id] = t )
 
       return { ...state }
     }

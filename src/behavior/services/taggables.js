@@ -10,6 +10,10 @@ export class TaggablesService extends BaseService {
     this.dispatch( actions.newTaggable(taggable) )
   }
 
+  loadTaggable = (taggableType, taggable, overwrite = false) => {
+    this.dispatch( actions.loadTaggable(taggableType, taggable, overwrite) )
+  }
+
   loadTaggables = (taggableType, taggables, overwrite = false) => {
     this.dispatch( actions.loadTaggables(taggableType, taggables, overwrite) )
   }

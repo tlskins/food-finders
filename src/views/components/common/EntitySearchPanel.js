@@ -56,7 +56,7 @@ class EntitySearchPanel extends Component {
           { yelpBusinesses.map( tag =>
             <EntityPanel
               showMap={false}
-              yelpBusiness={ tag.yelpBusiness }
+              yelpBusiness={ tag.embeddedTaggable }
               panelStyle={ panelStyle }
               onClick={ () => this.onAddTagToText(tag) }
             />
