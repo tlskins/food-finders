@@ -496,7 +496,7 @@ body {
 
 .main-nav--user--dropdown {
   position: absolute;
-  z-index: 5;
+  z-index: 201;
   top: 60px;
   right: 17px;
   width: 250px;

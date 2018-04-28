@@ -23,7 +23,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = () => {
   const { RestService, TagService, TaggablesService, SessionService, SocialEntryService, UIService } = services
-  const { pResponseGeneric, pResponseUser, pResponseYelpBusinesses, pRequestUpdateSocialEntry, pRequestPostSocialEntry } = presenters.Api
+  const {
+    pResponseGeneric,
+    pResponseUser,
+    pResponseSocialEntry,
+    pResponseYelpBusinesses,
+    pRequestUpdateSocialEntry,
+    pRequestPostSocialEntry
+  } = presenters.Api
   const pResponseTags = pResponseGeneric
   const UpdateDraftSocialEntry = coordinators.updateDraftSocialEntry({
     RestService,
@@ -67,9 +74,11 @@ const mapDispatchToProps = () => {
     SuggestTags,
   })
   const updateSelectedTagIndex = coordinators.updateSelectedTagIndex({ SocialEntryService, SuggestTags })
+  const loadParentSocialEntry = coordinators.loadParentSocialEntry({ RestService, SocialEntryService, SessionService, pResponseSocialEntry })
 
   return {
     addTagToText,
+    loadParentSocialEntry,
     loadDraftSocialEntry,
     postSocialEntry,
     resetSearchCriteria,

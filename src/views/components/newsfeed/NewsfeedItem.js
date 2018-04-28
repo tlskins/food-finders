@@ -79,7 +79,10 @@ class NewsFeedItem extends Component {
   }
 
   renderFooter = () => {
-    const { feedItem, newReplySocialEntry } = this.props
+    const { user, feedItem, newReplySocialEntry } = this.props
+    if ( !user ) {
+      return null
+    }
 
     return (
       <div className="newsfeed-item-footer">
@@ -110,6 +113,7 @@ class NewsFeedItem extends Component {
 }
 
 NewsFeedItem.propTypes = {
+  user: PropTypes.object,
   displayFooter: PropTypes.bool,
   feedItem: PropTypes.object,
 

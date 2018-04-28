@@ -23,11 +23,11 @@ export const newReplySocialEntry = ({
   pRequestUpdateSocialEntry,
 }) => async (parentSocialEntry, requestedAt = new Date()) => {
   const userId = SessionService.currentUserId()
-  const { id } = parentSocialEntry
+  const { actionableId } = parentSocialEntry
   const payload = pRequestUpdateSocialEntry({
     text: '',
     creatableTags: [],
-    parentSocialEntryId: id
+    parentSocialEntryId: actionableId
   })
 
   let user = await RestService.put('/api/users/' + userId, payload )
@@ -35,6 +35,14 @@ export const newReplySocialEntry = ({
   SessionService.setUserSession(user, requestedAt)
   SocialEntryService.setParentSocialEntry({ parentSocialEntry })
   UIService.SocialEntry.toggleVisibility(true)
+}
+
+
+export const loadParentSocialEntry = ({ RestService, SocialEntryService, SessionService, pResponseSocialEntry }) => async parentSocialEntryId => {
+  const payload = { actionable_id: parentSocialEntryId }
+  let parentSocialEntry = await RestService.get('/api/actionables/', payload )
+  parentSocialEntry = pResponseSocialEntry(parentSocialEntry[0])
+  SocialEntryService.setParentSocialEntry({ parentSocialEntry })
 }
 
 

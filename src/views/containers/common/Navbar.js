@@ -9,9 +9,7 @@ import coordinators from '@coordinators'
 const mapStateToProps = state => {
   const { user } = state.session
 
-  return {
-    user,
-  }
+  return { user }
 }
 
 

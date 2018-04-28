@@ -6,6 +6,12 @@ import services from '@services'
 import coordinators from '@coordinators'
 import presenters from '@presenters'
 
+const mapStateToProps = state => {
+  const { user } = state.session
+
+  return { user }
+}
+
 const mapDispatchToProps = () => {
   const { RestService, SessionService, SocialEntryService, UIService } = services
   const { pResponseUser, pRequestUpdateSocialEntry } = presenters.Api
@@ -24,4 +30,4 @@ const mapDispatchToProps = () => {
   }
 }
 
-export default connect(null, mapDispatchToProps)(NewsfeedItem)
+export default connect(mapStateToProps, mapDispatchToProps)(NewsfeedItem)

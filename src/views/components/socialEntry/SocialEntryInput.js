@@ -45,9 +45,14 @@ class SocialEntryInput extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { tagSearches, tagSymbol, searchText } = nextProps
+    const { loadParentSocialEntry } = this.props
+    const { tagSearches, tagSymbol, searchText, draftSocialEntry, parentSocialEntry } = nextProps
     if ( this.props !== nextProps ) {
       this.setState({ ...nextProps })
+
+      if ( !parentSocialEntry && draftSocialEntry.parentSocialEntryId ) {
+        loadParentSocialEntry(draftSocialEntry.parentSocialEntryId)
+      }
 
       const searchTextSearchStatuses = tagSearches[tagSymbol] && tagSearches[tagSymbol][searchText]
       this.updateSearchStatus(searchTextSearchStatuses, searchText)
@@ -285,6 +290,7 @@ SocialEntryInput.propTypes = {
   selectedTagIndex: PropTypes.number,
 
   addTagToText: PropTypes.func,
+  loadParentSocialEntry: PropTypes.func,
   loadDraftSocialEntry: PropTypes.func,
   postSocialEntry: PropTypes.func,
   resetSearchCriteria: PropTypes.func,
