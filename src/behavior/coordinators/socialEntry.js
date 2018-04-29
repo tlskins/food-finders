@@ -71,8 +71,12 @@ export const postSocialEntry = ({
 
   const userId = SessionService.currentUserId()
   const socialEntry = SocialEntryService.getSocialEntry()
-  const { text, creatableTags } = socialEntry
-  const payload = pRequestPostSocialEntry({ text, creatableTags })
+  const { text, creatableTags, parentSocialEntryId } = socialEntry
+  const payload = pRequestPostSocialEntry({
+    text,
+    creatableTags,
+    parentSocialEntryId,
+  })
 
   let user = await RestService.post('/api/users/' + userId + '/publish_draft_social_entry', payload )
   user = pResponseUser(user)

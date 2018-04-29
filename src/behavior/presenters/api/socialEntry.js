@@ -13,10 +13,11 @@ export const pRequestUpdateSocialEntry = ({ text, creatableTags, parentSocialEnt
 }
 
 
-export const pRequestPostSocialEntry = ({ text, creatableTags }) => {
+export const pRequestPostSocialEntry = ({ text, creatableTags, parentSocialEntryId }) => {
   const req = {}
   req.text = text
   req.creatable_tags = snakeCaseify(creatableTags)
+  req.parent_social_entry_id = parentSocialEntryId
   return req
 }
 

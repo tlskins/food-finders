@@ -79,18 +79,30 @@ class NewsFeedItem extends Component {
     )
   }
 
-  renderFooter = () => {
-    const { user, feedItem, newReplySocialEntry } = this.props
-    if ( !user ) {
-      return null
+  newReply = () => {
+    const { user, feedItem, displayInfoMessage, newReplySocialEntry } = this.props
+    if ( user ) {
+      newReplySocialEntry(feedItem)
     }
+    else {
+      displayInfoMessage('Please register an account so you can start socializing!')
+    }
+  }
+
+  renderFooter = () => {
+    const { feedItem } = this.props
+    const { metadata } = feedItem
+    const repliesCount = (metadata && metadata.repliesCount) || 0
 
     return (
       <div className="newsfeed-item-footer">
-        <div
-          className="newsfeed-item-btn reply-btn"
-          onClick={ () => newReplySocialEntry(feedItem) }
-        />
+        <div className="newsfeed-item-reply-container">
+          <div
+            className="newsfeed-item-btn reply-btn"
+            onClick={ this.newReply }
+          />
+          { repliesCount }
+        </div>
         <div className="newsfeed-item-btn like-btn" />
       </div>
     )
@@ -128,11 +140,12 @@ class NewsFeedItem extends Component {
 
 NewsFeedItem.propTypes = {
   user: PropTypes.object,
-  displayFooter: PropTypes.bool,
+  renderFooter: PropTypes.bool,
   displayInputFooter: PropTypes.bool,
   feedItem: PropTypes.object,
 
   clearParentSocialEntry: PropTypes.func,
+  displayInfoMessage: PropTypes.func,
   newReplySocialEntry: PropTypes.func,
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,

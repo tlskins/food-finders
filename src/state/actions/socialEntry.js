@@ -3,6 +3,7 @@ export const UPDATE_SOCIAL_ENTRY = 'UPDATE_SOCIAL_ENTRY'
 
 export const updateSocialEntry = ({
   parentSocialEntry,
+  parentSocialEntryId,
   searchText,
   tagSuggestions,
   tagSymbol,
@@ -16,6 +17,7 @@ export const updateSocialEntry = ({
 }) => ({
   type: UPDATE_SOCIAL_ENTRY,
   parentSocialEntry,
+  parentSocialEntryId,
   searchText,
   tagSuggestions,
   tagSymbol,

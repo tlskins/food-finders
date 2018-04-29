@@ -25,9 +25,11 @@ const mapDispatchToProps = () => {
     pRequestUpdateSocialEntry,
   })
   const { clearParentSocialEntry } = SocialEntryService
+  const displayInfoMessage = message => UIService.FlashMessage.displayInfoMessage(message)
 
   return {
     clearParentSocialEntry,
+    displayInfoMessage,
     newReplySocialEntry,
   }
 }

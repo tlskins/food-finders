@@ -33,8 +33,8 @@ export const EmailSignIn = ({
     const { parentSocialEntryId } = currentUser.draftSocialEntry
     if ( parentSocialEntryId ) {
       const payload = { actionable_id: parentSocialEntryId }
-      let parentSocialEntry = await RestService.get('/api/actionables/', payload )
-      parentSocialEntry = pResponseSocialEntry(parentSocialEntry[0])
+      let parentSocialEntry = await RestService.get('/api/actionables/find', payload )
+      parentSocialEntry = pResponseSocialEntry(parentSocialEntry)
       SocialEntryService.setParentSocialEntry({ parentSocialEntry })
     }
   }

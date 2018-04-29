@@ -120,7 +120,10 @@ export class SocialEntryService extends BaseService {
   }
 
   setParentSocialEntry = ({ parentSocialEntry }) => {
-    this.dispatch( actions.updateSocialEntry({ parentSocialEntry }) )
+    this.dispatch( actions.updateSocialEntry({
+      parentSocialEntry,
+      parentSocialEntryId: parentSocialEntry.actionableId,
+    }) )
   }
 
   // Helpers
