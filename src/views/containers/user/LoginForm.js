@@ -30,7 +30,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = () => {
   const { RestService, RouterService, SessionService, SocialEntryService, UIService } = services
   const { EmailSignIn, EmailSignUp } = coordinators
-  const { pResponseUser } = presenters.Api
+  const { pResponseUser, pResponseSocialEntry } = presenters.Api
 
   const signIn = EmailSignIn({
     RestService,
@@ -39,7 +39,8 @@ const mapDispatchToProps = () => {
     SocialEntryService,
     UIService,
     HandleError,
-    pResponseUser
+    pResponseUser,
+    pResponseSocialEntry,
   })
   const signUp = EmailSignUp({ RestService, HandleError, UIService })
   const toggleMode = mode => UIService.LoginForm.toggleMode( mode )

@@ -26,15 +26,17 @@ const mapDispatchToProps = () => {
   const {
     pResponseGeneric,
     pResponseUser,
-    pResponseSocialEntry,
     pResponseYelpBusinesses,
     pRequestUpdateSocialEntry,
     pRequestPostSocialEntry
   } = presenters.Api
   const pResponseTags = pResponseGeneric
+
+  // Composed
   const UpdateDraftSocialEntry = coordinators.updateDraftSocialEntry({
     RestService,
     SessionService,
+    SocialEntryService,
     pResponseUser,
     pRequestUpdateSocialEntry
   })
@@ -57,6 +59,7 @@ const mapDispatchToProps = () => {
     UpdateDraftSocialEntry,
   })
   const resetSearchCriteria = () => SocialEntryService.resetSearchCriteria()
+  const clearParentSocialEntry = () => SocialEntryService.clearParentSocialEntry()
   const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
   const updateSearchText = coordinators.updateSearchText({
     SocialEntryService,
@@ -74,11 +77,10 @@ const mapDispatchToProps = () => {
     SuggestTags,
   })
   const updateSelectedTagIndex = coordinators.updateSelectedTagIndex({ SocialEntryService, SuggestTags })
-  const loadParentSocialEntry = coordinators.loadParentSocialEntry({ RestService, SocialEntryService, SessionService, pResponseSocialEntry })
 
   return {
     addTagToText,
-    loadParentSocialEntry,
+    clearParentSocialEntry,
     loadDraftSocialEntry,
     postSocialEntry,
     resetSearchCriteria,

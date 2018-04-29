@@ -45,15 +45,9 @@ class SocialEntryInput extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { loadParentSocialEntry } = this.props
-    const { tagSearches, tagSymbol, searchText, draftSocialEntry, parentSocialEntry } = nextProps
+    const { tagSearches, tagSymbol, searchText } = nextProps
     if ( this.props !== nextProps ) {
       this.setState({ ...nextProps })
-
-      if ( !parentSocialEntry && draftSocialEntry.parentSocialEntryId ) {
-        loadParentSocialEntry(draftSocialEntry.parentSocialEntryId)
-      }
-
       const searchTextSearchStatuses = tagSearches[tagSymbol] && tagSearches[tagSymbol][searchText]
       this.updateSearchStatus(searchTextSearchStatuses, searchText)
     }
@@ -202,7 +196,7 @@ class SocialEntryInput extends Component {
       selectedTagIndex,
       tagSuggestions,
     } = this.state
-    const { addTagToText, updateSelectedTagIndex, visible } = this.props
+    const { addTagToText, clearParentSocialEntry, updateSelectedTagIndex, visible } = this.props
     const { tags, creatableTags } = draftSocialEntry
     if ( !visible ) {
       return null
@@ -215,10 +209,18 @@ class SocialEntryInput extends Component {
         <div className="modal-screen"></div>
         <div className="modal-inner-container">
           { parentSocialEntry &&
-            <NewsFeedItem
-              feedItem={ parentSocialEntry }
-              renderFooter={ false }
-            />
+            <div>
+              <NewsFeedItem
+                feedItem={ parentSocialEntry }
+                renderFooter={ false }
+              />
+              <div className="newsfeed-item-footer">
+                <div
+                  className="newsfeed-item-btn clear-parent"
+                  onClick={ () => clearParentSocialEntry() }
+                />
+              </div>
+            </div>
           }
 
           <div className="modal-section">
@@ -289,8 +291,8 @@ SocialEntryInput.propTypes = {
   searchHandles: PropTypes.arrayOf(PropTypes.string),
   selectedTagIndex: PropTypes.number,
 
+  clearParentSocialEntry: PropTypes.func,
   addTagToText: PropTypes.func,
-  loadParentSocialEntry: PropTypes.func,
   loadDraftSocialEntry: PropTypes.func,
   postSocialEntry: PropTypes.func,
   resetSearchCriteria: PropTypes.func,

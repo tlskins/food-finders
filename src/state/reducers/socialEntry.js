@@ -8,6 +8,7 @@ const initialSocialEntryState = {
   cursorBeginIndex: 0,
   cursorEndIndex: 0,
   parentSocialEntry: null,
+  parentSocialEntryId: null,
   searchText: null,
   searchHandles: null,
   selectedTagIndex: 0,
@@ -23,6 +24,7 @@ export const socialEntry = (state = initialSocialEntryState, action) => {
     case UPDATE_SOCIAL_ENTRY: {
       const {
         parentSocialEntry = state.parentSocialEntry,
+        parentSocialEntryId = state.parentSocialEntryId,
         searchText = state.searchText,
         tags = state.tags,
         tagSuggestions = state.tagSuggestions,
@@ -39,6 +41,7 @@ export const socialEntry = (state = initialSocialEntryState, action) => {
       return {
         ...state,
         parentSocialEntry,
+        parentSocialEntryId,
         searchText,
         tags,
         tagSuggestions,

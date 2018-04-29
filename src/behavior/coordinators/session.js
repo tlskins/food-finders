@@ -19,7 +19,8 @@ export const EmailSignIn = ({
   SocialEntryService,
   UIService,
   HandleError,
-  pResponseUser
+  pResponseUser,
+  pResponseSocialEntry,
 }) => async ({ email, password }) => {
   try {
     let user = await RestService.post( '/api/users/sign_in', { email, password })
@@ -28,15 +29,14 @@ export const EmailSignIn = ({
     RouterService.replace({ pathname: '/' })
 
     // load parent social entry if it is not loaded already
-    // const { draftSocialEntry } = SessionService.currentUser()
-    // const parentSocialEntryId = draftSocialEntry && draftSocialEntry.parentSocialEntryId
-    // if ( parentSocialEntryId ) {
-    //   const { parentSocialEntry } = SocialEntryService.getSocialEntry()
-    //   if ( !parentSocialEntry ) {
-    //     const socialEntry = await RestService.get('/newsfeed_items/' + parentSocialEntryId )
-    //     SocialEntryService.setParentSocialEntry({ parentSocialEntry: socialEntry })
-    //   }
-    // }
+    const currentUser = SessionService.currentUser()
+    const { parentSocialEntryId } = currentUser.draftSocialEntry
+    if ( parentSocialEntryId ) {
+      const payload = { actionable_id: parentSocialEntryId }
+      let parentSocialEntry = await RestService.get('/api/actionables/', payload )
+      parentSocialEntry = pResponseSocialEntry(parentSocialEntry[0])
+      SocialEntryService.setParentSocialEntry({ parentSocialEntry })
+    }
   }
   catch ( error ) {
     HandleError({ error, namespace: 'loginForm'})

@@ -26,6 +26,13 @@ export class SocialEntryService extends BaseService {
     this._loadCurrentChildTags()
   }
 
+  clearParentSocialEntry = () => {
+    this.dispatch( actions.updateSocialEntry({
+      parentSocialEntry: null,
+      parentSocialEntryId: null,
+    }))
+  }
+
   refreshTagSuggestions = () => {
     const { tagSymbol, searchText, searchHandles, selectedTagIndex } = this.getSocialEntry()
     const tagSuggestions = this._getTagSuggestions({ tagSymbol, searchText, searchHandles })

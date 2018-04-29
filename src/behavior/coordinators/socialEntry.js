@@ -2,11 +2,17 @@
 export const updateDraftSocialEntry = ({
   RestService,
   SessionService,
+  SocialEntryService,
   pResponseUser,
   pRequestUpdateSocialEntry
 }) => async (text, creatableTags, requestedAt = new Date()) => {
   const userId = SessionService.currentUserId()
-  const payload = pRequestUpdateSocialEntry({ text, creatableTags })
+  const { parentSocialEntryId } = SocialEntryService.getSocialEntry()
+  const payload = pRequestUpdateSocialEntry({
+    text,
+    creatableTags,
+    parentSocialEntryId,
+  })
 
   let user = await RestService.put('/api/users/' + userId, payload )
   user = pResponseUser(user)
