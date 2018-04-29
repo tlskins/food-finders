@@ -5,7 +5,7 @@ import TagSuggestions from '@components/socialEntry/TagSuggestions'
 import CurrentTags from '@components/socialEntry/CurrentTags'
 import SocialEntryRating from '@components/socialEntry/SocialEntryRating'
 import SocialEntryDetailPanel from '@containers/socialEntry/SocialEntryDetailPanel'
-import NewsFeedItem from '@components/newsfeed/NewsfeedItem'
+import NewsFeedItem from '@containers/newsfeed/NewsfeedItem'
 import close from '@res/images/x-icon-gray.png'
 
 import {
@@ -196,7 +196,7 @@ class SocialEntryInput extends Component {
       selectedTagIndex,
       tagSuggestions,
     } = this.state
-    const { addTagToText, clearParentSocialEntry, updateSelectedTagIndex, visible } = this.props
+    const { addTagToText, updateSelectedTagIndex, visible } = this.props
     const { tags, creatableTags } = draftSocialEntry
     if ( !visible ) {
       return null
@@ -209,18 +209,10 @@ class SocialEntryInput extends Component {
         <div className="modal-screen"></div>
         <div className="modal-inner-container">
           { parentSocialEntry &&
-            <div>
-              <NewsFeedItem
-                feedItem={ parentSocialEntry }
-                renderFooter={ false }
-              />
-              <div className="newsfeed-item-footer">
-                <div
-                  className="newsfeed-item-btn clear-parent"
-                  onClick={ () => clearParentSocialEntry() }
-                />
-              </div>
-            </div>
+            <NewsFeedItem
+              feedItem={ parentSocialEntry }
+              renderInputFooter={ true }
+            />
           }
 
           <div className="modal-section">
@@ -291,7 +283,6 @@ SocialEntryInput.propTypes = {
   searchHandles: PropTypes.arrayOf(PropTypes.string),
   selectedTagIndex: PropTypes.number,
 
-  clearParentSocialEntry: PropTypes.func,
   addTagToText: PropTypes.func,
   loadDraftSocialEntry: PropTypes.func,
   postSocialEntry: PropTypes.func,

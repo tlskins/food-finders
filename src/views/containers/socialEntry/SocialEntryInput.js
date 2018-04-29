@@ -59,7 +59,6 @@ const mapDispatchToProps = () => {
     UpdateDraftSocialEntry,
   })
   const resetSearchCriteria = () => SocialEntryService.resetSearchCriteria()
-  const clearParentSocialEntry = () => SocialEntryService.clearParentSocialEntry()
   const toggleVisibility = visible => UIService.SocialEntry.toggleVisibility(visible)
   const updateSearchText = coordinators.updateSearchText({
     SocialEntryService,
@@ -80,7 +79,6 @@ const mapDispatchToProps = () => {
 
   return {
     addTagToText,
-    clearParentSocialEntry,
     loadDraftSocialEntry,
     postSocialEntry,
     resetSearchCriteria,

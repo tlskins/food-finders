@@ -30,7 +30,7 @@ class NewsFeedItem extends Component {
   }
 
   renderRatingFeedItem = item => {
-    const { onMouseEnter, onMouseLeave, renderFooter } = this.props
+    const { onMouseEnter, onMouseLeave, renderFooter, renderInputFooter } = this.props
     const { conductedAt, metadata } = item
     const { foodRating, authorName } = metadata
     const { rateable, ratee, ratingType, ratingMetrics } = foodRating
@@ -74,6 +74,7 @@ class NewsFeedItem extends Component {
           </div>
         </div>
         { renderFooter && this.renderFooter() }
+        { renderInputFooter && this.renderInputFooter() }
       </div>
     )
   }
@@ -91,6 +92,19 @@ class NewsFeedItem extends Component {
           onClick={ () => newReplySocialEntry(feedItem) }
         />
         <div className="newsfeed-item-btn like-btn" />
+      </div>
+    )
+  }
+
+  renderInputFooter = () => {
+    const { clearParentSocialEntry } = this.props
+
+    return (
+      <div className="newsfeed-item-footer">
+        <div
+          className="newsfeed-item-btn clear-parent"
+          onClick={ () => clearParentSocialEntry() }
+        />
       </div>
     )
   }
@@ -115,8 +129,10 @@ class NewsFeedItem extends Component {
 NewsFeedItem.propTypes = {
   user: PropTypes.object,
   displayFooter: PropTypes.bool,
+  displayInputFooter: PropTypes.bool,
   feedItem: PropTypes.object,
 
+  clearParentSocialEntry: PropTypes.func,
   newReplySocialEntry: PropTypes.func,
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,

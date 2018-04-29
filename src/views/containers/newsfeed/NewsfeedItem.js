@@ -24,8 +24,10 @@ const mapDispatchToProps = () => {
     pResponseUser,
     pRequestUpdateSocialEntry,
   })
+  const { clearParentSocialEntry } = SocialEntryService
 
   return {
+    clearParentSocialEntry,
     newReplySocialEntry,
   }
 }
