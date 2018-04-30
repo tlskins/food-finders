@@ -19,10 +19,16 @@ class NewsFeed extends Component {
     clearInterval(this.interval)
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props !== nextProps) {
+      const { newsfeed: feedItems } = nextProps
+      this.setState({ feedItems })
+    }
+  }
+
   reloadFeedItems = async () => {
     const { loadNewsfeed } = this.props
-    const feedItems = await loadNewsfeed()
-    this.setState({ feedItems })
+    loadNewsfeed()
   }
 
   selectItem = item => {
@@ -61,6 +67,8 @@ class NewsFeed extends Component {
 }
 
 NewsFeed.propTypes = {
+  newsfeed: PropTypes.arrayOf(PropTypes.object),
+
   loadNewsfeed: PropTypes.func,
   selectNewsfeedItem: PropTypes.func,
 }

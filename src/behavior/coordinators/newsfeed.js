@@ -1,5 +1,5 @@
 
-export const loadNewsfeed = ({ RestService, SessionService, pResponseFeedItems }) => async () => {
+export const loadNewsfeed = ({ RestService, SessionService, ActionablesService, pResponseFeedItems }) => async () => {
   const userId = SessionService.currentUserId()
   let feedItems = []
   if ( userId ) {
@@ -10,6 +10,5 @@ export const loadNewsfeed = ({ RestService, SessionService, pResponseFeedItems }
     feedItems = await RestService.get('/api/actionables')
     feedItems = pResponseFeedItems( feedItems )
   }
-
-  return feedItems
+  ActionablesService.loadNewsfeed(feedItems)
 }

@@ -6,11 +6,20 @@ import services from '@services'
 import coordinators from '@coordinators'
 import presenters from '@presenters'
 
+const mapStateToProps = state => {
+  const { actionables } = state
+  const { newsfeed } = actionables
+
+  return {
+    newsfeed,
+  }
+}
+
 const mapDispatchToProps = () => {
-  const { RestService, SessionService, UIService } = services
+  const { RestService, SessionService, UIService, ActionablesService } = services
   const { pResponseFeedItems } = presenters.Api
 
-  const loadNewsfeed = coordinators.loadNewsfeed({ RestService, SessionService, pResponseFeedItems })
+  const loadNewsfeed = coordinators.loadNewsfeed({ RestService, SessionService, ActionablesService, pResponseFeedItems })
   const selectNewsfeedItem = selectedItem => UIService.Newsfeed.selectNewsfeedItem(selectedItem)
 
   return {
@@ -19,4 +28,4 @@ const mapDispatchToProps = () => {
   }
 }
 
-export default connect(null, mapDispatchToProps)(Newsfeed)
+export default connect(mapStateToProps, mapDispatchToProps)(Newsfeed)

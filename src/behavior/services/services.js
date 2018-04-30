@@ -12,9 +12,11 @@ import * as HierarchiesService from './hierarchies'
 import * as FoodRatingMetricsService from './foodRatingMetrics'
 import * as TaggablesService from './taggables'
 import * as SocialEntryService from './socialEntry'
+import * as ActionablesService from './actionables'
 import UIService from './ui/index'
 
 const coreServices = {
+  ...ActionablesService,
   ...RestService,
   ...RouterService,
   ...SessionService,
