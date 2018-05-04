@@ -65,6 +65,15 @@ class Home extends Component {
     })
   }
 
+  toggleToNewsfeed = () => {
+    this.setState({
+      mode: 'Newsfeed',
+      selectedNewsfeedItem: undefined,
+      selectedEntity: undefined,
+      clickedNewsfeedItem: undefined,
+    })
+  }
+
   renderStickyHeader = ({ isSticky, style }) => {
     const {
       displayInfoMessage,
@@ -72,6 +81,7 @@ class Home extends Component {
       friendsManagerVisible,
       currentUser,
     } = this.props
+    const { mode } = this.state
     if ( isSticky ) {
       style = { ...style, top: '70px' }
     }
@@ -82,6 +92,8 @@ class Home extends Component {
         toggleFriendsManagerVisibility={ () => toggleFriendsManagerVisibility(!friendsManagerVisible) }
         toggleSocialEntryVisibility={ this.onToggleSocialEntryVisibility }
         currentUser={ currentUser }
+        mode={ mode }
+        toggleToNewsfeed={ this.toggleToNewsfeed }
       />
     )
   }

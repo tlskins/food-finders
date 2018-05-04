@@ -5,7 +5,6 @@ import DropdownArrow from '@res/images/icons8-expand-arrow-48.png'
 
 
 class Header extends PureComponent {
-
   toggleSocialEntryVisibility = () => {
     const {
       currentUser,
@@ -21,13 +20,13 @@ class Header extends PureComponent {
     }
   }
 
-  render() {
+  renderNewsfeedHeader = props => {
     const {
       currentUser,
       displayInfoMessage,
       style,
       toggleFriendsManagerVisibility,
-    } = this.props
+    } = props
 
     return (
       <div className="sticky-header" style={{ ...style }}>
@@ -52,7 +51,50 @@ class Header extends PureComponent {
         >
           New Social Entry
         </button>
-      </div> )
+      </div>
+    )
+  }
+
+  renderSocialEntryPageHeader = props => {
+    const {
+      currentUser,
+      style,
+      toggleFriendsManagerVisibility,
+      toggleToNewsfeed,
+    } = props
+
+    return (
+      <div className="sticky-header" style={{ ...style }}>
+        { currentUser &&
+          <div className="sticky-sidebar-toggle"
+            onClick={ toggleFriendsManagerVisibility }
+          >
+            Buddies
+          </div>
+        }
+        <div className="sticky-header-title">Social Entry View</div>
+        <button
+          className="header-button"
+          onClick={ toggleToNewsfeed }
+        >
+          Newsfeed
+        </button>
+      </div>
+    )
+  }
+
+  render() {
+    const { mode } = this.props
+
+    if ( mode === 'Newsfeed' ) {
+      return this.renderNewsfeedHeader(this.props)
+    }
+    else if ( mode === 'SocialEntryPage' ) {
+      return this.renderSocialEntryPageHeader(this.props)
+    }
+    else {
+      return null
+    }
   }
 }
 
@@ -60,10 +102,12 @@ class Header extends PureComponent {
 Header.propTypes = {
   currentUser: PropTypes.object,
   style: PropTypes.object,
+  mode: PropTypes.string,
 
   displayInfoMessage: PropTypes.func,
   toggleFriendsManagerVisibility: PropTypes.func,
   toggleSocialEntryVisibility: PropTypes.func,
+  toggleToNewsfeed: PropTypes.func,
 }
 
 

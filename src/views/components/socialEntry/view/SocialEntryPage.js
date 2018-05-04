@@ -16,10 +16,12 @@ class SocialEntryPage extends Component {
     return (
       <div className="social-entry-replies-container">
         { replies.map( (reply,i) => (
-          <SocialEntryItem
-            item={ reply }
-            renderSocialFooter={ true }
-          />
+          <div className="newsfeed-item" key={i}>
+            <SocialEntryItem
+              item={ reply }
+              renderSocialFooter={ true }
+            />
+          </div>
         ) ) }
       </div>
     )
