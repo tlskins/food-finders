@@ -30,7 +30,6 @@ class SocialEntryPage extends Component {
     if ( !SocialEntry ) {
       return null
     }
-    console.log('SocialEntryDetail, SocialEntry=',SocialEntry)
 
     return (
       <div className="social-entry-page">

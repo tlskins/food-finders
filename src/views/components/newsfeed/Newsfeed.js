@@ -59,7 +59,6 @@ class NewsFeed extends Component {
                 item={ feedItem }
                 renderSocialFooter={ true }
                 onMouseEnter={ () => this.selectItem(feedItem) }
-                onMouseLeave={ () => this.unselectItem() }
                 onClick={ () => clickNewsfeedItem(feedItem) }
               />
             </div>

@@ -22,7 +22,8 @@ class EntityPanel extends Component {
     const { yelpBusiness, style } = nextProps
     let newState = undefined
     if ( yelpBusiness && yelpBusiness !== this.props.yelpBusiness) {
-      newState = this.getMapDetails( yelpBusiness )
+      const mapDetails = this.getMapDetails( yelpBusiness )
+      newState = { ...mapDetails }
     }
     if ( style !== this.props.style ) {
       newState = { ...newState, style }
@@ -36,7 +37,6 @@ class EntityPanel extends Component {
   getMapDetails = yelpBusiness => {
     let marker = undefined
     let mapCenter = {}
-    console.log('getMapDetails yelpBusiness=',yelpBusiness)
     if ( yelpBusiness ) {
       const { categories, name, coordinates } = yelpBusiness
       const position = { lat: coordinates['latitude'], lng: coordinates['longitude'] }

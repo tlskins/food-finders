@@ -31,9 +31,9 @@ class Home extends Component {
     }
   }
 
-  // TODO - Move to coordinator
   selectNewsfeedItem = async selectedNewsfeedItem => {
     const { loadTaggable, pTaggableClassToType } = this.props
+    let newState = { selectedNewsfeedItem }
     let selectedEntity = undefined
     let entityTag = undefined
 
@@ -51,8 +51,9 @@ class Home extends Component {
     if ( entityTag ) {
       const taggableType = pTaggableClassToType(entityTag.taggableType)
       selectedEntity = await loadTaggable( taggableType, entityTag.handle )
+      newState = { ...newState, selectedEntity }
     }
-    this.setState({ selectedNewsfeedItem, selectedEntity, clickedNewsfeedItem: undefined })
+    this.setState( newState )
   }
 
   clickNewsfeedItem = newsfeedItem => {
