@@ -131,7 +131,7 @@ export function camelCaseify( val ) {
           k = 'id'
           newVal[k] = v.$oid
         }
-        else if ( v && RegExp('_id$').test(k) && v.$oid ) {
+        else if ( v && (RegExp('_id$').test(k) || v.$oid) ) {
           k = k.replace( /_(\w)/g, s => s[1].toUpperCase())
           newVal[k] = v.$oid
         }

@@ -78,7 +78,6 @@ class SocialEntryItem extends Component {
     const {
       renderSocialFooter,
       item,
-      user,
       onClick,
       onMouseEnter,
       onMouseLeave,
@@ -94,7 +93,6 @@ class SocialEntryItem extends Component {
         { isFoodRating ?
           <RatingEntryItem
             item={ item }
-            use={ user }
             onClick={ onClick }
           />
           :

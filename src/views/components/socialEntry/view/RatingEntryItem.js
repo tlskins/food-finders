@@ -55,7 +55,6 @@ class RatingEntryItem extends Component {
 }
 
 RatingEntryItem.propTypes = {
-  user: PropTypes.object,
   item: PropTypes.object,
 
   onClick: PropTypes.func,

@@ -45,35 +45,47 @@ export const pResponseSocialEntry = json => {
         }
       })
     }
-    socialEntry.renderContent = () => {
-      const { data, tags } = metadata
-
-      if ( tags && tags.length > 0 ) {
-        return(
-          <div className='newsfeed-p'>
-            { tags.map( (t,i) =>
-              <div className='social-entry-text'>
-                <div className='social-entry-text'>
-                  { data.slice(((tags[i-1] && tags[i-1].tagEnd) || 0), t.tagStart) }
-                </div>
-                <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }>
-                  { data.slice(t.tagStart,t.tagEnd) }
-                </div>
-                { i === tags.length - 1 && data.slice(t.tagEnd, ((tags[i+1] && tags[i+1].tagEnd)|| data.length)) }
-              </div>
-            )}
-          </div>
-        )
-      }
-      else {
-        return(
-          <div>
-            { data }
-          </div>
-        )
-      }
+    if ( metadata.replies && metadata.replies.length > 0 ) {
+      const { replies } = metadata
+      replies.forEach( r => {
+        r.metadata = r
+        r.conductedAt = r.createdAt
+        r.isFoodRating = false
+        r.renderContent = _buildRenderContent(r.metadata)
+      })
     }
+    socialEntry.renderContent = _buildRenderContent(metadata)
   }
 
   return socialEntry
+}
+
+
+const _buildRenderContent = metadata => () => {
+  const { data, tags } = metadata
+
+  if ( tags && tags.length > 0 ) {
+    return(
+      <div className='newsfeed-p'>
+        { tags.map( (t,i) =>
+          <div className='social-entry-text'>
+            <div className='social-entry-text'>
+              { data.slice(((tags[i-1] && tags[i-1].tagEnd) || 0), t.tagStart) }
+            </div>
+            <div className={ 'social-entry-tag__' + (t.taggableType || '').toLowerCase() }>
+              { data.slice(t.tagStart,t.tagEnd) }
+            </div>
+            { i === tags.length - 1 && data.slice(t.tagEnd, ((tags[i+1] && tags[i+1].tagEnd)|| data.length)) }
+          </div>
+        )}
+      </div>
+    )
+  }
+  else {
+    return(
+      <div>
+        { data }
+      </div>
+    )
+  }
 }

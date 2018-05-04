@@ -17,7 +17,7 @@ class SocialEntryPage extends Component {
       <div>
         { replies.map( (reply,i) => (
           <SocialEntryItem
-            feedItem={ reply }
+            item={ reply }
             renderSocialFooter={ true }
           />
         ) ) }
@@ -33,9 +33,9 @@ class SocialEntryPage extends Component {
     console.log('SocialEntryDetail, SocialEntry=',SocialEntry)
 
     return (
-      <div>
+      <div className="social-entry-page">
         <SocialEntryItem
-          feedItem={ SocialEntry }
+          item={ SocialEntry }
           renderSocialFooter={ true }
         />
         { this.renderReplies(SocialEntry) }

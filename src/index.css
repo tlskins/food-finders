@@ -882,10 +882,6 @@ body {
   display: inline;
 }
 
-.social-entry-text {
-  display: inline;
-}
-
 .newsfeed-item-container {
   background: #fcfcfc;
   padding: 20px 30px 20px 30px;
@@ -1016,6 +1012,16 @@ body {
   letter-spacing: .061em;
   text-transform: uppercase;
   margin: 0px 6px 0px 0px;
+}
+
+/** Social Entry Page **/
+
+.social-entry-page {
+  width: 100%;
+}
+
+.social-entry-text {
+  display: inline;
 }
 
 /** Google Maps **/
