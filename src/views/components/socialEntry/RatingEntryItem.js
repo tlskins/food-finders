@@ -4,33 +4,9 @@ import PropTypes from 'prop-types'
 import Moment from 'moment'
 
 
-class NewsFeedItem extends Component {
-  renderFeedItem = item => {
-    const { renderFooter } = this.props
-    const { conductedAt, metadata } = item
-    const authorName = metadata && metadata.authorName
-    const renderContent = item && item.renderContent
-
-    return (
-      <div className='newsfeed-item-container'>
-        <div className='newsfeed-item'>
-          <div>
-            <h3 className='p-header'>
-              { authorName }
-            </h3>
-              { renderContent && renderContent() }
-            <p className='p-footer'>
-              Posted at { Moment(conductedAt).format( 'MM-DD-YY h:mma' ) }
-            </p>
-          </div>
-        </div>
-        { renderFooter && this.renderFooter() }
-      </div>
-    )
-  }
-
-  renderRatingFeedItem = item => {
-    const { onMouseEnter, onMouseLeave, renderFooter, renderInputFooter } = this.props
+class RatingEntryItem extends Component {
+  render() {
+    const { onMouseEnter, onMouseLeave, clickItem, renderFooter, renderInputFooter, item } = this.props
     const { conductedAt, metadata } = item
     const { foodRating, authorName } = metadata
     const { rateable, ratee, ratingType, ratingMetrics } = foodRating
@@ -43,7 +19,10 @@ class NewsFeedItem extends Component {
         onMouseEnter={ onMouseEnter }
         onMouseLeave={ onMouseLeave }
       >
-        <div className="newsfeed-item">
+        <div
+          className="newsfeed-item"
+          onClick={ () => clickItem() }
+        >
           <div className="item-header newsfeed-item-header">
             { rateableName }
           </div>
@@ -80,9 +59,9 @@ class NewsFeedItem extends Component {
   }
 
   newReply = () => {
-    const { user, feedItem, displayInfoMessage, newReplySocialEntry } = this.props
+    const { user, item, displayInfoMessage, newReplySocialEntry } = this.props
     if ( user ) {
-      newReplySocialEntry(feedItem)
+      newReplySocialEntry(item)
     }
     else {
       displayInfoMessage('Please register an account so you can start socializing!')
@@ -90,8 +69,8 @@ class NewsFeedItem extends Component {
   }
 
   renderFooter = () => {
-    const { feedItem } = this.props
-    const { metadata } = feedItem
+    const { item } = this.props
+    const { metadata } = item
     const repliesCount = (metadata && metadata.repliesCount) || 0
 
     return (
@@ -120,35 +99,24 @@ class NewsFeedItem extends Component {
       </div>
     )
   }
-
-  render() {
-    const { feedItem } = this.props
-    const { metadata } = feedItem
-    const foodRating = metadata && metadata.foodRating
-
-    return (
-      <div>
-        { foodRating ?
-          this.renderRatingFeedItem(feedItem)
-          :
-          this.renderFeedItem(feedItem)
-        }
-      </div>
-    )
-  }
 }
 
-NewsFeedItem.propTypes = {
+RatingEntryItem.propTypes = {
+  // provided by container
   user: PropTypes.object,
+  // provided by parent component
   renderFooter: PropTypes.bool,
   displayInputFooter: PropTypes.bool,
-  feedItem: PropTypes.object,
+  item: PropTypes.object,
 
+  // provided by container
   clearParentSocialEntry: PropTypes.func,
   displayInfoMessage: PropTypes.func,
   newReplySocialEntry: PropTypes.func,
+  // provided by parent component
+  clickItem: PropTypes.func,
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
 }
 
-export default NewsFeedItem
+export default RatingEntryItem

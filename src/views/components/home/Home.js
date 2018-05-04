@@ -4,6 +4,7 @@ import { Sticky, StickyContainer } from 'react-sticky'
 
 import Newsfeed from '@containers/newsfeed/Newsfeed'
 import SocialEntryInput from '@containers/socialEntry/SocialEntryInput'
+import SocialEntryPage from '@components/socialEntry/view/SocialEntryPage'
 import FriendsManager from '@containers/home/FriendsManager'
 import NavBar from '@containers/common/Navbar'
 import EntityPanel from '@components/common/EntityPanel'
@@ -11,7 +12,10 @@ import Header from '@components/home/Header'
 
 
 class Home extends Component {
+  // TODO : move selectedNewsfeedItem, selectedEntity to newsfeed component
   state = {
+    mode: 'Newsfeed',
+    clickedNewsfeedItem: undefined,
     selectedNewsfeedItem: undefined,
     selectedEntity: undefined,
   }
@@ -21,24 +25,36 @@ class Home extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { loadRootTags, selectedNewsfeedItem, loadTaggable, pTaggableClassToType } = nextProps
+    const { loadRootTags } = nextProps
     if ( !this.props.currentUser && nextProps.currentUser ) {
       ( async() => await loadRootTags() )()
     }
+  }
 
-    if ( this.props.selectNewsfeedItem !== selectedNewsfeedItem ) {
-      if ( selectedNewsfeedItem && selectedNewsfeedItem.metadata && selectedNewsfeedItem.metadata.foodRating ) {
-        ( async() => {
-          const ratee = selectedNewsfeedItem.metadata.foodRating.ratee
-          const taggableType = pTaggableClassToType(ratee.taggableType)
-          const selectedEntity = await loadTaggable( taggableType, ratee.handle )
-          this.setState({ selectedNewsfeedItem, selectedEntity })
-        })()
-      }
-      else {
-        this.setState({ selectedNewsfeedItem, selectedEntity: undefined })
-      }
+  // TODO - Move to coordinator
+  selectNewsfeedItem = selectedNewsfeedItem => {
+    const { loadTaggable, pTaggableClassToType } = this.props
+
+    if ( selectedNewsfeedItem && selectedNewsfeedItem.metadata && selectedNewsfeedItem.metadata.foodRating ) {
+      ( async() => {
+        const ratee = selectedNewsfeedItem.metadata.foodRating.ratee
+        const taggableType = pTaggableClassToType(ratee.taggableType)
+        const selectedEntity = await loadTaggable( taggableType, ratee.handle )
+        this.setState({ selectedNewsfeedItem, selectedEntity, clickedNewsfeedItem: undefined })
+      })()
     }
+    else {
+      this.setState({ selectedNewsfeedItem, selectedEntity: undefined, clickedNewsfeedItem: undefined })
+    }
+  }
+
+  clickNewsfeedItem = newsfeedItem => {
+    this.setState({
+      mode: 'SocialEntryPage',
+      selectedNewsfeedItem: undefined,
+      selectedEntity: undefined,
+      clickedNewsfeedItem: newsfeedItem,
+    })
   }
 
   renderStickyHeader = ({ isSticky, style }) => {
@@ -62,8 +78,7 @@ class Home extends Component {
     )
   }
 
-  renderStickyEntityPanel = ({ isSticky, style }) => {
-    const { selectedEntity } = this.state
+  renderStickyEntityPanel = selectedEntity => ({ isSticky, style }) => {
     if ( isSticky ) {
       style = { ...style, width: '100%', top: '155px' }
     }
@@ -84,16 +99,52 @@ class Home extends Component {
     toggleFriendsManagerVisibility(false)
   }
 
-  render() {
-    const {
-      friendsManagerVisible,
-      socialEntryVisible,
-    } = this.props
+  renderNewsfeed = () => {
+    const { friendsManagerVisible } = this.props
     const { selectedEntity } = this.state
     let socialContainerClass = "social-container"
     if ( friendsManagerVisible ) {
       socialContainerClass += " show-sidebar"
     }
+
+    return(
+      <div className={ socialContainerClass }>
+        <Newsfeed
+          selectNewsfeedItem={ this.selectNewsfeedItem }
+          clickNewsfeedItem={ this.clickNewsfeedItem }
+        />
+        { selectedEntity &&
+          <div className="home-page-entity-container">
+            <Sticky topOffset={-70}>
+              { this.renderStickyEntityPanel(selectedEntity) }
+            </Sticky>
+            <div style={{ height: '100%' }}></div>
+          </div>
+        }
+      </div>
+    )
+  }
+
+  renderSocialEntryPage = () => {
+    const { friendsManagerVisible } = this.props
+    const { clickedNewsfeedItem } = this.state
+    let socialContainerClass = "social-container"
+    if ( friendsManagerVisible ) {
+      socialContainerClass += " show-sidebar"
+    }
+
+    return(
+      <div className={ socialContainerClass }>
+        <SocialEntryPage
+          SocialEntry={ clickedNewsfeedItem }
+        />
+      </div>
+    )
+  }
+
+  render() {
+    const { socialEntryVisible } = this.props
+    const { mode } = this.state
 
     return (
       <div className='page-container'>
@@ -107,18 +158,9 @@ class Home extends Component {
           </Sticky>
           <div className="home-page">
             <FriendsManager />
-              <div className={ socialContainerClass }>
-                <Newsfeed />
-                { selectedEntity &&
-                  <div className="home-page-entity-container">
-                    <Sticky topOffset={-70}>
-                      { this.renderStickyEntityPanel }
-                    </Sticky>
-                    <div style={{ height: '100%' }}></div>
-                  </div>
-                }
-                { socialEntryVisible && <SocialEntryInput /> }
-              </div>
+            { mode === 'Newsfeed' && this.renderNewsfeed() }
+            { mode === 'SocialEntryPage' && this.renderSocialEntryPage() }
+            { socialEntryVisible && <SocialEntryInput /> }
           </div>
         </StickyContainer>
       </div>
@@ -128,9 +170,9 @@ class Home extends Component {
 }
 
 Home.propTypes = {
+  actionablesDict: PropTypes.object,
   currentUser: PropTypes.object,
   friendsManagerVisible: PropTypes.bool,
-  selectedNewsfeedItem: PropTypes.object,
   socialEntryVisible: PropTypes.bool,
 
   displayInfoMessage: PropTypes.func,

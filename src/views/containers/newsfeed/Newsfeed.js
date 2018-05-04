@@ -16,15 +16,13 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  const { RestService, SessionService, UIService, ActionablesService } = services
+  const { RestService, SessionService, ActionablesService } = services
   const { pResponseFeedItems } = presenters.Api
 
   const loadNewsfeed = coordinators.loadNewsfeed({ RestService, SessionService, ActionablesService, pResponseFeedItems })
-  const selectNewsfeedItem = selectedItem => UIService.Newsfeed.selectNewsfeedItem(selectedItem)
 
   return {
     loadNewsfeed,
-    selectNewsfeedItem,
   }
 }
 

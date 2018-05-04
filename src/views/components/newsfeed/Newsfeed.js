@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import NewsFeedItem from '@containers/newsfeed/NewsfeedItem'
+import SocialEntryItem from '@containers/socialEntry/view/SocialEntryItem'
 
 
 class NewsFeed extends Component {
@@ -29,6 +29,7 @@ class NewsFeed extends Component {
   reloadFeedItems = async () => {
     const { loadNewsfeed } = this.props
     loadNewsfeed()
+    console.log('feedItems=',this.state.feedItems)
   }
 
   selectItem = item => {
@@ -45,19 +46,20 @@ class NewsFeed extends Component {
 
   render() {
     const { feedItems } = this.state
+    const { clickNewsfeedItem } = this.props
     const emptyFeed = feedItems.length === 0
-    console.log('feedItems=',feedItems)
 
     return (
       <div>
         <div className='newsfeed'>
           { emptyFeed && `Empty Feed!` }
           { feedItems.map( (feedItem,i) => (
-            <NewsFeedItem
-              feedItem={ feedItem }
+            <SocialEntryItem
+              item={ feedItem }
+              renderSocialFooter={ true }
               onMouseEnter={ () => this.selectItem(feedItem) }
-              onMouseLeave={ () => this.selectItem(feedItem) }
-              renderFooter={ true }
+              onMouseLeave={ () => this.unselectItem() }
+              onClick={ () => clickNewsfeedItem(feedItem) }
             />
           ) ) }
         </div>
@@ -70,6 +72,7 @@ NewsFeed.propTypes = {
   newsfeed: PropTypes.arrayOf(PropTypes.object),
 
   loadNewsfeed: PropTypes.func,
+  clickNewsfeedItem: PropTypes.func,
   selectNewsfeedItem: PropTypes.func,
 }
 

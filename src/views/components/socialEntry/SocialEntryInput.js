@@ -5,7 +5,7 @@ import TagSuggestions from '@components/socialEntry/TagSuggestions'
 import CurrentTags from '@components/socialEntry/CurrentTags'
 import SocialEntryRating from '@components/socialEntry/SocialEntryRating'
 import SocialEntryDetailPanel from '@containers/socialEntry/SocialEntryDetailPanel'
-import NewsFeedItem from '@containers/newsfeed/NewsfeedItem'
+import SocialEntryItem from '@containers/socialEntry/view/SocialEntryItem'
 import close from '@res/images/x-icon-gray.png'
 
 import {
@@ -209,8 +209,8 @@ class SocialEntryInput extends Component {
         <div className="modal-screen"></div>
         <div className="modal-inner-container">
           { parentSocialEntry &&
-            <NewsFeedItem
-              feedItem={ parentSocialEntry }
+            <SocialEntryItem
+              item={ parentSocialEntry }
               renderInputFooter={ true }
             />
           }

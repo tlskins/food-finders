@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 
-import NewsfeedItem from '@components/newsfeed/NewsfeedItem'
+import RatingEntryItem from '@components/socialEntry/RatingEntryItem'
 
 import services from '@services'
 import coordinators from '@coordinators'
@@ -34,4 +34,4 @@ const mapDispatchToProps = () => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewsfeedItem)
+export default connect(mapStateToProps, mapDispatchToProps)(RatingEntryItem)

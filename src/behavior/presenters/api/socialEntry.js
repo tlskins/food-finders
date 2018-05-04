@@ -24,9 +24,16 @@ export const pRequestPostSocialEntry = ({ text, creatableTags, parentSocialEntry
 
 export const pResponseSocialEntry = json => {
   const socialEntry = camelCaseify( json )
+  const { metadata } = socialEntry
 
-  if ( socialEntry.metadata ) {
-    const { metadata } = socialEntry
+  if ( metadata && metadata.foodRating ) {
+    socialEntry.isFoodRating = true
+  }
+  else {
+    socialEntry.isFoodRating = false
+  }
+
+  if ( metadata ) {
     if ( metadata.foodRating ) {
       socialEntry.metadata.foodRatingTags = []
       Object.values( metadata.foodRating ).forEach( t => {

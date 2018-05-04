@@ -5,17 +5,17 @@ import {
 
 const initialActionablesState = {
   newsfeed: [],
-  actionables: {}
+  actionablesDict: {}
 }
 
 export const actionables = (state = initialActionablesState, action) => {
   switch (action.type) {
     case LOAD_NEWSFEED: {
       const { newsfeed } = action
-      const { actionables } = state
-      newsfeed.forEach( n => actionables[n.id] = n )
+      const { actionablesDict } = state
+      newsfeed.forEach( n => actionablesDict[n.id] = n )
 
-      return { newsfeed: [...newsfeed], actionables: { ...actionables } }
+      return { newsfeed: [...newsfeed], actionablesDict: { ...actionablesDict } }
     }
 
     default:
