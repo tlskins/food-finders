@@ -24,6 +24,7 @@ class Header extends PureComponent {
   render() {
     const {
       currentUser,
+      displayInfoMessage,
       style,
       toggleFriendsManagerVisibility,
     } = this.props
@@ -38,7 +39,9 @@ class Header extends PureComponent {
           </div>
         }
         <div className="sticky-header-title">Newsfeed</div>
-        <button className="sticky-header-dropdown">
+        <button className="sticky-header-dropdown"
+          onClick={ () => displayInfoMessage('Sorting coming soon!') }
+        >
           <span className="sticky-header-dropdown-title">Sort by - </span>
           <span className="sticky-header-dropdown-value">Topic</span>
           <img className="dropdown-expand-icon" src={ DropdownArrow } alt="dropdown-arrow"/>

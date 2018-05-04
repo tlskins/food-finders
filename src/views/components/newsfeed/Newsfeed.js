@@ -54,13 +54,15 @@ class NewsFeed extends Component {
         <div className='newsfeed'>
           { emptyFeed && `Empty Feed!` }
           { feedItems.map( (feedItem,i) => (
-            <SocialEntryItem
-              item={ feedItem }
-              renderSocialFooter={ true }
-              onMouseEnter={ () => this.selectItem(feedItem) }
-              onMouseLeave={ () => this.unselectItem() }
-              onClick={ () => clickNewsfeedItem(feedItem) }
-            />
+            <div className="newsfeed-item" key={i}>
+              <SocialEntryItem
+                item={ feedItem }
+                renderSocialFooter={ true }
+                onMouseEnter={ () => this.selectItem(feedItem) }
+                onMouseLeave={ () => this.unselectItem() }
+                onClick={ () => clickNewsfeedItem(feedItem) }
+              />
+            </div>
           ) ) }
         </div>
       </div>

@@ -19,20 +19,22 @@ class SocialEntryItem extends Component {
   }
 
   renderSocialFooter = () => {
-    const { item } = this.props
+    const { displayInfoMessage, item } = this.props
     const { metadata } = item
     const repliesCount = (metadata && metadata.repliesCount) || 0
 
     return (
-      <div className="newsfeed-item-footer">
-        <div className="newsfeed-item-reply-container">
+      <div className="social-entry-item-footer">
+        <div className="social-entry-item-reply-container">
           <div
-            className="newsfeed-item-btn reply-btn"
+            className="social-entry-item-btn reply-btn"
             onClick={ this.newReply }
           />
           { repliesCount }
         </div>
-        <div className="newsfeed-item-btn like-btn" />
+        <div className="social-entry-item-btn like-btn"
+          onClick={ () => displayInfoMessage('Like functionality coming soon!') }
+        />
       </div>
     )
   }
@@ -41,9 +43,9 @@ class SocialEntryItem extends Component {
     const { clearParentSocialEntry } = this.props
 
     return (
-      <div className="newsfeed-item-footer">
+      <div className="social-entry-item-footer">
         <div
-          className="newsfeed-item-btn clear-parent"
+          className="social-entry-item-btn clear-parent"
           onClick={ () => clearParentSocialEntry && clearParentSocialEntry() }
         />
       </div>
@@ -58,7 +60,7 @@ class SocialEntryItem extends Component {
 
     return(
       <div
-        className='newsfeed-item'
+        className='social-entry-item'
         onClick={ () => onClick && onClick() }
       >
         <div>
@@ -86,7 +88,7 @@ class SocialEntryItem extends Component {
     const { isFoodRating } = item
 
     return (
-      <div className='newsfeed-item-container'
+      <div className='social-entry-item-container'
         onMouseEnter={ onMouseEnter }
         onMouseLeave={ onMouseLeave }
       >

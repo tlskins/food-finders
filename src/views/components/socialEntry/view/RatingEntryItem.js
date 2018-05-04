@@ -17,10 +17,10 @@ class RatingEntryItem extends Component {
     return (
       <div>
         <div
-          className="newsfeed-item"
+          className="social-entry-item"
           onClick={ () => onClick && onClick() }
         >
-          <div className="item-header newsfeed-item-header">
+          <div className="item-header social-entry-item-header">
             { rateableName }
           </div>
           <div className="item-sub-header">
@@ -33,7 +33,7 @@ class RatingEntryItem extends Component {
               { ratingMetrics && ratingMetrics.map( (m,i) => {
                 const renderBullet = i !== ratingMetrics.length - 1
                 return (
-                  <div>
+                  <div key={ i }>
                     <span className="rating-component">{ m.symbol + m.handle }</span>
                     { renderBullet && <span className="rating-component"> • </span> }
                   </div>

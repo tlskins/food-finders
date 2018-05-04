@@ -14,7 +14,7 @@ class SocialEntryPage extends Component {
     const { replies } = metadata
 
     return (
-      <div>
+      <div className="social-entry-replies-container">
         { replies.map( (reply,i) => (
           <SocialEntryItem
             item={ reply }

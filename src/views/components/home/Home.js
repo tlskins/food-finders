@@ -32,20 +32,27 @@ class Home extends Component {
   }
 
   // TODO - Move to coordinator
-  selectNewsfeedItem = selectedNewsfeedItem => {
+  selectNewsfeedItem = async selectedNewsfeedItem => {
     const { loadTaggable, pTaggableClassToType } = this.props
+    let selectedEntity = undefined
+    let entityTag = undefined
 
-    if ( selectedNewsfeedItem && selectedNewsfeedItem.metadata && selectedNewsfeedItem.metadata.foodRating ) {
-      ( async() => {
-        const ratee = selectedNewsfeedItem.metadata.foodRating.ratee
-        const taggableType = pTaggableClassToType(ratee.taggableType)
-        const selectedEntity = await loadTaggable( taggableType, ratee.handle )
-        this.setState({ selectedNewsfeedItem, selectedEntity, clickedNewsfeedItem: undefined })
-      })()
+    // Find entity tag
+    if ( selectedNewsfeedItem && selectedNewsfeedItem.metadata ) {
+      const { metadata } = selectedNewsfeedItem
+      if ( metadata.foodRating ) {
+        entityTag = selectedNewsfeedItem.metadata.foodRating.ratee
+      }
+      else if ( metadata.tags && metadata.tags.length > 0 ) {
+        entityTag = metadata.tags.find( t => t.taggableType === 'Entity' )
+      }
     }
-    else {
-      this.setState({ selectedNewsfeedItem, selectedEntity: undefined, clickedNewsfeedItem: undefined })
+
+    if ( entityTag ) {
+      const taggableType = pTaggableClassToType(entityTag.taggableType)
+      selectedEntity = await loadTaggable( taggableType, entityTag.handle )
     }
+    this.setState({ selectedNewsfeedItem, selectedEntity, clickedNewsfeedItem: undefined })
   }
 
   clickNewsfeedItem = newsfeedItem => {
