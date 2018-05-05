@@ -9,9 +9,11 @@ import * as foodRatingMetricsCoordinators from './foodRatingMetrics'
 import * as taggablesCoordinators from './taggables'
 import * as requestCoordinators from './request'
 import * as composedCoordinators from './composed'
+import * as homeCoordinators from './home'
 
 
 export default Object.freeze({
+  ...homeCoordinators,
   ...errorsCoordinators,
   ...newsfeedCoordinators,
   ...socialEntryCoordinators,

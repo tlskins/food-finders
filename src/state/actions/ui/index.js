@@ -6,9 +6,11 @@ import * as tagEditorUIActions from './tagEditor'
 import * as hierarchiesManagerUIActions from './hierarchiesManager'
 import * as socialEntryDetailPanelUIActions from './socialEntryDetailPanel'
 import * as errorsActions from './errors'
+import * as homeActions from './home'
 
 
 export default {
+  ...homeActions,
   ...loginFormUIActions,
   ...flashMessageUIActions,
   ...friendsManagerUIActions,

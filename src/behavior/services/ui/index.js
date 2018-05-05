@@ -9,6 +9,7 @@ import HierarchiesManager from './hierarchiesManager'
 import Newsfeed from './newsfeed'
 import SocialEntryDetailPanel from './socialEntryDetailPanel'
 import Errors from './errors'
+import Home from './home'
 
 
 const SubServices = {
@@ -21,6 +22,7 @@ const SubServices = {
   HierarchiesManager,
   Newsfeed,
   SocialEntryDetailPanel,
+  Home,
 }
 
 

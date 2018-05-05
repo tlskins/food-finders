@@ -47,12 +47,10 @@ class NewsFeed extends Component {
   render() {
     const { feedItems } = this.state
     const { clickNewsfeedItem } = this.props
-    const emptyFeed = feedItems.length === 0
 
     return (
       <div>
         <div className='newsfeed'>
-          { emptyFeed && `Empty Feed!` }
           { feedItems.map( (feedItem,i) => (
             <div className="newsfeed-item" key={i}>
               <SocialEntryItem

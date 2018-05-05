@@ -8,7 +8,7 @@ import presenters from '@presenters'
 
 
 const mapStateToProps = state => {
-  const { actionables, session, friendsManager, socialEntryForm } = state
+  const { actionables, session, friendsManager, socialEntryForm, home } = state
   const currentUser = session ? session.user : undefined
   const { actionablesDict } = actionables
 
@@ -17,6 +17,7 @@ const mapStateToProps = state => {
     currentUser,
     friendsManagerVisible: friendsManager.visible,
     socialEntryVisible: socialEntryForm.visible,
+    home,
   }
 }
 
@@ -32,13 +33,18 @@ const mapDispatchToProps = () => {
   const loadRootTags = coordinators.LoadRootTags({ TagService, RestService, pResponseRoots })
   const loadTaggable = coordinators.LoadTaggable({ RestService, TaggablesService, pResponseTaggable, UIService, pResponseYelpBusiness })
   const displayInfoMessage = message => UIService.FlashMessage.displayInfoMessage(message)
+  const toggleSocialEntryPage = newsfeedItem => UIService.Home.toggleSocialEntryPage(newsfeedItem)
+  const toggleNewsfeed = () => UIService.Home.toggleNewsfeed()
+  const selectNewsfeedItem = coordinators.SelectNewsfeedItem({ UIService, pTaggableClassToType, LoadTaggable: loadTaggable })
 
   return {
     displayInfoMessage,
     loadRootTags,
     loadTaggable,
-    pTaggableClassToType,
+    selectNewsfeedItem,
     toggleFriendsManagerVisibility,
+    toggleNewsfeed,
+    toggleSocialEntryPage,
     toggleSocialEntryVisibility,
     redirect,
   }

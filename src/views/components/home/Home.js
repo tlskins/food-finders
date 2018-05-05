@@ -12,66 +12,21 @@ import Header from '@components/home/Header'
 
 
 class Home extends Component {
-  // TODO : move selectedNewsfeedItem, selectedEntity to newsfeed component
-  state = {
-    mode: 'Newsfeed',
-    clickedNewsfeedItem: undefined,
-    selectedNewsfeedItem: undefined,
-    selectedEntity: undefined,
-  }
-
-  componentDidMount() {
+  componentWillMount() {
     window.scrollTo(0, 0)
+    const { home } = this.props
+    this.setState({ ...home })
   }
 
   componentWillReceiveProps(nextProps) {
-    const { loadRootTags } = nextProps
+    const { loadRootTags, home } = nextProps
     if ( !this.props.currentUser && nextProps.currentUser ) {
       ( async() => await loadRootTags() )()
     }
-  }
 
-  selectNewsfeedItem = async selectedNewsfeedItem => {
-    const { loadTaggable, pTaggableClassToType } = this.props
-    let newState = { selectedNewsfeedItem }
-    let selectedEntity = undefined
-    let entityTag = undefined
-
-    // Find entity tag
-    if ( selectedNewsfeedItem && selectedNewsfeedItem.metadata ) {
-      const { metadata } = selectedNewsfeedItem
-      if ( metadata.foodRating ) {
-        entityTag = selectedNewsfeedItem.metadata.foodRating.ratee
-      }
-      else if ( metadata.tags && metadata.tags.length > 0 ) {
-        entityTag = metadata.tags.find( t => t.taggableType === 'Entity' )
-      }
+    if ( this.props.home !== home ) {
+      this.setState({ ...home })
     }
-
-    if ( entityTag ) {
-      const taggableType = pTaggableClassToType(entityTag.taggableType)
-      selectedEntity = await loadTaggable( taggableType, entityTag.handle )
-      newState = { ...newState, selectedEntity }
-    }
-    this.setState( newState )
-  }
-
-  clickNewsfeedItem = newsfeedItem => {
-    this.setState({
-      mode: 'SocialEntryPage',
-      selectedNewsfeedItem: undefined,
-      selectedEntity: undefined,
-      clickedNewsfeedItem: newsfeedItem,
-    })
-  }
-
-  toggleToNewsfeed = () => {
-    this.setState({
-      mode: 'Newsfeed',
-      selectedNewsfeedItem: undefined,
-      selectedEntity: undefined,
-      clickedNewsfeedItem: undefined,
-    })
   }
 
   renderStickyHeader = ({ isSticky, style }) => {
@@ -80,6 +35,7 @@ class Home extends Component {
       toggleFriendsManagerVisibility,
       friendsManagerVisible,
       currentUser,
+      toggleNewsfeed,
     } = this.props
     const { mode } = this.state
     if ( isSticky ) {
@@ -93,7 +49,7 @@ class Home extends Component {
         toggleSocialEntryVisibility={ this.onToggleSocialEntryVisibility }
         currentUser={ currentUser }
         mode={ mode }
-        toggleToNewsfeed={ this.toggleToNewsfeed }
+        toggleToNewsfeed={ toggleNewsfeed }
       />
     )
   }
@@ -120,7 +76,7 @@ class Home extends Component {
   }
 
   renderNewsfeed = () => {
-    const { friendsManagerVisible } = this.props
+    const { friendsManagerVisible, toggleSocialEntryPage, selectNewsfeedItem } = this.props
     const { selectedEntity } = this.state
     let socialContainerClass = "social-container"
     if ( friendsManagerVisible ) {
@@ -130,8 +86,8 @@ class Home extends Component {
     return(
       <div className={ socialContainerClass }>
         <Newsfeed
-          selectNewsfeedItem={ this.selectNewsfeedItem }
-          clickNewsfeedItem={ this.clickNewsfeedItem }
+          selectNewsfeedItem={ selectNewsfeedItem }
+          clickNewsfeedItem={ toggleSocialEntryPage }
         />
         { selectedEntity &&
           <div className="home-page-entity-container">
@@ -190,6 +146,7 @@ class Home extends Component {
 }
 
 Home.propTypes = {
+  home: PropTypes.object,
   actionablesDict: PropTypes.object,
   currentUser: PropTypes.object,
   friendsManagerVisible: PropTypes.bool,
@@ -197,9 +154,11 @@ Home.propTypes = {
 
   displayInfoMessage: PropTypes.func,
   loadTaggable: PropTypes.func,
-  pTaggableClassToType: PropTypes.func,
   redirect: PropTypes.func,
+  selectNewsfeedItem: PropTypes.func,
   toggleFriendsManagerVisibility: PropTypes.func,
+  toggleNewsfeed: PropTypes.func,
+  toggleSocialEntryPage: PropTypes.func,
   toggleSocialEntryVisibility: PropTypes.func,
 }
 
