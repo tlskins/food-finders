@@ -49,6 +49,7 @@ export const pResponseSocialEntry = json => {
       const { replies } = metadata
       replies.forEach( r => {
         r.metadata = r
+        r.actionableId = r.id
         r.conductedAt = r.createdAt
         r.isFoodRating = false
         r.renderContent = _buildRenderContent(r.metadata)

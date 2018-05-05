@@ -196,7 +196,12 @@ class SocialEntryInput extends Component {
       selectedTagIndex,
       tagSuggestions,
     } = this.state
-    const { addTagToText, updateSelectedTagIndex, visible } = this.props
+    const {
+      addTagToText,
+      renderRating,
+      updateSelectedTagIndex,
+      visible
+    } = this.props
     const { tags, creatableTags } = draftSocialEntry
     if ( !visible ) {
       return null
@@ -218,7 +223,7 @@ class SocialEntryInput extends Component {
           <div className="modal-section">
             <img className="close" src={ close } onClick={ this.close } alt="close-form"/>
             <div className='social-entry-form-header item-header'> New Social Entry </div>
-            <SocialEntryRating tags={ allTags } />
+            { !parentSocialEntry && <SocialEntryRating tags={ allTags } /> }
           </div>
 
           <div className="modal-column-section">

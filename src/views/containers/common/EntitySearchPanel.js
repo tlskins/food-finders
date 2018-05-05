@@ -11,7 +11,7 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  const { RestService, SocialEntryService, SessionService, UIService } = services
+  const { RestService, SocialEntryService, SessionService, TaggablesService, UIService } = services
   const { pResponseUser, pResponseYelpBusinesses, pRequestUpdateSocialEntry } = presenters.Api
   const UpdateDraftSocialEntry = coordinators.updateDraftSocialEntry({
     RestService,
@@ -22,7 +22,7 @@ const mapDispatchToProps = () => {
   })
 
   const searchYelpBusinesses = coordinators.SearchYelpBusinesses({ RestService, pResponseYelpBusinesses })
-  const addTagToText = coordinators.addTagToText({ SocialEntryService, UpdateDraftSocialEntry })
+  const addTagToText = coordinators.addTagToText({ SocialEntryService, UpdateDraftSocialEntry, TaggablesService })
   const toggleMode = mode => UIService.SocialEntryDetailPanel.toggleMode(mode)
 
   return {

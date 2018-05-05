@@ -65,7 +65,7 @@ export const postSocialEntry = ({
   const editTaggable = TaggablesService.getEditTaggable()
   const { edited } = editTaggable
   if ( edited ) {
-    addTagToText({ SocialEntryService, UpdateDraftSocialEntry })(editTaggable, false)
+    addTagToText({ SocialEntryService, UpdateDraftSocialEntry, TaggablesService })(editTaggable, false)
     TaggablesService.resetTaggable()
   }
 
@@ -147,7 +147,7 @@ export const updateCursorTextData = ({
   const { edited: taggableEdited } = editTaggable
   if ( taggableEdited ) {
     // TODO - refactor out creatable tag logic from addTag
-    addTagToText({ SocialEntryService, UpdateDraftSocialEntry })(editTaggable, false)
+    addTagToText({ SocialEntryService, UpdateDraftSocialEntry, TaggablesService })(editTaggable, false)
     TaggablesService.resetTaggable()
   }
 
