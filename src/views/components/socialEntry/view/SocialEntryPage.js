@@ -5,7 +5,6 @@ import SocialEntryItem from '@containers/socialEntry/view/SocialEntryItem'
 
 
 class SocialEntryPage extends Component {
-
   renderReplies = ({ SocialEntry, loadSocialEntryPage }) => {
     const { metadata } = SocialEntry
     if ( !metadata || !metadata.replies ) {

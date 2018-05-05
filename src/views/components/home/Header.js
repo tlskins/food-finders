@@ -61,7 +61,10 @@ class Header extends PureComponent {
       style,
       toggleFriendsManagerVisibility,
       toggleToNewsfeed,
+      socialEntry,
+      loadSocialEntryPage,
     } = props
+    const parentSocialEntryId = socialEntry.metadata && socialEntry.metadata.parentSocialEntry && socialEntry.metadata.parentSocialEntry.id
 
     return (
       <div className="sticky-header" style={{ ...style }}>
@@ -73,6 +76,14 @@ class Header extends PureComponent {
           </div>
         }
         <div className="sticky-header-title">Social Entry View</div>
+        { parentSocialEntryId &&
+          <button
+            className="header-button"
+            onClick={ () => loadSocialEntryPage(parentSocialEntryId) }
+          >
+            Back to Previous Entry
+          </button>
+        }
         <button
           className="header-button"
           onClick={ toggleToNewsfeed }
@@ -103,8 +114,10 @@ Header.propTypes = {
   currentUser: PropTypes.object,
   style: PropTypes.object,
   mode: PropTypes.string,
+  clickedNewsfeedItem: PropTypes.object,
 
   displayInfoMessage: PropTypes.func,
+  loadSocialEntryPage: PropTypes.func,
   toggleFriendsManagerVisibility: PropTypes.func,
   toggleSocialEntryVisibility: PropTypes.func,
   toggleToNewsfeed: PropTypes.func,

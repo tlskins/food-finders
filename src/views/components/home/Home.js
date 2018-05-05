@@ -34,13 +34,15 @@ class Home extends Component {
       displayInfoMessage,
       toggleFriendsManagerVisibility,
       friendsManagerVisible,
+      loadSocialEntryPage,
       currentUser,
       toggleNewsfeed,
     } = this.props
-    const { mode } = this.state
+    const { clickedNewsfeedItem, mode } = this.state
     if ( isSticky ) {
       style = { ...style, top: '70px' }
     }
+
     return (
       <Header
         style={style}
@@ -50,6 +52,8 @@ class Home extends Component {
         currentUser={ currentUser }
         mode={ mode }
         toggleToNewsfeed={ toggleNewsfeed }
+        socialEntry={ clickedNewsfeedItem }
+        loadSocialEntryPage={ loadSocialEntryPage }
       />
     )
   }
