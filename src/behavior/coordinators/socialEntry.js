@@ -53,12 +53,15 @@ export const loadParentSocialEntry = ({ RestService, SocialEntryService, Session
 
 
 export const postSocialEntry = ({
+  ActionablesService,
   RestService,
   SessionService,
   SocialEntryService,
   TaggablesService,
+  UIService,
   pResponseUser,
   pRequestPostSocialEntry,
+  pResponseSocialEntries,
   UpdateDraftSocialEntry,
 }) => async () => {
   // write any unsaved taggable edits
@@ -72,7 +75,7 @@ export const postSocialEntry = ({
   const userId = SessionService.currentUserId()
   const socialEntry = SocialEntryService.getSocialEntry()
   const { text, creatableTags, parentSocialEntryId } = socialEntry
-  const payload = pRequestPostSocialEntry({
+  let payload = pRequestPostSocialEntry({
     text,
     creatableTags,
     parentSocialEntryId,
@@ -81,6 +84,16 @@ export const postSocialEntry = ({
   let user = await RestService.post('/api/users/' + userId + '/publish_draft_social_entry', payload )
   user = pResponseUser(user)
   SessionService.setUserSession(user)
+
+  if ( parentSocialEntryId ) {
+    const { parentSocialEntry } = socialEntry
+    const { parentSocialEntryId: grandParentSocialEntryId } = parentSocialEntry
+    payload = { social_entry_ids: [parentSocialEntryId, grandParentSocialEntryId] }
+    let updatedActionables = await RestService.get('/api/actionables/find', payload )
+    updatedActionables = pResponseSocialEntries(updatedActionables)
+    ActionablesService.loadNewsfeed(updatedActionables)
+    UIService.Home.updateClickedNewsfeedItem()
+  }
 }
 
 

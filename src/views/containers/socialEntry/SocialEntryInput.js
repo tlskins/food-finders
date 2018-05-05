@@ -22,13 +22,14 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  const { RestService, TagService, TaggablesService, SessionService, SocialEntryService, UIService } = services
+  const { ActionablesService, RestService, TagService, TaggablesService, SessionService, SocialEntryService, UIService } = services
   const {
     pResponseGeneric,
     pResponseUser,
     pResponseYelpBusinesses,
     pRequestUpdateSocialEntry,
-    pRequestPostSocialEntry
+    pRequestPostSocialEntry,
+    pResponseSocialEntries,
   } = presenters.Api
   const pResponseTags = pResponseGeneric
 
@@ -50,12 +51,15 @@ const mapDispatchToProps = () => {
     TagService,
   })
   const postSocialEntry = coordinators.postSocialEntry({
+    ActionablesService,
     RestService,
     SessionService,
     SocialEntryService,
     TaggablesService,
+    UIService,
     pResponseUser,
     pRequestPostSocialEntry,
+    pResponseSocialEntries,
     UpdateDraftSocialEntry,
   })
   const resetSearchCriteria = () => SocialEntryService.resetSearchCriteria()

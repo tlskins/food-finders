@@ -24,7 +24,7 @@ export const pRequestPostSocialEntry = ({ text, creatableTags, parentSocialEntry
 
 export const pResponseSocialEntry = json => {
   const socialEntry = camelCaseify( json )
-  const { metadata } = socialEntry
+  const { metadata, actionableId } = socialEntry
 
   if ( metadata && metadata.foodRating ) {
     socialEntry.isFoodRating = true
@@ -48,10 +48,11 @@ export const pResponseSocialEntry = json => {
     if ( metadata.replies && metadata.replies.length > 0 ) {
       const { replies } = metadata
       replies.forEach( r => {
-        r.metadata = r
+        r.parentSocialEntryId = actionableId
         r.actionableId = r.id
         r.conductedAt = r.createdAt
         r.isFoodRating = false
+        r.metadata = { ...r }
         r.renderContent = _buildRenderContent(r.metadata)
       })
     }
@@ -59,6 +60,15 @@ export const pResponseSocialEntry = json => {
   }
 
   return socialEntry
+}
+
+
+export const pResponseSocialEntries = json => {
+  let socialEntries = camelCaseify( json )
+
+  socialEntries = socialEntries.map( n => pResponseSocialEntry(n) )
+
+  return socialEntries
 }
 
 

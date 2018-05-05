@@ -12,6 +12,7 @@ class SocialEntryPage extends Component {
       return null
     }
     const { replies } = metadata
+    console.log('replies=',replies)
 
     return (
       <div className="social-entry-replies-container">
