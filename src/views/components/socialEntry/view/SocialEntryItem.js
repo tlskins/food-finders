@@ -48,6 +48,7 @@ class SocialEntryItem extends Component {
           className="social-entry-item-btn clear-parent"
           onClick={ () => clearParentSocialEntry && clearParentSocialEntry() }
         />
+        Remove reply to
       </div>
     )
   }

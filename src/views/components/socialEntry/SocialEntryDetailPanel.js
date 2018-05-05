@@ -108,11 +108,18 @@ class SocialEntryDetailPanel extends Component {
   }
 
   renderEntityPanel = ({ activeTag, mapStyle, panelStyle }) => {
-    const { toggleMode } = this.props
+    const { toggleMode, displayInfoMessage } = this.props
     const yelpBusiness = activeTag && activeTag.embeddedTaggable
 
     return (
       <div>
+        <div onClick={ () => displayInfoMessage('Regionalized searching coming soon!') }>
+          Default search area:
+          <input type='text'
+            disabled={ true }
+            value='Arlington, VA'
+          />
+        </div>
         <button
           onClick={ () => toggleMode('SEARCH ENTITY') }
           className="social-entry-dtl-hdr-btn"
@@ -191,6 +198,7 @@ SocialEntryDetailPanel.propTypes = {
   panelStyle: PropTypes.object,
   mapStyle: PropTypes.object,
 
+  displayInfoMessage: PropTypes.func,
   toggleMode: PropTypes.func,
   updateTaggable: PropTypes.func,
 }

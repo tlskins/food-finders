@@ -30,8 +30,10 @@ const mapDispatchToProps = () => {
 
   const toggleMode = mode => UIService.SocialEntryDetailPanel.toggleMode(mode)
   const updateTaggable = (taggable) => TaggablesService.editTaggable(taggable)
+  const displayInfoMessage = text => UIService.FlashMessage.displayInfoMessage(text)
 
   return {
+    displayInfoMessage,
     toggleMode,
     updateTaggable,
   }

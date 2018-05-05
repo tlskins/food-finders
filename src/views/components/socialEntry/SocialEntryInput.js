@@ -6,6 +6,7 @@ import CurrentTags from '@components/socialEntry/CurrentTags'
 import SocialEntryRating from '@components/socialEntry/SocialEntryRating'
 import SocialEntryDetailPanel from '@containers/socialEntry/SocialEntryDetailPanel'
 import SocialEntryItem from '@containers/socialEntry/view/SocialEntryItem'
+import SocialEntryLegend from '@components/socialEntry/SocialEntryLegend'
 import close from '@res/images/x-icon-gray.png'
 
 import {
@@ -198,7 +199,6 @@ class SocialEntryInput extends Component {
     } = this.state
     const {
       addTagToText,
-      renderRating,
       updateSelectedTagIndex,
       visible
     } = this.props
@@ -224,6 +224,7 @@ class SocialEntryInput extends Component {
             <img className="close" src={ close } onClick={ this.close } alt="close-form"/>
             <div className='social-entry-form-header item-header'> New Social Entry </div>
             { !parentSocialEntry && <SocialEntryRating tags={ allTags } /> }
+            <SocialEntryLegend/>
           </div>
 
           <div className="modal-column-section">
