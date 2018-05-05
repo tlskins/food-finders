@@ -102,7 +102,7 @@ class Home extends Component {
   }
 
   renderSocialEntryPage = () => {
-    const { friendsManagerVisible } = this.props
+    const { friendsManagerVisible, loadSocialEntryPage } = this.props
     const { clickedNewsfeedItem } = this.state
     let socialContainerClass = "social-container"
     if ( friendsManagerVisible ) {
@@ -113,6 +113,7 @@ class Home extends Component {
       <div className={ socialContainerClass }>
         <SocialEntryPage
           SocialEntry={ clickedNewsfeedItem }
+          loadSocialEntryPage={ loadSocialEntryPage }
         />
       </div>
     )
@@ -153,6 +154,7 @@ Home.propTypes = {
   socialEntryVisible: PropTypes.bool,
 
   displayInfoMessage: PropTypes.func,
+  loadSocialEntryPage: PropTypes.func,
   loadTaggable: PropTypes.func,
   redirect: PropTypes.func,
   selectNewsfeedItem: PropTypes.func,

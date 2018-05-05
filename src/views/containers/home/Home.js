@@ -22,8 +22,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = () => {
-  const { RouterService, RestService, TagService, TaggablesService, UIService } = services
-  const { pResponseGeneric, pTaggableClassToType, pResponseYelpBusiness } = presenters.Api
+  const { ActionablesService, RouterService, RestService, TagService, TaggablesService, UIService } = services
+  const { pResponseGeneric, pTaggableClassToType, pResponseYelpBusiness, pResponseSocialEntry } = presenters.Api
   const pResponseRoots = pResponseGeneric
   const pResponseTaggable = pResponseGeneric
 
@@ -36,10 +36,12 @@ const mapDispatchToProps = () => {
   const toggleSocialEntryPage = newsfeedItem => UIService.Home.toggleSocialEntryPage(newsfeedItem)
   const toggleNewsfeed = () => UIService.Home.toggleNewsfeed()
   const selectNewsfeedItem = coordinators.SelectNewsfeedItem({ UIService, pTaggableClassToType, LoadTaggable: loadTaggable })
+  const loadSocialEntryPage = coordinators.LoadSocialEntryPage({ ActionablesService, UIService, RestService, pResponseSocialEntry })
 
   return {
     displayInfoMessage,
     loadRootTags,
+    loadSocialEntryPage,
     loadTaggable,
     selectNewsfeedItem,
     toggleFriendsManagerVisibility,

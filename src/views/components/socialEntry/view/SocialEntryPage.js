@@ -6,7 +6,7 @@ import SocialEntryItem from '@containers/socialEntry/view/SocialEntryItem'
 
 class SocialEntryPage extends Component {
 
-  renderReplies = SocialEntry => {
+  renderReplies = ({ SocialEntry, loadSocialEntryPage }) => {
     const { metadata } = SocialEntry
     if ( !metadata || !metadata.replies ) {
       return null
@@ -20,6 +20,7 @@ class SocialEntryPage extends Component {
             <SocialEntryItem
               item={ reply }
               renderSocialFooter={ true }
+              onClick={ () => loadSocialEntryPage(reply.metadata.actionableId) }
             />
           </div>
         ) ) }
@@ -28,7 +29,7 @@ class SocialEntryPage extends Component {
   }
 
   render() {
-    const { SocialEntry } = this.props
+    const { SocialEntry, loadSocialEntryPage } = this.props
     if ( !SocialEntry ) {
       return null
     }
@@ -39,7 +40,7 @@ class SocialEntryPage extends Component {
           item={ SocialEntry }
           renderSocialFooter={ true }
         />
-        { this.renderReplies(SocialEntry) }
+        { this.renderReplies({ SocialEntry, loadSocialEntryPage }) }
       </div>
     )
   }
@@ -47,6 +48,8 @@ class SocialEntryPage extends Component {
 
 SocialEntryPage.propTypes = {
   SocialEntry: PropTypes.object,
+
+  loadSocialEntryPage: PropTypes.func,
 }
 
 export default SocialEntryPage

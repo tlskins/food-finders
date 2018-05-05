@@ -20,3 +20,17 @@ export const SelectNewsfeedItem = ({ UIService, pTaggableClassToType, LoadTaggab
   }
   UIService.Home.selectNewsfeedItem({ selectedNewsfeedItem, selectedEntity })
 }
+
+
+export const LoadSocialEntryPage = ({ ActionablesService, RestService, UIService, pResponseSocialEntry }) => async actionableId => {
+  let actionable = ActionablesService.findActionable(actionableId)
+
+  if ( !actionable ) {
+    const payload = { social_entry_id: actionableId }
+    actionable = await RestService.get('/api/actionables/find', payload )
+    actionable = pResponseSocialEntry(actionable)
+    ActionablesService.loadActionable(actionable)
+  }
+
+  UIService.Home.toggleSocialEntryPage(actionable)
+}
