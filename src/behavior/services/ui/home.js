@@ -10,9 +10,11 @@ export default class Home extends BaseService {
 
   updateClickedNewsfeedItem() {
     let clickedNewsfeedItem = this.getState().home.clickedNewsfeedItem
-    const dict = this.getState().actionables.actionablesDict
-    clickedNewsfeedItem = dict[clickedNewsfeedItem.id]
-    this.dispatch( actions.toggleSocialEntryPage(clickedNewsfeedItem))
+    if ( clickedNewsfeedItem ) {
+      const dict = this.getState().actionables.actionablesDict
+      clickedNewsfeedItem = dict[clickedNewsfeedItem.id]
+      this.dispatch( actions.toggleSocialEntryPage(clickedNewsfeedItem))
+    }
   }
 
   toggleSocialEntryPage(newsfeedItem) {

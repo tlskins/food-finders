@@ -208,6 +208,7 @@ class SocialEntryInput extends Component {
     }
 
     const allTags = [...tags, ...creatableTags]
+    const noParentEntry = !parentSocialEntry || !parentSocialEntry.id
 
     return (
       <div className="modal-form-container">
@@ -223,7 +224,7 @@ class SocialEntryInput extends Component {
           <div className="modal-section">
             <img className="close" src={ close } onClick={ this.close } alt="close-form"/>
             <div className='social-entry-form-header item-header'> New Social Entry </div>
-            { !parentSocialEntry && <SocialEntryRating tags={ allTags } /> }
+            { noParentEntry && <SocialEntryRating tags={ allTags } /> }
             <SocialEntryLegend/>
           </div>
 
